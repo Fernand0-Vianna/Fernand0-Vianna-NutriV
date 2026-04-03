@@ -13,6 +13,7 @@ import 'presentation/bloc/meal/meal_event.dart';
 import 'presentation/bloc/food_scanner/food_scanner_bloc.dart';
 import 'presentation/bloc/water/water_bloc.dart';
 import 'presentation/bloc/water/water_event.dart';
+import 'presentation/bloc/barcode/barcode_scanner_bloc.dart';
 import 'presentation/pages/home/home_page.dart';
 import 'presentation/pages/diary/diary_page.dart';
 import 'presentation/pages/scanner/scanner_page.dart';
@@ -60,6 +61,9 @@ class NutriVApp extends StatelessWidget {
         BlocProvider<WaterBloc>(
           create: (_) =>
               getIt<WaterBloc>()..add(LoadWaterIntake(DateTime.now())),
+        ),
+        BlocProvider<BarcodeScannerBloc>(
+          create: (_) => getIt<BarcodeScannerBloc>(),
         ),
       ],
       child: MaterialApp.router(

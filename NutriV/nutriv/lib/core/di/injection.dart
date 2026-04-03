@@ -14,6 +14,7 @@ import '../../presentation/bloc/user/user_bloc.dart';
 import '../../presentation/bloc/meal/meal_bloc.dart';
 import '../../presentation/bloc/food_scanner/food_scanner_bloc.dart';
 import '../../presentation/bloc/water/water_bloc.dart';
+import '../../presentation/bloc/barcode/barcode_scanner_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -57,4 +58,6 @@ Future<void> setupDependencies() async {
   );
 
   getIt.registerFactory<WaterBloc>(() => WaterBloc(getIt<SharedPreferences>()));
+
+  getIt.registerFactory<BarcodeScannerBloc>(() => BarcodeScannerBloc());
 }
