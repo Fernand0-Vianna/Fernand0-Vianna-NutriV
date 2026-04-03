@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../data/datasources/local_data_source.dart';
 import '../../data/datasources/ai_food_service.dart';
+import '../../data/datasources/auth_service.dart';
 import '../../data/repositories/user_repository.dart';
 import '../../data/repositories/meal_repository.dart';
 import '../../data/repositories/daily_log_repository.dart';
@@ -15,10 +18,13 @@ import '../../presentation/bloc/water/water_bloc.dart';
 final getIt = GetIt.instance;
 
 Future<void> setupDependencies() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   final prefs = await SharedPreferences.getInstance();
 
   getIt.registerSingleton<SharedPreferences>(prefs);
   getIt.registerSingleton<Dio>(Dio());
+  getIt.registerSingleton<GoogleSignIn>(GoogleSignIn());
 
   getIt.registerSingleton<LocalDataSource>(
     LocalDataSource(getIt<SharedPreferences>()),
@@ -28,6 +34,10 @@ Future<void> setupDependencies() async {
 
   getIt.registerSingleton<UserRepository>(
     UserRepository(getIt<LocalDataSource>()),
+  );
+
+  getIt.registerSingleton<AuthService>(
+    AuthService(getIt<GoogleSignIn>(), getIt<UserRepository>()),
   );
 
   getIt.registerSingleton<MealRepository>(

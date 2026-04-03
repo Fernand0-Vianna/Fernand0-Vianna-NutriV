@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/di/injection.dart';
@@ -21,6 +23,22 @@ import 'presentation/pages/main/main_shell.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (e) {
+    // Use fallback values if .env file is not found in debug
+  }
+
+  try {
+    await Supabase.initialize(
+      url: dotenv.env['SUPABASE_URL'] ?? 'https://placeholder.supabase.co',
+      anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? 'placeholder_key',
+    );
+  } catch (e) {
+    // Continue without Supabase if initialization fails
+  }
+
   await setupDependencies();
   runApp(const NutriVApp());
 }

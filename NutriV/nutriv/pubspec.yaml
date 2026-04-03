@@ -43,6 +43,15 @@ dependencies:
   get_it: ^8.0.3
   intl: ^0.20.2
   uuid: ^4.5.1
+  flutter_dotenv: ^5.2.1
+
+  # Firebase
+  firebase_core: ^3.13.0
+  firebase_auth: ^5.5.2
+  google_sign_in: ^6.2.2
+
+  # Supabase
+  supabase_flutter: ^2.5.0
 
 dev_dependencies:
   flutter_test:
@@ -51,3 +60,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - .env

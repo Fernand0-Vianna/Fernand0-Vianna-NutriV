@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_theme.dart';
 
 class WaterTrackerWidget extends StatelessWidget {
   final double currentIntake;
@@ -19,85 +20,107 @@ class WaterTrackerWidget extends StatelessWidget {
     final progress = (currentIntake / goal).clamp(0.0, 1.0);
     final remaining = (goal - currentIntake).clamp(0.0, goal);
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.water_drop, color: Colors.blue[400]),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Água',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ],
-                ),
-                Text(
-                  '${currentIntake.toInt()} / ${goal.toInt()} ml',
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: LinearProgressIndicator(
-                value: progress,
-                backgroundColor: Colors.blue[100],
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[400]!),
-                minHeight: 12,
+                    child: const Icon(
+                      Icons.water_drop,
+                      color: Colors.blue,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Água',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${remaining.toInt()} ml restantes',
-              style: TextStyle(
-                color: Colors.blue[600],
-                fontWeight: FontWeight.w500,
+              Text(
+                '${currentIntake.toInt()} / ${goal.toInt()} ml',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: progress,
+              backgroundColor: Colors.blue.shade100,
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+              minHeight: 10,
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildQuickAddButton(context, 150),
-                _buildQuickAddButton(context, 250),
-                _buildQuickAddButton(context, 350),
-                _buildQuickAddButton(context, 500),
-              ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '${remaining.toInt()} ml restantes',
+            style: const TextStyle(
+              color: Colors.blue,
+              fontWeight: FontWeight.w500,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildQuickAddButton(150),
+              _buildQuickAddButton(250),
+              _buildQuickAddButton(350),
+              _buildQuickAddButton(500),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildQuickAddButton(BuildContext context, int amount) {
-    return InkWell(
+  Widget _buildQuickAddButton(int amount) {
+    return GestureDetector(
       onTap: onAddWater,
-      borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.blue[50],
-          borderRadius: BorderRadius.circular(8),
+          color: Colors.blue.shade50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.blue.shade100),
         ),
         child: Column(
           children: [
-            Icon(Icons.add, color: Colors.blue[400], size: 20),
+            const Icon(Icons.add, color: Colors.blue, size: 18),
+            const SizedBox(height: 4),
             Text(
               '${amount}ml',
-              style: TextStyle(
-                color: Colors.blue[600],
-                fontWeight: FontWeight.w500,
+              style: const TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.w600,
                 fontSize: 12,
               ),
             ),

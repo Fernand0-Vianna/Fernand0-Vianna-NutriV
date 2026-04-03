@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../../core/theme/app_theme.dart';
 
 class CalorieRing extends StatelessWidget {
   final double consumed;
@@ -12,98 +13,86 @@ class CalorieRing extends StatelessWidget {
     final percentage = (consumed / goal).clamp(0.0, 1.0);
     final remaining = (goal - consumed).clamp(0.0, goal);
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 180,
-              width: 180,
-              child: Stack(
-                alignment: Alignment.center,
+    return Column(
+      children: [
+        SizedBox(
+          height: 160,
+          width: 160,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              PieChart(
+                PieChartData(
+                  sectionsSpace: 0,
+                  centerSpaceRadius: 50,
+                  startDegreeOffset: 270,
+                  sections: [
+                    PieChartSectionData(
+                      value: percentage * 100,
+                      color: AppTheme.primaryColor,
+                      radius: 18,
+                      showTitle: false,
+                    ),
+                    PieChartSectionData(
+                      value: (1 - percentage) * 100,
+                      color: Colors.grey.shade200,
+                      radius: 18,
+                      showTitle: false,
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  PieChart(
-                    PieChartData(
-                      sectionsSpace: 0,
-                      centerSpaceRadius: 60,
-                      startDegreeOffset: 270,
-                      sections: [
-                        PieChartSectionData(
-                          value: percentage * 100,
-                          color: Theme.of(context).colorScheme.primary,
-                          radius: 20,
-                          showTitle: false,
-                        ),
-                        PieChartSectionData(
-                          value: (1 - percentage) * 100,
-                          color: Colors.grey.shade200,
-                          radius: 20,
-                          showTitle: false,
-                        ),
-                      ],
+                  Text(
+                    consumed.toInt().toString(),
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        consumed.toInt().toString(),
-                        style: Theme.of(context).textTheme.headlineMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        '/ ${goal.toInt()} kcal',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                      ),
-                    ],
+                  Text(
+                    '/ ${goal.toInt()}',
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   ),
                 ],
               ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildInfoColumn(
+              'Consumidas',
+              '${consumed.toInt()}',
+              AppTheme.primaryColor,
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildInfoColumn(
-                  context,
-                  'Consumidas',
-                  '${consumed.toInt()}',
-                  Colors.green,
-                ),
-                _buildInfoColumn(
-                  context,
-                  'Restantes',
-                  '${remaining.toInt()}',
-                  Colors.orange,
-                ),
-              ],
+            _buildInfoColumn(
+              'Restantes',
+              '${remaining.toInt()}',
+              Colors.orange,
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildInfoColumn(
-    BuildContext context,
-    String label,
-    String value,
-    Color color,
-  ) {
+  Widget _buildInfoColumn(String label, String value, Color color) {
     return Column(
       children: [
         Text(
           label,
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
         ),
+        const SizedBox(height: 4),
         Text(
           value,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          style: TextStyle(
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             color: color,
           ),
