@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart' show Dio, Options;
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../core/constants/app_constants.dart';
 import '../models/food_item_model.dart';
 import '../../domain/entities/food_item.dart';
 
-const String _openaiApiKey =
-    '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';
+String get _openaiApiKey => dotenv.env['OPENAI_API_KEY'] ?? '';
 
 class AiFoodService {
   final Dio _dio;

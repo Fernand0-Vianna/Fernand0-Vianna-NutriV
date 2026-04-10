@@ -1,11 +1,12 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class ApiConstants {
-  static const String geminiApiKey = 'AIzaSyDFFfX3jrt4Ha2OAndYK88nbvEloqymjx4';
+  static String get geminiApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
   static const String geminiBaseUrl =
       'https://generativelanguage.googleapis.com/v1beta';
   static const String modelName = 'gemini-2.0-flash';
 
-  static const String openaiApiKey =
-      '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';
+  static String get openaiApiKey => dotenv.env['OPENAI_API_KEY'] ?? '';
   static const String openaiBaseUrl = 'https://api.openai.com/v1';
 }
 
