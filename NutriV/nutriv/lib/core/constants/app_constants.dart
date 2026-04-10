@@ -1,10 +1,11 @@
 class ApiConstants {
-  static const String geminiApiKey = 'AIzaSyAToaMIk3UQPkAHXavsG-7XXlDXh1H6zYc';
+  static const String geminiApiKey = 'AIzaSyDFFfX3jrt4Ha2OAndYK88nbvEloqymjx4';
   static const String geminiBaseUrl =
       'https://generativelanguage.googleapis.com/v1beta';
   static const String modelName = 'gemini-2.0-flash';
 
-  static const String openaiApiKey = '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';
+  static const String openaiApiKey =
+      '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';
   static const String openaiBaseUrl = 'https://api.openai.com/v1';
 }
 

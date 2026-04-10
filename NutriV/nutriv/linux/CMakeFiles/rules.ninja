@@ -7,7 +7,7 @@
 
 # =============================================================================
 # Project: runner
-# Configurations: Release
+# Configurations: Debug
 # =============================================================================
 # =============================================================================
 
@@ -22,7 +22,7 @@ rule CUSTOM_COMMAND
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__nutriv_unscanned_Release
+rule CXX_COMPILER__nutriv_unscanned_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -32,7 +32,7 @@ rule CXX_COMPILER__nutriv_unscanned_Release
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__nutriv_Release
+rule CXX_EXECUTABLE_LINKER__nutriv_Debug
   command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
@@ -41,7 +41,7 @@ rule CXX_EXECUTABLE_LINKER__nutriv_Release
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__file_selector_linux_plugin_unscanned_Release
+rule CXX_COMPILER__file_selector_linux_plugin_unscanned_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -51,7 +51,7 @@ rule CXX_COMPILER__file_selector_linux_plugin_unscanned_Release
 #############################################
 # Rule for linking CXX shared library.
 
-rule CXX_SHARED_LIBRARY_LINKER__file_selector_linux_plugin_Release
+rule CXX_SHARED_LIBRARY_LINKER__file_selector_linux_plugin_Debug
   command = $PRE_LINK && /usr/bin/clang++ -fPIC $LANGUAGE_COMPILE_FLAGS $ARCH_FLAGS $LINK_FLAGS -shared $SONAME_FLAG$SONAME -o $TARGET_FILE $in $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX shared library $TARGET_FILE
   restat = $RESTAT
@@ -60,7 +60,7 @@ rule CXX_SHARED_LIBRARY_LINKER__file_selector_linux_plugin_Release
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__gtk_plugin_unscanned_Release
+rule CXX_COMPILER__gtk_plugin_unscanned_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -70,7 +70,7 @@ rule CXX_COMPILER__gtk_plugin_unscanned_Release
 #############################################
 # Rule for linking CXX shared library.
 
-rule CXX_SHARED_LIBRARY_LINKER__gtk_plugin_Release
+rule CXX_SHARED_LIBRARY_LINKER__gtk_plugin_Debug
   command = $PRE_LINK && /usr/bin/clang++ -fPIC $LANGUAGE_COMPILE_FLAGS $ARCH_FLAGS $LINK_FLAGS -shared $SONAME_FLAG$SONAME -o $TARGET_FILE $in $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX shared library $TARGET_FILE
   restat = $RESTAT
@@ -79,7 +79,7 @@ rule CXX_SHARED_LIBRARY_LINKER__gtk_plugin_Release
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__url_launcher_linux_plugin_unscanned_Release
+rule CXX_COMPILER__url_launcher_linux_plugin_unscanned_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -89,7 +89,7 @@ rule CXX_COMPILER__url_launcher_linux_plugin_unscanned_Release
 #############################################
 # Rule for linking CXX shared library.
 
-rule CXX_SHARED_LIBRARY_LINKER__url_launcher_linux_plugin_Release
+rule CXX_SHARED_LIBRARY_LINKER__url_launcher_linux_plugin_Debug
   command = $PRE_LINK && /usr/bin/clang++ -fPIC $LANGUAGE_COMPILE_FLAGS $ARCH_FLAGS $LINK_FLAGS -shared $SONAME_FLAG$SONAME -o $TARGET_FILE $in $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX shared library $TARGET_FILE
   restat = $RESTAT

@@ -11,7 +11,6 @@ import '../../bloc/meal/meal_event.dart';
 import '../../../domain/entities/meal.dart';
 import '../../../domain/entities/food_item.dart';
 import 'barcode_scan_page.dart';
-import '../../widgets/voice_input_widget.dart';
 
 class ScannerPage extends StatefulWidget {
   const ScannerPage({super.key});
@@ -106,12 +105,6 @@ class _ScannerPageState extends State<ScannerPage> {
             icon: Icons.photo_library,
             label: 'Escolher da Galeria',
             onTap: () => _pickImage(ImageSource.gallery),
-          ),
-          const SizedBox(height: 12),
-          _buildOptionButton(
-            icon: Icons.mic,
-            label: 'Descrever por Voz',
-            onTap: _showVoiceDialog,
           ),
           const SizedBox(height: 12),
           _buildOptionButton(
@@ -222,17 +215,6 @@ class _ScannerPageState extends State<ScannerPage> {
     if (image != null && mounted) {
       context.read<FoodScannerBloc>().add(AnalyzeImage(File(image.path)));
     }
-  }
-
-  void _showVoiceDialog() {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => VoiceInputWidget(
-        onTextRecognized: (text) {
-          context.read<FoodScannerBloc>().add(AnalyzeText(text));
-        },
-      ),
-    );
   }
 
   void _showSearchDialog() {
