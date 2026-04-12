@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nutrition Tracking App - Landing</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Icons+Outlined&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#22C55E", // Vibrant green from the screenshots
+              "background-light": "#FFFFFF",
+              "background-dark": "#0F172A",
+            },
+            fontFamily: {
+              display: ["Plus Jakarta Sans", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1.5rem",
+              '2xl': "2rem",
+            },
+          },
+        },
+      };
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+        .dark .glass-effect {
+            background: rgba(15, 23, 42, 0.8);
+        }
+        .hero-gradient {
+            background: linear-gradient(180deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0) 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+<div class="w-full max-w-md h-[812px] bg-white dark:bg-slate-900 shadow-2xl rounded-[3rem] overflow-hidden relative border-[8px] border-slate-100 dark:border-slate-800 flex flex-col">
+<div class="h-10 w-full flex justify-between items-center px-8 pt-4">
+<span class="text-xs font-bold dark:text-white">9:41</span>
+<div class="flex gap-1.5 items-center">
+<span class="material-icons-outlined text-[14px] dark:text-white">signal_cellular_alt</span>
+<span class="material-icons-outlined text-[14px] dark:text-white">wifi</span>
+<span class="material-icons-outlined text-[18px] dark:text-white">battery_full</span>
+</div>
+</div>
+<div class="flex-1 flex flex-col px-8 pt-6 overflow-y-auto hero-gradient">
+<div class="flex justify-center mb-8">
+<div class="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-green-200 dark:shadow-none">
+<span class="material-icons-outlined text-white text-4xl">restaurant_menu</span>
+</div>
+</div>
+<div class="relative w-full aspect-square mb-8 rounded-[2rem] overflow-hidden shadow-xl">
+<img alt="Healthy vibrant food bowl with fresh ingredients" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRHpWPgkrn2TojIfhPv8ad1WGT4LZZVTYdVwrAVjOkhb5tbvw4TWUrK8owOC2le1DirEWpMmVy30XpKI6ZOWqIp06AWEY7LdOeSyjcI55SL2v_L1Cz0LDZxaDfsbJv05-bwyY_jeqCCKU8e-EeEX_-HBqPZfPEzGnU_Qz2nybFxOW2mY4BWfxLcOco29c9G6V426plO_qr88amROXBaSc0qpO1vPr3kTFyDcKNGe_CPffvPgDCgPLWAYx5AA5pkptH2JweLKbPu30"/>
+<div class="absolute bottom-4 left-4 right-4 glass-effect dark:bg-slate-800/90 p-4 rounded-2xl shadow-lg border border-white/20 dark:border-slate-700/50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
+<span class="material-icons-outlined text-orange-500 text-xl">local_fire_department</span>
+</div>
+<div>
+<p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Daily Goal</p>
+<p class="text-sm font-bold dark:text-white">1,850 kcal reached</p>
+</div>
+</div>
+</div>
+</div>
+<div class="text-center space-y-4 mb-10">
+<h1 class="text-3xl font-extrabold leading-tight text-slate-900 dark:text-white">
+                    Seu corpo,<br/><span class="text-primary">sua meta.</span>
+</h1>
+<p class="text-slate-500 dark:text-slate-400 text-lg leading-relaxed px-4">
+                    Transforme sua saúde com monitoramento inteligente de nutrição e hábitos saudáveis.
+                </p>
+</div>
+<div class="grid grid-cols-3 gap-4 mb-8">
+<div class="flex flex-col items-center gap-2">
+<div class="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center">
+<span class="material-icons-outlined text-primary">qr_code_scanner</span>
+</div>
+<span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Scan</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center">
+<span class="material-icons-outlined text-primary">bar_chart</span>
+</div>
+<span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Stats</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center">
+<span class="material-icons-outlined text-primary">menu_book</span>
+</div>
+<span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Recipes</span>
+</div>
+</div>
+</div>
+<div class="px-8 pb-12 pt-4 bg-white dark:bg-slate-900">
+<button class="w-full bg-primary hover:bg-green-600 transition-colors py-5 rounded-2xl text-white font-bold text-lg shadow-lg shadow-green-100 dark:shadow-none flex items-center justify-center gap-2 group">
+                Começar agora
+                <span class="material-icons-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<p class="text-center mt-6 text-sm text-slate-400 dark:text-slate-500">
+                Já tem uma conta? <a class="text-primary font-bold" href="#">Entrar</a>
+</p>
+</div>
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+</div>
+<div class="fixed -z-10 top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none select-none">
+<div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary rounded-full blur-[120px]"></div>
+</div>
+
+</body></html>

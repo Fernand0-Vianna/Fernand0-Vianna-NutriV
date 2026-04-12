@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Perfil - Vitality Curator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#aef1cc",
+                        "on-error-container": "#570008",
+                        "surface-container": "#b8f6d3",
+                        "tertiary-fixed-dim": "#00cdee",
+                        "inverse-on-surface": "#76a78d",
+                        "error-container": "#fb5151",
+                        "on-primary-container": "#005f2f",
+                        "surface-variant": "#a4ecc5",
+                        "on-tertiary": "#ddf7ff",
+                        "on-error": "#ffefee",
+                        "tertiary-dim": "#005867",
+                        "error-dim": "#9f0519",
+                        "surface-container-low": "#c4fedd",
+                        "primary-dim": "#005c2d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#005e3e",
+                        "secondary": "#006946",
+                        "surface": "#dbffe8",
+                        "primary": "#006a35",
+                        "on-secondary": "#c9ffdf",
+                        "primary-container": "#6bfe9c",
+                        "outline": "#518168",
+                        "background": "#dbffe8",
+                        "on-background": "#003622",
+                        "on-surface": "#003622",
+                        "on-primary": "#cdffd4",
+                        "tertiary": "#006576"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #dbffe8;
+            color: #003622;
+        }
+        .headline-font {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-emerald-50/80 dark:bg-emerald-950/80 backdrop-blur-md">
+<div class="flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<img alt="Profile" class="w-10 h-10 rounded-full object-cover ring-2 ring-primary-container" data-alt="Close-up portrait of a professional man with friendly expression, natural lighting, soft outdoor background, high resolution" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPk9OVmFgpsaKDUtbyUm_AAIHYyJcNs0gUlffbiJhKgaZSTZtT1CuSul_MHcSdgkh5k5CqwP9y13RglcepouAZ_lAPD_hLwaWSf2gqqYAOVkmjGNM5wDhYPn0J7Z3PCqdPzWioMTjrswK2wrknh1JyQXqw2NFwvuRcKYlEUXkgkmvrvAYbef1tRlTvMDPxN7bRK0PoqD0Hs--BKNLWQxMy2g0XjOfl22be6RDeC15PS1ApTAvc_QdcoQPiP6BHyd8GdHyOw3SUn4o"/>
+</div>
+<h1 class="font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-xl text-emerald-900 dark:text-emerald-50">Vitality Curator</h1>
+<div class="flex items-center">
+<button class="p-2 hover:opacity-80 transition-opacity active:scale-95 duration-200 text-emerald-900 dark:text-emerald-100">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-2xl mx-auto">
+<!-- Profile Hero Section -->
+<section class="flex flex-col items-center mb-10">
+<div class="relative group">
+<div class="absolute inset-0 bg-primary-container blur-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+<img alt="User Profile Large" class="relative w-28 h-28 rounded-full object-cover shadow-xl ring-4 ring-surface-container-lowest" data-alt="Front facing portrait of a young male professional in a clean studio setting, bright airy atmosphere, minimalist style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLGfbwPuwnqVrY7xFnf2Ex-chV9X0iPtmsaUPEluFoDQmmT7LNmsTFcDAlYtsfZTlgCTwwHRC6vojEeP1vBV-1d6VsOHWxULRWqhXpS3zzXDRTZlbyzsjonFQrL8dejJH3Z-LXtiMnwuAn99QUqIfsAN6YtuiIKIE6ZVItBtZoRKZhmToltrDIZYUJfVBQx0U-2045DIhmkYreTtPUajhMs_tEM71uyDDQVWu3BMY7eug1E8i1j1tccr3j0dd8OtzTw9CzUAwSvSg"/>
+<button class="absolute bottom-0 right-0 bg-primary text-on-primary p-2 rounded-full shadow-lg active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+</div>
+<div class="mt-6 text-center">
+<h2 class="text-2xl font-['Plus_Jakarta_Sans'] font-extrabold text-on-background tracking-tight">Ricardo Oliveira</h2>
+<p class="text-on-surface-variant font-medium">ricardo.oliveira@vitality.com</p>
+</div>
+<!-- Stats Bar -->
+<div class="w-full mt-8 grid grid-cols-3 gap-4">
+<div class="bg-surface-container-low p-4 rounded-xl text-center">
+<span class="block text-primary font-bold text-lg">84</span>
+<span class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Pontos</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl text-center">
+<span class="block text-primary font-bold text-lg">12</span>
+<span class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Metas</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl text-center">
+<span class="block text-primary font-bold text-lg">7d</span>
+<span class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Sequência</span>
+</div>
+</div>
+</section>
+<!-- Menu Options -->
+<nav class="space-y-3">
+<div class="bg-surface-container-lowest rounded-[24px] overflow-hidden">
+<a class="flex items-center justify-between p-5 hover:bg-emerald-50 transition-colors group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<span class="font-semibold text-on-background">Meu Perfil</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-5 hover:bg-emerald-50 transition-colors group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</div>
+<span class="font-semibold text-on-background">Notificações</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="bg-error text-white text-[10px] font-bold px-2 py-0.5 rounded-full">3</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</a>
+<a class="flex items-center justify-between p-5 hover:bg-emerald-50 transition-colors group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</div>
+<span class="font-semibold text-on-background">Favoritos</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-5 hover:bg-emerald-50 transition-colors group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</div>
+<span class="font-semibold text-on-background">Configurações</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</a>
+</div>
+<div class="bg-surface-container-lowest rounded-[24px] mt-4 overflow-hidden">
+<button class="w-full flex items-center justify-between p-5 hover:bg-error-container/10 transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-error-container/20 flex items-center justify-center text-error">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+</div>
+<span class="font-semibold text-error">Sair</span>
+</div>
+</button>
+</div>
+</nav>
+<!-- Premium Upsell -->
+<div class="mt-8 relative overflow-hidden bg-primary rounded-[32px] p-6 text-on-primary">
+<div class="relative z-10">
+<h3 class="font-['Plus_Jakarta_Sans'] font-bold text-lg mb-1">Upgrade Vitality Plus</h3>
+<p class="text-on-primary/80 text-sm mb-4">Tenha acesso a planos nutricionais personalizados.</p>
+<button class="bg-primary-container text-on-primary-container font-bold py-2 px-6 rounded-full text-sm active:scale-95 transition-transform">
+                    Saiba Mais
+                </button>
+</div>
+<div class="absolute -right-10 -bottom-10 w-40 h-40 bg-primary-dim rounded-full blur-3xl opacity-50"></div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 pb-8 bg-white/80 dark:bg-emerald-950/90 backdrop-blur-xl z-50 rounded-t-[32px] shadow-[0_-12px_32px_rgba(0,54,34,0.08)]">
+<div class="flex flex-col items-center justify-center text-emerald-700/50 dark:text-emerald-400/50 p-2 hover:text-emerald-600 dark:hover:text-emerald-200 active:scale-90 transition-transform duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-wider mt-1">Início</span>
+</div>
+<div class="flex flex-col items-center justify-center text-emerald-700/50 dark:text-emerald-400/50 p-2 hover:text-emerald-600 dark:hover:text-emerald-200 active:scale-90 transition-transform duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-wider mt-1">Estatísticas</span>
+</div>
+<div class="flex flex-col items-center justify-center text-emerald-700/50 dark:text-emerald-400/50 p-2 hover:text-emerald-600 dark:hover:text-emerald-200 active:scale-90 transition-transform duration-200 cursor-pointer">
+<span class="material-symbols-outlined text-3xl" data-icon="add_circle">add_circle</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-wider mt-1">Adicionar</span>
+</div>
+<div class="flex flex-col items-center justify-center text-emerald-700/50 dark:text-emerald-400/50 p-2 hover:text-emerald-600 dark:hover:text-emerald-200 active:scale-90 transition-transform duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-wider mt-1">Pesquisar</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-emerald-200 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-50 rounded-full px-5 py-2 transition-all duration-300 active:scale-90 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-wider mt-1">Perfil</span>
+</div>
+</nav>
+</body></html>

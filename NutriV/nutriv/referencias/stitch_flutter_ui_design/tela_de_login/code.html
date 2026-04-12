@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login | Vitality Curator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#004930",
+                    "inverse-primary": "#6bfe9c",
+                    "tertiary-dim": "#005867",
+                    "secondary": "#006946",
+                    "on-primary-container": "#005f2f",
+                    "on-secondary-container": "#005e3e",
+                    "on-primary-fixed-variant": "#006a35",
+                    "surface-dim": "#98e4bc",
+                    "surface-bright": "#dbffe8",
+                    "on-tertiary": "#ddf7ff",
+                    "on-secondary": "#c9ffdf",
+                    "surface-container-low": "#c4fedd",
+                    "surface-container": "#b8f6d3",
+                    "on-error": "#ffefee",
+                    "primary-fixed": "#6bfe9c",
+                    "tertiary-fixed-dim": "#00cdee",
+                    "secondary-fixed-dim": "#63ecaf",
+                    "on-tertiary-fixed": "#00333d",
+                    "tertiary-fixed": "#00dcff",
+                    "outline": "#518168",
+                    "error-container": "#fb5151",
+                    "outline-variant": "#86b89c",
+                    "primary-fixed-dim": "#5bef90",
+                    "secondary-container": "#72fbbd",
+                    "background": "#dbffe8",
+                    "inverse-surface": "#001209",
+                    "on-secondary-fixed-variant": "#006946",
+                    "secondary-fixed": "#72fbbd",
+                    "on-surface-variant": "#35654d",
+                    "on-background": "#003622",
+                    "surface": "#dbffe8",
+                    "primary": "#006a35",
+                    "on-primary": "#cdffd4",
+                    "on-primary-fixed": "#004a23",
+                    "primary-container": "#6bfe9c",
+                    "primary-dim": "#005c2d",
+                    "on-error-container": "#570008",
+                    "surface-container-highest": "#a4ecc5",
+                    "on-tertiary-container": "#004956",
+                    "tertiary-container": "#00dcff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-dim": "#005c3d",
+                    "on-surface": "#003622",
+                    "on-tertiary-fixed-variant": "#005361",
+                    "tertiary": "#006576",
+                    "surface-container-high": "#aef1cc",
+                    "surface-variant": "#a4ecc5",
+                    "surface-tint": "#006a35",
+                    "inverse-on-surface": "#76a78d",
+                    "error": "#b31b25",
+                    "error-dim": "#9f0519"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-background min-h-screen flex items-center justify-center p-4">
+<!-- Suppressed TopAppBar and BottomNavBar as per "The Destination Rule" for Transactional Screens -->
+<main class="w-full max-w-md flex flex-col items-center">
+<!-- Logo/Welcome Icon Section -->
+<div class="mb-10 text-center">
+<div class="w-20 h-20 bg-primary-container rounded-[2rem] flex items-center justify-center mb-6 mx-auto transform rotate-3 shadow-[0_12px_32px_rgba(0,54,34,0.12)]">
+<span class="material-symbols-outlined text-primary text-5xl" data-icon="eco" style="font-variation-settings: 'FILL' 1;">eco</span>
+</div>
+<h1 class="font-headline text-3xl font-extrabold text-on-surface tracking-tight mb-2">Bem-vindo de volta!</h1>
+<p class="font-body text-on-surface-variant font-medium">Entre para continuar sua jornada de saúde.</p>
+</div>
+<!-- Identity Canvas Card -->
+<div class="w-full bg-surface-container-lowest rounded-[2rem] p-8 space-y-6 shadow-[0_12px_48px_rgba(0,54,34,0.06)] relative overflow-hidden">
+<!-- Asymmetric Decorative Element -->
+<div class="absolute -top-12 -right-12 w-32 h-32 bg-primary-container/20 rounded-full blur-3xl"></div>
+<!-- Google Login -->
+<button class="w-full h-14 flex items-center justify-center gap-3 bg-surface-container-low border-2 border-transparent hover:border-outline-variant/20 transition-all duration-300 rounded-full font-label font-bold text-on-surface">
+<svg class="w-5 h-5" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+                Continuar com Google
+            </button>
+<!-- Visual Divider -->
+<div class="flex items-center gap-4 py-2">
+<div class="flex-1 h-[1px] bg-outline-variant/20"></div>
+<span class="text-xs font-label font-bold text-on-surface-variant/60 tracking-widest">OU ENTRE COM E-MAIL</span>
+<div class="flex-1 h-[1px] bg-outline-variant/20"></div>
+</div>
+<!-- Login Form -->
+<form class="space-y-4">
+<div class="space-y-1.5">
+<label class="block ml-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider" for="email">E-mail</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="mail">mail</span>
+<input class="w-full h-14 pl-12 pr-4 bg-surface-container-low border-0 rounded-2xl font-body text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container transition-all" id="email" placeholder="nome@exemplo.com" type="email"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="block ml-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider" for="password">Senha</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="lock">lock</span>
+<input class="w-full h-14 pl-12 pr-4 bg-surface-container-low border-0 rounded-2xl font-body text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container transition-all" id="password" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<div class="flex justify-end px-2">
+<a class="text-sm font-label font-semibold text-primary hover:text-primary-dim transition-colors" href="#">Esqueceu a senha?</a>
+</div>
+<!-- Action Button -->
+<button class="w-full h-14 bg-gradient-to-br from-primary to-primary-dim text-on-primary font-headline font-bold text-lg rounded-full shadow-[0_8px_24px_rgba(0,106,53,0.25)] active:scale-95 transition-all duration-150 mt-4" type="submit">
+                    Entrar
+                </button>
+</form>
+</div>
+<!-- Footer Links -->
+<div class="mt-8 text-center space-y-6">
+<p class="font-body text-on-surface-variant">
+                Não tem uma conta? 
+                <a class="font-bold text-secondary hover:underline underline-offset-4 decoration-primary/30" href="#">Criar conta</a>
+</p>
+<!-- Small Illustration or Mood Image -->
+<div class="w-full max-w-[280px] mx-auto aspect-video rounded-3xl overflow-hidden opacity-60 hover:opacity-100 transition-opacity duration-700">
+<img class="w-full h-full object-cover" data-alt="peaceful morning scene with soft sunlight hitting a green plant and a glass of water on a clean wooden surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXGjaT8JMx-odqBfmLNGOqGY-ZmwU1eVFR57E0CEkMOGMi_EEI9rlgooYlhNqP9xbK36HpFGVLWhPdtU2Vysa1DecrkuEjgfvRyIXsNQI8DP88xojBVAOoTNQ5ic4Z9W7uzs8JHNt9dlxjZ_HEgzIgmUpH9bwwaiQedQ8k7hvix-FYry_81I6WTloxvX87Nah6p2QUikFsrVolhnjwO-DrxURZWzMQ660tvg9Jf_exkSrbfxKdPgLzNBGDG3y1NISDwgjl4zGDRcU"/>
+</div>
+</div>
+</main>
+<!-- Semantic Padding for Mobile Bottom Spacing -->
+<div class="h-8 md:hidden"></div>
+</body></html>

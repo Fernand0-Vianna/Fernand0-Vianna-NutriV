@@ -1,5 +1,4 @@
 import '../../domain/entities/meal.dart';
-import '../../domain/entities/food_item.dart';
 import 'food_item_model.dart';
 
 class MealModel extends Meal {
