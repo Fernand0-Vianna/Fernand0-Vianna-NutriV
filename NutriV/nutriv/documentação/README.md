@@ -26,7 +26,7 @@
 | **Navegação** | go_router |
 | **HTTP Client** | dio |
 | **Armazenamento Local** | shared_preferences, sqflite |
-| **Backend** | Firebase (Firestore), Supabase |
+| **Backend** | Supabase |
 | **Autenticação** | Google Sign-In |
 | **IA** | Google Gemini, OpenAI GPT-4 |
 | **APIs Externas** | USDA FoodData Central, OpenFoodFacts |
