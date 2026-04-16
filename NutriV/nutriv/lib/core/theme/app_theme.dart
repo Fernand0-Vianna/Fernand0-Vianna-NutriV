@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static const Color primary = Color(0xFF006A35);
@@ -142,79 +143,64 @@ class AppTheme {
         showUnselectedLabels: true,
         elevation: 0,
       ),
-      textTheme: const TextTheme(
-        displayLarge: TextStyle(
-          fontFamily: 'Plus Jakarta Sans',
+      textTheme: TextTheme(
+        displayLarge: GoogleFonts.plusJakartaSans(
           fontWeight: FontWeight.w800,
           color: onSurface,
         ),
-        displayMedium: TextStyle(
-          fontFamily: 'Plus Jakarta Sans',
+        displayMedium: GoogleFonts.plusJakartaSans(
           fontWeight: FontWeight.w700,
           color: onSurface,
         ),
-        displaySmall: TextStyle(
-          fontFamily: 'Plus Jakarta Sans',
+        displaySmall: GoogleFonts.plusJakartaSans(
           fontWeight: FontWeight.w600,
           color: onSurface,
         ),
-        headlineLarge: TextStyle(
-          fontFamily: 'Plus Jakarta Sans',
+        headlineLarge: GoogleFonts.plusJakartaSans(
           fontWeight: FontWeight.w700,
           color: onSurface,
         ),
-        headlineMedium: TextStyle(
-          fontFamily: 'Plus Jakarta Sans',
+        headlineMedium: GoogleFonts.plusJakartaSans(
           fontWeight: FontWeight.w600,
           color: onSurface,
         ),
-        headlineSmall: TextStyle(
-          fontFamily: 'Plus Jakarta Sans',
+        headlineSmall: GoogleFonts.plusJakartaSans(
           fontWeight: FontWeight.w500,
           color: onSurface,
         ),
-        titleLarge: TextStyle(
-          fontFamily: 'Manrope',
+        titleLarge: GoogleFonts.manrope(
           fontWeight: FontWeight.w600,
           color: onSurface,
         ),
-        titleMedium: TextStyle(
-          fontFamily: 'Manrope',
+        titleMedium: GoogleFonts.manrope(
           fontWeight: FontWeight.w500,
           color: onSurface,
         ),
-        titleSmall: TextStyle(
-          fontFamily: 'Manrope',
+        titleSmall: GoogleFonts.manrope(
           fontWeight: FontWeight.w500,
           color: onSurface,
         ),
-        bodyLarge: TextStyle(
-          fontFamily: 'Manrope',
+        bodyLarge: GoogleFonts.manrope(
           fontWeight: FontWeight.w400,
           color: onSurface,
         ),
-        bodyMedium: TextStyle(
-          fontFamily: 'Manrope',
+        bodyMedium: GoogleFonts.manrope(
           fontWeight: FontWeight.w400,
           color: onSurface,
         ),
-        bodySmall: TextStyle(
-          fontFamily: 'Manrope',
+        bodySmall: GoogleFonts.manrope(
           fontWeight: FontWeight.w400,
           color: onSurfaceVariant,
         ),
-        labelLarge: TextStyle(
-          fontFamily: 'Manrope',
+        labelLarge: GoogleFonts.manrope(
           fontWeight: FontWeight.w600,
           color: onSurface,
         ),
-        labelMedium: TextStyle(
-          fontFamily: 'Manrope',
+        labelMedium: GoogleFonts.manrope(
           fontWeight: FontWeight.w500,
           color: onSurface,
         ),
-        labelSmall: TextStyle(
-          fontFamily: 'Manrope',
+        labelSmall: GoogleFonts.manrope(
           fontWeight: FontWeight.w500,
           color: onSurfaceVariant,
         ),

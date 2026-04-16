@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 
 import '../../bloc/food_scanner/food_scanner_bloc.dart';
@@ -10,6 +11,7 @@ import '../../bloc/meal/meal_bloc.dart';
 import '../../bloc/meal/meal_event.dart';
 import '../../../domain/entities/meal.dart';
 import '../../../domain/entities/food_item.dart';
+import '../../../core/theme/app_theme.dart';
 import 'barcode_scan_page.dart';
 
 class ScannerPage extends StatefulWidget {
@@ -26,20 +28,10 @@ class _ScannerPageState extends State<ScannerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Scanner de Alimentos')),
       body: BlocBuilder<FoodScannerBloc, FoodScannerState>(
         builder: (context, state) {
           if (state is FoodScannerLoading) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Analisando imagem...'),
-                ],
-              ),
-            );
+            return _buildLoadingView();
           }
 
           if (state is FoodScannerAnalyzed) {
@@ -47,23 +39,7 @@ class _ScannerPageState extends State<ScannerPage> {
           }
 
           if (state is FoodScannerError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline, size: 48, color: Colors.red[300]),
-                  const SizedBox(height: 16),
-                  Text(state.message),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<FoodScannerBloc>().add(ClearScannedFoods());
-                    },
-                    child: const Text('Tentar novamente'),
-                  ),
-                ],
-              ),
-            );
+            return _buildErrorView(state);
           }
 
           return _buildInitialView();
@@ -72,45 +48,158 @@ class _ScannerPageState extends State<ScannerPage> {
     );
   }
 
-  Widget _buildInitialView() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
+  Widget _buildLoadingView() {
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.camera_alt,
-            size: 80,
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: AppTheme.primaryContainer,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.restaurant_menu,
+              size: 40,
+              color: AppTheme.primary,
+            ),
           ),
           const SizedBox(height: 24),
           Text(
+            'Analisando imagem...',
+            style: GoogleFonts.manrope(
+              fontSize: 16,
+              color: AppTheme.onSurface,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorView(FoodScannerError state) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppTheme.errorContainer.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.error_outline,
+                size: 40,
+                color: AppTheme.error,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Ops! Algo deu errado',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              state.message,
+              style: GoogleFonts.manrope(
+                fontSize: 14,
+                color: AppTheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                context.read<FoodScannerBloc>().add(ClearScannedFoods());
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primary,
+                foregroundColor: AppTheme.onPrimary,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: Text(
+                'Tentar novamente',
+                style: GoogleFonts.manrope(fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInitialView() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 60, 24, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Adicionar',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
             'O que você quer adicionar?',
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: GoogleFonts.manrope(
+              fontSize: 16,
+              color: AppTheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 32),
-          _buildOptionButton(
-            icon: Icons.qr_code_scanner,
-            label: 'Código de Barras',
-            onTap: _openBarcodeScanner,
-          ),
-          const SizedBox(height: 12),
-          _buildOptionButton(
-            icon: Icons.camera_alt,
-            label: 'Tirar Foto',
-            onTap: () => _pickImage(ImageSource.camera),
-          ),
-          const SizedBox(height: 12),
-          _buildOptionButton(
-            icon: Icons.photo_library,
-            label: 'Escolher da Galeria',
-            onTap: () => _pickImage(ImageSource.gallery),
-          ),
-          const SizedBox(height: 12),
-          _buildOptionButton(
-            icon: Icons.edit,
-            label: 'Buscar Alimento',
-            onTap: _showSearchDialog,
+          Expanded(
+            child: Column(
+              children: [
+                _buildOptionButton(
+                  icon: Icons.qr_code_scanner,
+                  label: 'Código de Barras',
+                  subtitle: 'Escaneie o código de barras',
+                  onTap: _openBarcodeScanner,
+                ),
+                const SizedBox(height: 16),
+                _buildOptionButton(
+                  icon: Icons.camera_alt,
+                  label: 'Tirar Foto',
+                  subtitle: 'Fotografie seu alimento',
+                  onTap: () => _pickImage(ImageSource.camera),
+                ),
+                const SizedBox(height: 16),
+                _buildOptionButton(
+                  icon: Icons.photo_library,
+                  label: 'Escolher da Galeria',
+                  subtitle: 'Selecione uma foto',
+                  onTap: () => _pickImage(ImageSource.gallery),
+                ),
+                const SizedBox(height: 16),
+                _buildOptionButton(
+                  icon: Icons.search,
+                  label: 'Buscar Alimento',
+                  subtitle: 'Pesquise pelo nome',
+                  onTap: _showSearchDialog,
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -120,16 +209,64 @@ class _ScannerPageState extends State<ScannerPage> {
   Widget _buildOptionButton({
     required IconData icon,
     required String label,
+    required String subtitle,
     required VoidCallback onTap,
   }) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: onTap,
-        icon: Icon(icon),
-        label: Text(label),
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AppTheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryContainer,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(icon, color: AppTheme.primary, size: 28),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.manrope(
+                      fontSize: 13,
+                      color: AppTheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: AppTheme.onSurfaceVariant,
+              size: 20,
+            ),
+          ],
         ),
       ),
     );
@@ -138,29 +275,95 @@ class _ScannerPageState extends State<ScannerPage> {
   Widget _buildAnalyzedView(FoodScannerAnalyzed state) {
     return Column(
       children: [
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 60, 24, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Alimentos identificados',
-                style: Theme.of(context).textTheme.titleMedium,
+                'Resultados',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.onSurface,
+                ),
               ),
-              const SizedBox(height: 8),
-              ...state.scannedFoods.map((food) => _buildFoodItem(food)),
+              GestureDetector(
+                onTap: () {
+                  context.read<FoodScannerBloc>().add(ClearScannedFoods());
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.surfaceContainerLow,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    'Limpar',
+                    style: GoogleFonts.manrope(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.primary,
+                    ),
+                  ),
+                ),
+              ),
             ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            '${state.scannedFoods.length} alimentos encontrados',
+            style: GoogleFonts.manrope(
+              fontSize: 14,
+              color: AppTheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            itemCount: state.scannedFoods.length,
+            itemBuilder: (context, index) {
+              final food = state.scannedFoods[index];
+              final isSelected = state.selectedFoods.any(
+                (f) => f.id == food.id,
+              );
+              return _buildFoodItem(food, isSelected);
+            },
           ),
         ),
         _buildMealTypeSelector(),
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(24),
           child: SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: state.selectedFoods.isNotEmpty
                   ? () => _addToMeal(state.selectedFoods)
                   : null,
-              child: Text('Adicionar ${state.selectedFoods.length} alimentos'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primary,
+                foregroundColor: AppTheme.onPrimary,
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                disabledBackgroundColor: AppTheme.surfaceContainerLow,
+              ),
+              child: Text(
+                state.selectedFoods.isNotEmpty
+                    ? 'Adicionar ${state.selectedFoods.length} alimentos'
+                    : 'Selecione alimentos',
+                style: GoogleFonts.manrope(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
           ),
         ),
@@ -168,51 +371,150 @@ class _ScannerPageState extends State<ScannerPage> {
     );
   }
 
-  Widget _buildFoodItem(FoodItem food) {
-    final scannerState = context.read<FoodScannerBloc>().state;
-    if (scannerState is! FoodScannerAnalyzed) {
-      return const SizedBox.shrink();
-    }
-    final isSelected = scannerState.selectedFoods.any((f) => f.id == food.id);
-    return Card(
-      child: CheckboxListTile(
-        value: isSelected,
-        onChanged: (selected) {
-          if (selected == true) {
-            context.read<FoodScannerBloc>().add(SelectFood(food));
-          } else {
-            context.read<FoodScannerBloc>().add(DeselectFood(food));
-          }
-        },
-        title: Text(food.name),
-        subtitle: Text(
-          '${food.calories.toInt()} kcal | P: ${food.protein.toInt()}g | C: ${food.carbs.toInt()}g | G: ${food.fat.toInt()}g',
+  Widget _buildFoodItem(FoodItem food, bool isSelected) {
+    return GestureDetector(
+      onTap: () {
+        if (isSelected) {
+          context.read<FoodScannerBloc>().add(DeselectFood(food));
+        } else {
+          context.read<FoodScannerBloc>().add(SelectFood(food));
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppTheme.primaryContainer
+              : AppTheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(20),
+          border: isSelected
+              ? Border.all(color: AppTheme.primary, width: 2)
+              : null,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        secondary: Text('${food.portion.toInt()}g'),
+        child: Row(
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppTheme.primary
+                    : AppTheme.surfaceContainerLow,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected
+                      ? AppTheme.primary
+                      : AppTheme.outlineVariant,
+                  width: 2,
+                ),
+              ),
+              child: isSelected
+                  ? const Icon(Icons.check, size: 16, color: AppTheme.onPrimary)
+                  : null,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    food.name,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      _buildNutrientChip(
+                        '${food.calories.toInt()} kcal',
+                        AppTheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      _buildNutrientChip(
+                        'P: ${food.protein.toInt()}g',
+                        const Color(0xFF2196F3),
+                      ),
+                      const SizedBox(width: 8),
+                      _buildNutrientChip(
+                        'C: ${food.carbs.toInt()}g',
+                        const Color(0xFFFF9800),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              '${food.portion.toInt()}g',
+              style: GoogleFonts.manrope(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNutrientChip(String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.manrope(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
       ),
     );
   }
 
   Widget _buildMealTypeSelector() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: DropdownButtonFormField<String>(
-        initialValue: _selectedMealType,
-        decoration: const InputDecoration(labelText: 'Tipo de refeição'),
-        items: const [
-          DropdownMenuItem(
-            value: 'Café da manhã',
-            child: Text('Café da manhã'),
-          ),
-          DropdownMenuItem(value: 'Almoço', child: Text('Almoço')),
-          DropdownMenuItem(value: 'Jantar', child: Text('Jantar')),
-          DropdownMenuItem(value: 'Lanche', child: Text('Lanche')),
-        ],
-        onChanged: (value) {
-          if (value != null) {
-            setState(() => _selectedMealType = value);
-          }
-        },
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedMealType,
+          isExpanded: true,
+          icon: const Icon(Icons.keyboard_arrow_down),
+          items: ['Café da manhã', 'Almoço', 'Jantar', 'Lanche'].map((type) {
+            return DropdownMenuItem(
+              value: type,
+              child: Text(
+                type,
+                style: GoogleFonts.manrope(color: AppTheme.onSurface),
+              ),
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null) {
+              setState(() => _selectedMealType = value);
+            }
+          },
+        ),
       ),
     );
   }
@@ -226,27 +528,96 @@ class _ScannerPageState extends State<ScannerPage> {
 
   void _showSearchDialog() {
     final controller = TextEditingController();
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Buscar Alimento'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(hintText: 'Ex: Arroz com feijão'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              if (controller.text.isNotEmpty) {
-                this.context.read<FoodScannerBloc>().add(
-                  AnalyzeText(controller.text),
-                );
-              }
-            },
-            child: const Text('Buscar'),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (dialogContext) => Container(
+        height: MediaQuery.of(context).size.height * 0.6,
+        decoration: const BoxDecoration(
+          color: AppTheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
           ),
-        ],
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Buscar Alimento',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Digite o nome do alimento que deseja buscar',
+              style: GoogleFonts.manrope(
+                fontSize: 14,
+                color: AppTheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 24),
+            TextField(
+              controller: controller,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: 'Ex: Arroz com feijão',
+                filled: true,
+                fillColor: AppTheme.surfaceContainerLow,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide.none,
+                ),
+                prefixIcon: const Icon(Icons.search),
+              ),
+            ),
+            const Spacer(),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(dialogContext);
+                  if (controller.text.isNotEmpty) {
+                    context.read<FoodScannerBloc>().add(
+                      AnalyzeText(controller.text),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primary,
+                  foregroundColor: AppTheme.onPrimary,
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: Text(
+                  'Buscar',
+                  style: GoogleFonts.manrope(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -274,7 +645,15 @@ class _ScannerPageState extends State<ScannerPage> {
     context.read<FoodScannerBloc>().add(ClearScannedFoods());
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Alimentos adicionados com sucesso!')),
+      SnackBar(
+        content: Text(
+          'Alimentos adicionados com sucesso!',
+          style: GoogleFonts.manrope(),
+        ),
+        backgroundColor: AppTheme.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
     );
   }
 

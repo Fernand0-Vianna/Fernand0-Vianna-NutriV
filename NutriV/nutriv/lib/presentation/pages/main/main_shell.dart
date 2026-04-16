@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import '../../../core/theme/app_theme.dart';
 
 class MainShell extends StatelessWidget {
@@ -13,18 +15,22 @@ class MainShell extends StatelessWidget {
       body: child,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceContainerLowest,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 20,
-              offset: const Offset(0, -5),
+              offset: const Offset(0, -8),
             ),
           ],
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -37,20 +43,27 @@ class MainShell extends StatelessWidget {
                 ),
                 _buildNavItem(
                   1,
-                  Icons.book_outlined,
-                  Icons.book,
+                  Icons.menu_book_outlined,
+                  Icons.menu_book,
                   'Diário',
                   context,
                 ),
                 _buildNavItem(
                   2,
-                  Icons.camera_alt_outlined,
-                  Icons.camera_alt,
-                  'Scanner',
+                  Icons.add_circle_outline,
+                  Icons.add_circle,
+                  'Add',
                   context,
                 ),
                 _buildNavItem(
                   3,
+                  Icons.search_outlined,
+                  Icons.search,
+                  'Busca',
+                  context,
+                ),
+                _buildNavItem(
+                  4,
                   Icons.person_outline,
                   Icons.person,
                   'Perfil',
@@ -72,31 +85,57 @@ class MainShell extends StatelessWidget {
     BuildContext context,
   ) {
     final isSelected = _calculateSelectedIndex(context) == index;
+    final isCenter = index == 2;
+
+    if (isCenter) {
+      return GestureDetector(
+        onTap: () => _onItemTapped(index, context),
+        child: Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppTheme.primary, AppTheme.primaryDim],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primary.withValues(alpha: 0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Icon(Icons.add, color: AppTheme.onPrimary, size: 28),
+        ),
+      );
+    }
+
     return GestureDetector(
       onTap: () => _onItemTapped(index, context),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppTheme.primary.withValues(alpha: 0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               isSelected ? activeIcon : icon,
-              color: isSelected ? AppTheme.primary : Colors.grey,
+              color: isSelected
+                  ? AppTheme.primary
+                  : AppTheme.onSurfaceVariant.withValues(alpha: 0.6),
               size: 24,
             ),
             const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 12,
-                color: isSelected ? AppTheme.primary : Colors.grey,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              style: GoogleFonts.manrope(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: isSelected
+                    ? AppTheme.primary
+                    : AppTheme.onSurfaceVariant.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -110,7 +149,7 @@ class MainShell extends StatelessWidget {
     if (location == '/') return 0;
     if (location == '/diary') return 1;
     if (location == '/scanner') return 2;
-    if (location == '/profile') return 3;
+    if (location == '/profile') return 4;
     return 0;
   }
 
@@ -125,7 +164,7 @@ class MainShell extends StatelessWidget {
       case 2:
         context.go('/scanner');
         break;
-      case 3:
+      case 4:
         context.go('/profile');
         break;
     }

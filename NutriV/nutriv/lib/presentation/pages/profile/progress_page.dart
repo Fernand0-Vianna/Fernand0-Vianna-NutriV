@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../../core/theme/app_theme.dart';
 
 class ProgressPage extends StatefulWidget {
   const ProgressPage({super.key});
@@ -8,160 +11,178 @@ class ProgressPage extends StatefulWidget {
   State<ProgressPage> createState() => _ProgressPageState();
 }
 
-class _ProgressPageState extends State<ProgressPage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
+class _ProgressPageState extends State<ProgressPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Progresso'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'Peso'),
-            Tab(text: 'Calorias'),
-            Tab(text: 'Macros'),
-          ],
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildWeightChart(),
-          _buildCaloriesChart(),
-          _buildMacrosChart(),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 60, 24, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Estatísticas',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.onSurface,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.calendar_today,
+                              size: 16,
+                              color: AppTheme.primary,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Esta Semana',
+                              style: GoogleFonts.manrope(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  _buildCalorieSummaryCard(),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDailyCaloriesChart(),
+                  const SizedBox(height: 24),
+                  _buildMacrosSection(),
+                  const SizedBox(height: 24),
+                  _buildInsightCard(),
+                  const SizedBox(height: 100),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildWeightChart() {
-    final spots = [
-      const FlSpot(0, 80),
-      const FlSpot(1, 79.5),
-      const FlSpot(2, 79),
-      const FlSpot(3, 78.5),
-      const FlSpot(4, 78),
-      const FlSpot(5, 77.5),
-      const FlSpot(6, 77),
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.all(16),
+  Widget _buildCalorieSummaryCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Evolução do Peso',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text('Últimos 7 dias', style: TextStyle(color: Colors.grey[600])),
-          const SizedBox(height: 24),
-          Expanded(
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: 2,
-                  getDrawingHorizontalLine: (value) =>
-                      FlLine(color: Colors.grey[300], strokeWidth: 1),
-                ),
-                titlesData: FlTitlesData(
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 30,
-                      getTitlesWidget: (value, meta) {
-                        const days = [
-                          'Seg',
-                          'Ter',
-                          'Qua',
-                          'Qui',
-                          'Sex',
-                          'Sáb',
-                          'Dom',
-                        ];
-                        return Text(
-                          days[value.toInt()],
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
-                          ),
-                        );
-                      },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Meta Calórica',
+                    style: GoogleFonts.manrope(
+                      fontSize: 14,
+                      color: AppTheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 40,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          '${value.toInt()} kg',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
+                  const SizedBox(height: 4),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '1.840',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 36,
+                            fontWeight: FontWeight.w800,
+                            color: AppTheme.primary,
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                  topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                ),
-                borderData: FlBorderData(show: false),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: spots,
-                    isCurved: true,
-                    color: Theme.of(context).colorScheme.primary,
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    dotData: const FlDotData(show: true),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.1),
+                        ),
+                        TextSpan(
+                          text: ' kcal / dia',
+                          style: GoogleFonts.manrope(
+                            fontSize: 14,
+                            color: AppTheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildStatCard('Início', '80 kg', Colors.grey),
-              _buildStatCard(
-                'Atual',
-                '77 kg',
-                Theme.of(context).colorScheme.primary,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Média Semanal',
+                    style: GoogleFonts.manrope(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '1.725',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.onSurface,
+                    ),
+                  ),
+                ],
               ),
-              _buildStatCard('Perda', '-3 kg', Colors.red),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildDayBar('S', 0.85, true),
+              _buildDayBar('T', 0.95, true),
+              _buildDayBar('Q', 0.75, true),
+              _buildDayBar('Q', 1.10, false),
+              _buildDayBar('S', 0.90, true),
+              _buildDayBar('S', 0.60, true),
+              _buildDayBar('D', 0.45, true),
             ],
           ),
         ],
@@ -169,66 +190,101 @@ class _ProgressPageState extends State<ProgressPage>
     );
   }
 
-  Widget _buildCaloriesChart() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
+  Widget _buildDayBar(String label, double height, bool isPrimary) {
+    final barHeight = height.clamp(0.0, 1.0);
+    final isOver = height > 1.0;
+
+    return Column(
+      children: [
+        Container(
+          width: 32,
+          height: 150,
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            width: 32,
+            height: 150 * barHeight,
+            decoration: BoxDecoration(
+              color: isOver
+                  ? AppTheme.errorContainer
+                  : (isPrimary
+                        ? AppTheme.primary
+                        : AppTheme.surfaceContainerHigh),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: GoogleFonts.manrope(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDailyCaloriesChart() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Calorias Diárias',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            'Consumo Diário',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.onSurface,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Média semanal: 1850 kcal',
-            style: TextStyle(color: Colors.grey[600]),
+            'Calorias consumidas por refeição',
+            style: GoogleFonts.manrope(
+              fontSize: 13,
+              color: AppTheme.onSurfaceVariant,
+            ),
           ),
-          const SizedBox(height: 24),
-          Expanded(
+          const SizedBox(height: 20),
+          SizedBox(
+            height: 200,
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
                 maxY: 2500,
-                barTouchData: BarTouchData(
-                  touchTooltipData: BarTouchTooltipData(
-                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                      return BarTooltipItem(
-                        '${rod.toY.toInt()} kcal',
-                        const TextStyle(color: Colors.white),
-                      );
-                    },
-                  ),
-                ),
+                barTouchData: BarTouchData(enabled: false),
                 titlesData: FlTitlesData(
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
-                        const days = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'];
+                        const days = ['Café', 'Almoço', 'Lanche', 'Janta'];
                         return Text(
                           days[value.toInt()],
-                          style: TextStyle(color: Colors.grey[600]),
-                        );
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 40,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          '${value.toInt()}',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
+                          style: GoogleFonts.manrope(
+                            fontSize: 11,
+                            color: AppTheme.onSurfaceVariant,
                           ),
                         );
                       },
                     ),
+                  ),
+                  leftTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
                   ),
                   topTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
@@ -237,22 +293,13 @@ class _ProgressPageState extends State<ProgressPage>
                     sideTitles: SideTitles(showTitles: false),
                   ),
                 ),
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: 500,
-                  getDrawingHorizontalLine: (value) =>
-                      FlLine(color: Colors.grey[300], strokeWidth: 1),
-                ),
+                gridData: const FlGridData(show: false),
                 borderData: FlBorderData(show: false),
                 barGroups: [
-                  _makeBarGroup(0, 1800),
-                  _makeBarGroup(1, 1950),
-                  _makeBarGroup(2, 1700),
-                  _makeBarGroup(3, 2100),
-                  _makeBarGroup(4, 1850),
-                  _makeBarGroup(5, 1900),
-                  _makeBarGroup(6, 1750),
+                  _makeBarGroup(0, 450),
+                  _makeBarGroup(1, 680),
+                  _makeBarGroup(2, 320),
+                  _makeBarGroup(3, 275),
                 ],
               ),
             ),
@@ -268,94 +315,158 @@ class _ProgressPageState extends State<ProgressPage>
       barRods: [
         BarChartRodData(
           toY: y,
-          color: Theme.of(context).colorScheme.primary,
-          width: 20,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+          color: AppTheme.primary,
+          width: 40,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
         ),
       ],
     );
   }
 
-  Widget _buildMacrosChart() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Média de Macros',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+  Widget _buildMacrosSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Macronutrientes',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: AppTheme.onSurface,
           ),
-          const SizedBox(height: 24),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: PieChart(
-                    PieChartData(
-                      sectionsSpace: 2,
-                      centerSpaceRadius: 40,
-                      sections: [
-                        PieChartSectionData(
-                          value: 120,
-                          color: const Color(0xFF2196F3),
-                          title: '120g',
-                          titleStyle: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          radius: 50,
-                        ),
-                        PieChartSectionData(
-                          value: 200,
-                          color: const Color(0xFFFF9800),
-                          title: '200g',
-                          titleStyle: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          radius: 50,
-                        ),
-                        PieChartSectionData(
-                          value: 55,
-                          color: const Color(0xFFE91E63),
-                          title: '55g',
-                          titleStyle: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          radius: 50,
-                        ),
-                      ],
+        ),
+        const SizedBox(height: 16),
+        _buildMacroCard(
+          'Proteína',
+          142,
+          150,
+          const Color(0xFF2196F3),
+          '+12%',
+          true,
+        ),
+        const SizedBox(height: 16),
+        _buildMacroCard(
+          'Carboidratos',
+          210,
+          250,
+          const Color(0xFFFF9800),
+          '-5%',
+          false,
+        ),
+        const SizedBox(height: 16),
+        _buildMacroCard(
+          'Gorduras',
+          58,
+          65,
+          const Color(0xFFE91E63),
+          '+2%',
+          true,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMacroCard(
+    String label,
+    double value,
+    double goal,
+    Color color,
+    String change,
+    bool isPositive,
+  ) {
+    final progress = goal > 0 ? value / goal : 0.0;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Icon(
+                      label == 'Proteína'
+                          ? Icons.restaurant
+                          : label == 'Carboidratos'
+                          ? Icons.bakery_dining
+                          : Icons.water_drop,
+                      color: color,
+                      size: 24,
                     ),
                   ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: GoogleFonts.manrope(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: AppTheme.onSurfaceVariant,
+                        ),
+                      ),
+                      Text(
+                        '${value.toInt()}g',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
                 ),
-                const SizedBox(width: 16),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLegendItem(
-                      'Proteína',
-                      '120g',
-                      const Color(0xFF2196F3),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildLegendItem(
-                      'Carboidratos',
-                      '200g',
-                      const Color(0xFFFF9800),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildLegendItem('Gordura', '55g', const Color(0xFFE91E63)),
-                  ],
+                decoration: BoxDecoration(
+                  color: isPositive
+                      ? AppTheme.primaryContainer
+                      : AppTheme.errorContainer.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-              ],
+                child: Text(
+                  change,
+                  style: GoogleFonts.manrope(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: isPositive ? AppTheme.primary : AppTheme.error,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: progress.clamp(0, 1),
+              backgroundColor: color.withValues(alpha: 0.15),
+              valueColor: AlwaysStoppedAnimation(color),
+              minHeight: 6,
             ),
           ),
         ],
@@ -363,43 +474,62 @@ class _ProgressPageState extends State<ProgressPage>
     );
   }
 
-  Widget _buildStatCard(String label, String value, Color color) {
-    return Column(
-      children: [
-        Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
+  Widget _buildInsightCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppTheme.primary, AppTheme.primaryDim],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLegendItem(String label, String value, Color color) {
-    return Row(
-      children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: AppTheme.primaryContainer,
+              shape: BoxShape.circle,
             ),
-            Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
-          ],
-        ),
-      ],
+            child: const Icon(Icons.bolt, color: AppTheme.primary, size: 32),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Insight de Saúde',
+                  style: GoogleFonts.manrope(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.onPrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Sua ingestão de proteínas aumentou 12% em comparação com a semana passada.',
+                  style: GoogleFonts.manrope(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.onPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

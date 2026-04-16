@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_event.dart';
@@ -42,36 +43,42 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppTheme.primary, AppTheme.primaryDim],
+            colors: [AppTheme.surface, AppTheme.surfaceContainerLow],
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  _buildHeader(),
-                  const SizedBox(height: 32),
-                  _buildProfileCard(),
-                  const SizedBox(height: 24),
-                  _buildGenderCard(),
-                  const SizedBox(height: 24),
-                  _buildActivityCard(),
-                  const SizedBox(height: 24),
-                  _buildGoalCard(),
-                  const SizedBox(height: 32),
-                  _buildStartButton(),
-                  const SizedBox(height: 24),
-                ],
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 40),
+                        _buildHeader(),
+                        const SizedBox(height: 32),
+                        _buildProfileCard(),
+                        const SizedBox(height: 20),
+                        _buildGenderCard(),
+                        const SizedBox(height: 20),
+                        _buildActivityCard(),
+                        const SizedBox(height: 20),
+                        _buildGoalCard(),
+                        const SizedBox(height: 32),
+                        _buildStartButton(),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -85,28 +92,39 @@ class _OnboardingPageState extends State<OnboardingPage> {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
-            shape: BoxShape.circle,
+            color: AppTheme.primaryContainer,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primary.withValues(alpha: 0.2),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
           child: const Icon(
             Icons.restaurant_menu,
             size: 40,
-            color: Colors.white,
+            color: AppTheme.primary,
           ),
         ),
-        const SizedBox(height: 16),
-        const Text(
+        const SizedBox(height: 24),
+        Text(
           'NutriV',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 32,
+            fontWeight: FontWeight.w800,
+            color: AppTheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          'Vamos criar seu plano alimentar',
-          style: TextStyle(fontSize: 16, color: Colors.white70),
+        Text(
+          'Seu corpo, sua meta.',
+          style: GoogleFonts.manrope(
+            fontSize: 16,
+            color: AppTheme.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );
@@ -114,13 +132,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   Widget _buildProfileCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -129,20 +147,38 @@ class _OnboardingPageState extends State<OnboardingPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
-            children: [
-              Icon(Icons.person_outline, color: AppTheme.primary),
-              SizedBox(width: 8),
-              Text(
-                'Seu Perfil',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ],
+          Text(
+            'Seu Perfil',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.onSurface,
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _nameController,
-            decoration: _inputDecoration('Nome', 'Seu nome'),
+            decoration: InputDecoration(
+              labelText: 'Nome',
+              hintText: 'Seu nome',
+              filled: true,
+              fillColor: AppTheme.surfaceContainerLow,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(
+                  color: AppTheme.primary.withValues(alpha: 0.4),
+                  width: 2,
+                ),
+              ),
+            ),
             validator: (v) => Validators.validateRequired(v, 'Nome'),
           ),
           const SizedBox(height: 16),
@@ -152,7 +188,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 child: TextFormField(
                   controller: _weightController,
                   keyboardType: TextInputType.number,
-                  decoration: _inputDecoration('Peso', '70 kg'),
+                  decoration: InputDecoration(
+                    labelText: 'Peso (kg)',
+                    hintText: '70',
+                    filled: true,
+                    fillColor: AppTheme.surfaceContainerLow,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
                   validator: (v) =>
                       Validators.validatePositiveNumber(v, 'Peso'),
                 ),
@@ -162,7 +211,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 child: TextFormField(
                   controller: _heightController,
                   keyboardType: TextInputType.number,
-                  decoration: _inputDecoration('Altura', '170 cm'),
+                  decoration: InputDecoration(
+                    labelText: 'Altura (cm)',
+                    hintText: '170',
+                    filled: true,
+                    fillColor: AppTheme.surfaceContainerLow,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
                   validator: (v) =>
                       Validators.validatePositiveNumber(v, 'Altura'),
                 ),
@@ -173,7 +235,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
           TextFormField(
             controller: _ageController,
             keyboardType: TextInputType.number,
-            decoration: _inputDecoration('Idade', '25 anos'),
+            decoration: InputDecoration(
+              labelText: 'Idade',
+              hintText: '25',
+              filled: true,
+              fillColor: AppTheme.surfaceContainerLow,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
+            ),
             validator: (v) => Validators.validatePositiveNumber(v, 'Idade'),
           ),
         ],
@@ -183,13 +258,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   Widget _buildGenderCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -198,15 +273,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
-            children: [
-              Icon(Icons.wc, color: AppTheme.primary),
-              SizedBox(width: 8),
-              Text(
-                'Gênero',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ],
+          Text(
+            'Gênero',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.onSurface,
+            ),
           ),
           const SizedBox(height: 16),
           Row(
@@ -243,20 +316,27 @@ class _OnboardingPageState extends State<OnboardingPage> {
   ) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
-          color: selected ? AppTheme.primary : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
+          color: selected ? AppTheme.primary : AppTheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
           children: [
-            Icon(icon, color: selected ? Colors.white : Colors.grey, size: 32),
+            Icon(
+              icon,
+              color: selected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
+              size: 32,
+            ),
             const SizedBox(height: 8),
             Text(
               label,
-              style: TextStyle(
-                color: selected ? Colors.white : Colors.grey.shade700,
+              style: GoogleFonts.manrope(
+                color: selected
+                    ? AppTheme.onPrimary
+                    : AppTheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -268,13 +348,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   Widget _buildActivityCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -283,36 +363,40 @@ class _OnboardingPageState extends State<OnboardingPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
-            children: [
-              Icon(Icons.directions_run, color: AppTheme.primary),
-              SizedBox(width: 8),
-              Text(
-                'Nível de Atividade',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ],
+          Text(
+            'Nível de Atividade',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.onSurface,
+            ),
           ),
           const SizedBox(height: 16),
-          DropdownButtonFormField<int>(
-            initialValue: _activityLevel,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.grey.shade50,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: _activityLevel,
+                isExpanded: true,
+                icon: const Icon(Icons.keyboard_arrow_down),
+                items: List.generate(5, (i) {
+                  return DropdownMenuItem(
+                    value: i,
+                    child: Text(
+                      NutritionUtils.getActivityLevel(i),
+                      style: GoogleFonts.manrope(color: AppTheme.onSurface),
+                    ),
+                  );
+                }),
+                onChanged: (v) {
+                  if (v != null) setState(() => _activityLevel = v);
+                },
               ),
             ),
-            items: List.generate(5, (i) {
-              return DropdownMenuItem(
-                value: i,
-                child: Text(NutritionUtils.getActivityLevel(i)),
-              );
-            }),
-            onChanged: (v) {
-              if (v != null) setState(() => _activityLevel = v);
-            },
           ),
         ],
       ),
@@ -321,13 +405,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   Widget _buildGoalCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -336,15 +420,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
-            children: [
-              Icon(Icons.flag, color: AppTheme.primary),
-              SizedBox(width: 8),
-              Text(
-                'Seu Objetivo',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ],
+          Text(
+            'Seu Objetivo',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.onSurface,
+            ),
           ),
           const SizedBox(height: 16),
           Row(
@@ -371,20 +453,27 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final selected = _goal == value;
     return GestureDetector(
       onTap: () => setState(() => _goal = value),
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: selected ? AppTheme.primary : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
+          color: selected ? AppTheme.primary : AppTheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           children: [
-            Icon(icon, color: selected ? Colors.white : Colors.grey, size: 24),
+            Icon(
+              icon,
+              color: selected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
+              size: 24,
+            ),
             const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(
-                color: selected ? Colors.white : Colors.grey.shade700,
+              style: GoogleFonts.manrope(
+                color: selected
+                    ? AppTheme.onPrimary
+                    : AppTheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
@@ -400,23 +489,30 @@ class _OnboardingPageState extends State<OnboardingPage> {
       children: [
         SizedBox(
           width: double.infinity,
-          child: OutlinedButton.icon(
+          child: ElevatedButton(
             onPressed: _signInWithGoogle,
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              side: const BorderSide(color: Colors.white, width: 2),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.surfaceContainerLow,
+              foregroundColor: AppTheme.onSurface,
+              padding: const EdgeInsets.symmetric(vertical: 18),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(28),
               ),
+              elevation: 0,
             ),
-            icon: const Icon(Icons.g_mobiledata, color: Colors.white, size: 28),
-            label: const Text(
-              'Entrar com Google',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.g_mobiledata, size: 24),
+                const SizedBox(width: 12),
+                Text(
+                  'Continuar com Google',
+                  style: GoogleFonts.manrope(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -426,33 +522,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
           child: ElevatedButton(
             onPressed: _saveProfile,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: AppTheme.primary,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              backgroundColor: AppTheme.primary,
+              foregroundColor: AppTheme.onPrimary,
+              padding: const EdgeInsets.symmetric(vertical: 18),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(28),
               ),
+              elevation: 0,
             ),
-            child: const Text(
+            child: Text(
               'Começar',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: GoogleFonts.manrope(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
       ],
-    );
-  }
-
-  InputDecoration _inputDecoration(String label, String hint) {
-    return InputDecoration(
-      labelText: label,
-      hintText: hint,
-      filled: true,
-      fillColor: Colors.grey.shade50,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
     );
   }
 

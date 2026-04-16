@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_state.dart';
@@ -22,27 +23,32 @@ class _ProfilePageState extends State<ProfilePage> {
       body: BlocBuilder<UserBloc, UserState>(
         builder: (context, state) {
           if (state is UserLoaded) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildProfileHeader(context, state),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
+            return CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(child: _buildProfileHeader(context, state)),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
                     child: Column(
                       children: [
+                        _buildStatsBar(state),
+                        const SizedBox(height: 24),
                         _buildGoalsCard(context, state),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 24),
                         _buildStatsCard(context, state),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 24),
                         _buildSettingsCard(context),
+                        const SizedBox(height: 100),
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           }
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(color: AppTheme.primary),
+          );
         },
       ),
     );
@@ -51,35 +57,64 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildProfileHeader(BuildContext context, UserLoaded state) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
+      padding: const EdgeInsets.fromLTRB(24, 60, 24, 32),
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppTheme.primary, Color(0xFF00E676)],
+          colors: [AppTheme.primary, AppTheme.primaryDim],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(40),
+          bottomRight: Radius.circular(40),
         ),
       ),
       child: Column(
         children: [
-          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Perfil',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.onPrimary,
+                ),
+              ),
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryContainer.withValues(alpha: 0.3),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.notifications_outlined,
+                  color: AppTheme.onPrimary,
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
           Container(
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: AppTheme.primaryContainer,
               shape: BoxShape.circle,
+              border: Border.all(color: AppTheme.onPrimary, width: 3),
             ),
             child: Center(
               child: Text(
-                state.user.name[0].toUpperCase(),
-                style: const TextStyle(
+                state.user.name.isNotEmpty
+                    ? state.user.name[0].toUpperCase()
+                    : 'U',
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 40,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.primary,
                 ),
               ),
             ),
@@ -87,41 +122,45 @@ class _ProfilePageState extends State<ProfilePage> {
           const SizedBox(height: 16),
           Text(
             state.user.name,
-            style: const TextStyle(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.onPrimary,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: AppTheme.primaryContainer.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               _getGoalText(state.user.goal),
-              style: const TextStyle(color: Colors.white, fontSize: 14),
+              style: GoogleFonts.manrope(
+                color: AppTheme.onPrimary,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           GestureDetector(
             onTap: () => _showEditProfileDialog(context, state),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+                color: AppTheme.onPrimary,
+                borderRadius: BorderRadius.circular(24),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.edit, size: 18, color: AppTheme.primary),
-                  SizedBox(width: 8),
+                  const Icon(Icons.edit, size: 18, color: AppTheme.primary),
+                  const SizedBox(width: 8),
                   Text(
                     'Editar Perfil',
-                    style: TextStyle(
+                    style: GoogleFonts.manrope(
                       color: AppTheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -130,21 +169,84 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
         ],
       ),
     );
   }
 
-  Widget _buildGoalsCard(BuildContext context, UserLoaded state) {
+  Widget _buildStatsBar(UserLoaded state) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildStatItem('${state.user.weight.toInt()}', 'kg', 'Peso'),
+          Container(width: 1, height: 40, color: AppTheme.outlineVariant),
+          _buildStatItem('${state.user.height.toInt()}', 'cm', 'Altura'),
+          Container(width: 1, height: 40, color: AppTheme.outlineVariant),
+          _buildStatItem('${state.user.age}', 'anos', 'Idade'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String value, String unit, String label) {
+    return Column(
+      children: [
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: value,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.onSurface,
+                ),
+              ),
+              TextSpan(
+                text: ' $unit',
+                style: GoogleFonts.manrope(
+                  fontSize: 12,
+                  color: AppTheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: GoogleFonts.manrope(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGoalsCard(BuildContext context, UserLoaded state) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -153,45 +255,61 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.flag, color: AppTheme.primary),
-              SizedBox(width: 8),
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.flag,
+                  color: AppTheme.primary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
               Text(
                 'Metas Diárias',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.onSurface,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           _buildGoalRow(
             'Calorias',
             state.user.calorieGoal,
             'kcal',
             AppTheme.primary,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           _buildGoalRow(
             'Proteína',
             state.user.proteinGoal,
             'g',
             const Color(0xFF2196F3),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           _buildGoalRow(
             'Carboidratos',
             state.user.carbsGoal,
             'g',
             const Color(0xFFFF9800),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           _buildGoalRow(
             'Gordura',
             state.user.fatGoal,
             'g',
             const Color(0xFFE91E63),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           _buildGoalRow('Água', state.user.waterGoal, 'ml', Colors.blue),
         ],
       ),
@@ -205,17 +323,26 @@ class _ProfilePageState extends State<ProfilePage> {
         Row(
           children: [
             Container(
-              width: 8,
-              height: 8,
+              width: 10,
+              height: 10,
               decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
-            const SizedBox(width: 8),
-            Text(label),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: GoogleFonts.manrope(
+                color: AppTheme.onSurface,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         ),
         Text(
           '${value.toInt()} $unit',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w700,
+            color: AppTheme.onSurface,
+          ),
         ),
       ],
     );
@@ -223,13 +350,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildStatsCard(BuildContext context, UserLoaded state) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -238,60 +365,111 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(Icons.analytics, color: AppTheme.primary),
-              SizedBox(width: 8),
-              Text(
-                'Estatísticas',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppTheme.secondaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.analytics,
+                      color: AppTheme.secondary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Detalhes',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProgressPage()),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Ver Progresso',
+                    style: GoogleFonts.manrope(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.primary,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatItem('Peso', '${state.user.weight} kg'),
-              ),
-              Expanded(
-                child: _buildStatItem(
-                  'Altura',
-                  '${state.user.height.toInt()} cm',
-                ),
-              ),
-              Expanded(
-                child: _buildStatItem('Idade', '${state.user.age} anos'),
-              ),
-            ],
+          const SizedBox(height: 20),
+          _buildDetailRow(
+            'Atividade',
+            NutritionUtils.getActivityLevel(state.user.activityLevel),
+            Icons.directions_run,
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatItem(
-                  'Atividade',
-                  NutritionUtils.getActivityLevel(state.user.activityLevel),
-                ),
-              ),
-              const Expanded(child: SizedBox()),
-              const Expanded(child: SizedBox()),
-            ],
+          _buildDetailRow(
+            'Objetivo',
+            _getGoalText(state.user.goal),
+            Icons.flag,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatItem(String label, String value) {
-    return Column(
+  Widget _buildDetailRow(String label, String value, IconData icon) {
+    return Row(
       children: [
-        Text(
-          value,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: AppTheme.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: AppTheme.onSurfaceVariant, size: 18),
         ),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: GoogleFonts.manrope(
+                fontSize: 12,
+                color: AppTheme.onSurfaceVariant,
+              ),
+            ),
+            Text(
+              value,
+              style: GoogleFonts.manrope(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.onSurface,
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -299,11 +477,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildSettingsCard(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -311,36 +489,94 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       child: Column(
         children: [
-          _buildSettingsItem(
-            Icons.trending_up,
-            'Ver Progresso',
-            () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ProgressPage()),
-            ),
-          ),
-          const Divider(height: 1),
+          _buildSettingsItem(Icons.person_outline, 'Meu Perfil', () {}),
           _buildSettingsItem(
             Icons.notifications_outlined,
             'Notificações',
             () {},
+            badge: '3',
           ),
-          const Divider(height: 1),
-          _buildSettingsItem(Icons.privacy_tip_outlined, 'Privacidade', () {}),
-          const Divider(height: 1),
-          _buildSettingsItem(Icons.help_outline, 'Ajuda', () {}),
-          const Divider(height: 1),
-          _buildSettingsItem(Icons.info_outline, 'Sobre', () {}),
+          _buildSettingsItem(Icons.favorite_outline, 'Favoritos', () {}),
+          _buildSettingsItem(Icons.settings_outlined, 'Configurações', () {}),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            color: AppTheme.errorContainer.withValues(alpha: 0.1),
+            child: ListTile(
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppTheme.errorContainer.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.logout,
+                  color: AppTheme.error,
+                  size: 20,
+                ),
+              ),
+              title: Text(
+                'Sair',
+                style: GoogleFonts.manrope(
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.error,
+                ),
+              ),
+              onTap: () {},
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSettingsItem(IconData icon, String title, VoidCallback onTap) {
+  Widget _buildSettingsItem(
+    IconData icon,
+    String title,
+    VoidCallback onTap, {
+    String? badge,
+  }) {
     return ListTile(
-      leading: Icon(icon, color: AppTheme.primary),
-      title: Text(title),
-      trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: AppTheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: AppTheme.primary, size: 20),
+      ),
+      title: Text(
+        title,
+        style: GoogleFonts.manrope(
+          fontWeight: FontWeight.w500,
+          color: AppTheme.onSurface,
+        ),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (badge != null)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppTheme.error,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                badge,
+                style: GoogleFonts.manrope(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.onError,
+                ),
+              ),
+            ),
+          const SizedBox(width: 8),
+          const Icon(Icons.chevron_right, color: AppTheme.outlineVariant),
+        ],
+      ),
       onTap: onTap,
     );
   }
@@ -369,99 +605,219 @@ class _ProfilePageState extends State<ProfilePage> {
     );
     String selectedGoal = state.user.goal;
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('Editar Perfil'),
-          content: SingleChildScrollView(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (dialogContext) => Container(
+        height: MediaQuery.of(context).size.height * 0.85,
+        decoration: const BoxDecoration(
+          color: AppTheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
+          ),
+        ),
+        child: StatefulBuilder(
+          builder: (context, setState) => Padding(
+            padding: const EdgeInsets.all(24),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Nome'),
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppTheme.outlineVariant,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: weightController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Peso (kg)',
+                const SizedBox(height: 24),
+                Text(
+                  'Editar Perfil',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: nameController,
+                          decoration: InputDecoration(
+                            labelText: 'Nome',
+                            filled: true,
+                            fillColor: AppTheme.surfaceContainerLow,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
                         ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: weightController,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  labelText: 'Peso (kg)',
+                                  filled: true,
+                                  fillColor: AppTheme.surfaceContainerLow,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: TextField(
+                                controller: heightController,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  labelText: 'Altura (cm)',
+                                  filled: true,
+                                  fillColor: AppTheme.surfaceContainerLow,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: ageController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'Idade',
+                            filled: true,
+                            fillColor: AppTheme.surfaceContainerLow,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Objetivo',
+                          style: GoogleFonts.manrope(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            _buildGoalChip(
+                              'Perder',
+                              'lose',
+                              selectedGoal,
+                              (v) => setState(() => selectedGoal = v),
+                            ),
+                            const SizedBox(width: 12),
+                            _buildGoalChip(
+                              'Manter',
+                              'maintain',
+                              selectedGoal,
+                              (v) => setState(() => selectedGoal = v),
+                            ),
+                            const SizedBox(width: 12),
+                            _buildGoalChip(
+                              'Ganhar',
+                              'gain',
+                              selectedGoal,
+                              (v) => setState(() => selectedGoal = v),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final weight = double.tryParse(weightController.text);
+                      final height = double.tryParse(heightController.text);
+                      final age = int.tryParse(ageController.text);
+
+                      if (nameController.text.isNotEmpty &&
+                          weight != null &&
+                          height != null &&
+                          age != null) {
+                        final updatedUser = state.user.copyWith(
+                          name: nameController.text,
+                          weight: weight,
+                          height: height,
+                          age: age,
+                          goal: selectedGoal,
+                        );
+                        context.read<UserBloc>().add(UpdateUser(updatedUser));
+                        Navigator.pop(dialogContext);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primary,
+                      foregroundColor: AppTheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: TextField(
-                        controller: heightController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Altura (cm)',
-                        ),
+                    child: Text(
+                      'Salvar',
+                      style: GoogleFonts.manrope(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: ageController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Idade'),
-                ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  initialValue: selectedGoal,
-                  decoration: const InputDecoration(labelText: 'Objetivo'),
-                  items: const [
-                    DropdownMenuItem(value: 'lose', child: Text('Perder peso')),
-                    DropdownMenuItem(
-                      value: 'maintain',
-                      child: Text('Manter peso'),
-                    ),
-                    DropdownMenuItem(value: 'gain', child: Text('Ganhar peso')),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() => selectedGoal = value);
-                    }
-                  },
+                  ),
                 ),
               ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final weight = double.tryParse(weightController.text);
-                final height = double.tryParse(heightController.text);
-                final age = int.tryParse(ageController.text);
+        ),
+      ),
+    );
+  }
 
-                if (nameController.text.isNotEmpty &&
-                    weight != null &&
-                    height != null &&
-                    age != null) {
-                  final updatedUser = state.user.copyWith(
-                    name: nameController.text,
-                    weight: weight,
-                    height: height,
-                    age: age,
-                    goal: selectedGoal,
-                  );
-                  context.read<UserBloc>().add(UpdateUser(updatedUser));
-                  Navigator.pop(dialogContext);
-                }
-              },
-              child: const Text('Salvar'),
-            ),
-          ],
+  Widget _buildGoalChip(
+    String label,
+    String value,
+    String selected,
+    Function(String) onSelect,
+  ) {
+    final isSelected = value == selected;
+    return GestureDetector(
+      onTap: () => onSelect(value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primary : AppTheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.manrope(
+            color: isSelected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

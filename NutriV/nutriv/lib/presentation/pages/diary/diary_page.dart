@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../bloc/meal/meal_bloc.dart';
 import '../../bloc/meal/meal_event.dart';
@@ -28,21 +30,48 @@ class _DiaryPageState extends State<DiaryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            _buildDateSelector(),
-            Expanded(
-              child: BlocBuilder<MealBloc, MealState>(
-                builder: (context, state) {
-                  if (state is MealLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (state is MealLoaded) {
-                    return _buildMealsList(state);
-                  }
-                  return const Center(child: Text('Carregando...'));
-                },
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 60, 24, 0),
+                child: Column(
+                  children: [_buildHeader(), const SizedBox(height: 20)],
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(child: _buildDateSelector()),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: BlocBuilder<MealBloc, MealState>(
+                  builder: (context, state) {
+                    if (state is MealLoading) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(48),
+                          child: CircularProgressIndicator(
+                            color: AppTheme.primary,
+                          ),
+                        ),
+                      );
+                    }
+                    if (state is MealLoaded) {
+                      return _buildMealsList(state);
+                    }
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(48),
+                        child: Text(
+                          'Carregando...',
+                          style: GoogleFonts.manrope(
+                            color: AppTheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],
@@ -51,89 +80,106 @@ class _DiaryPageState extends State<DiaryPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.go('/scanner'),
         backgroundColor: AppTheme.primary,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('Adicionar', style: TextStyle(color: Colors.white)),
+        icon: const Icon(Icons.add, color: AppTheme.onPrimary),
+        label: Text(
+          'Adicionar',
+          style: GoogleFonts.manrope(
+            color: AppTheme.onPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            'Diário',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Diário',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 28,
+            fontWeight: FontWeight.w800,
+            color: AppTheme.onSurface,
           ),
-          IconButton(
-            icon: const Icon(Icons.calendar_month),
-            onPressed: _selectDate,
+        ),
+        GestureDetector(
+          onTap: _selectDate,
+          child: Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(
+              Icons.calendar_today,
+              color: AppTheme.onSurface,
+              size: 20,
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildDateSelector() {
-    return Container(
-      height: 90,
-      padding: const EdgeInsets.symmetric(vertical: 8),
+    return SizedBox(
+      height: 100,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         itemCount: 14,
         itemBuilder: (context, index) {
           final date = DateTime.now().subtract(Duration(days: 13 - index));
           final isSelected = _isSameDay(date, _selectedDate);
+
           return GestureDetector(
             onTap: () {
               setState(() => _selectedDate = date);
               context.read<MealBloc>().add(LoadMeals(date));
             },
             child: Container(
-              width: 50,
+              width: 56,
               margin: const EdgeInsets.symmetric(horizontal: 4),
               decoration: BoxDecoration(
-                color: isSelected ? AppTheme.primary : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: isSelected
-                    ? null
-                    : [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                color: isSelected
+                    ? AppTheme.primary
+                    : AppTheme.surfaceContainerLowest,
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    _getDayName(date.weekday),
-                    style: TextStyle(
-                      color: isSelected ? Colors.white70 : Colors.grey,
+                    DateFormat('E').format(date).substring(0, 3),
+                    style: GoogleFonts.manrope(
+                      color: isSelected
+                          ? AppTheme.onPrimary.withValues(alpha: 0.7)
+                          : AppTheme.onSurfaceVariant,
                       fontSize: 11,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   Text(
                     date.day.toString(),
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black87,
-                      fontWeight: FontWeight.bold,
+                    style: GoogleFonts.plusJakartaSans(
+                      color: isSelected
+                          ? AppTheme.onPrimary
+                          : AppTheme.onSurface,
+                      fontWeight: FontWeight.w700,
                       fontSize: 18,
                     ),
                   ),
+                  const SizedBox(height: 8),
                   if (isSelected)
                     Container(
-                      margin: const EdgeInsets.only(top: 4),
                       width: 20,
                       height: 3,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppTheme.onPrimary,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -149,22 +195,19 @@ class _DiaryPageState extends State<DiaryPage> {
   Widget _buildMealsList(MealLoaded state) {
     final mealTypes = ['Café da manhã', 'Almoço', 'Jantar', 'Lanche'];
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: mealTypes.length,
-      itemBuilder: (context, index) {
-        final mealType = mealTypes[index];
+    return Column(
+      children: mealTypes.map((mealType) {
         final mealsForType = state.getMealsByType(mealType);
 
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            color: AppTheme.surfaceContainerLowest,
+            borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -178,53 +221,87 @@ class _DiaryPageState extends State<DiaryPage> {
                 children: [
                   Row(
                     children: [
-                      Icon(
-                        _getMealIcon(mealType),
-                        color: AppTheme.primary,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        mealType,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(12),
                         ),
+                        child: Icon(
+                          _getMealIcon(mealType),
+                          color: AppTheme.primary,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            mealType,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.onSurface,
+                            ),
+                          ),
+                          if (mealsForType.isNotEmpty)
+                            Text(
+                              '${mealsForType.fold<double>(0, (sum, m) => sum + m.totalCalories).toInt()} kcal',
+                              style: GoogleFonts.manrope(
+                                fontSize: 12,
+                                color: AppTheme.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                        ],
                       ),
                     ],
                   ),
-                  if (mealsForType.isNotEmpty)
+                  if (mealsForType.isEmpty)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
+                        horizontal: 12,
+                        vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.primary.withValues(alpha: 0.1),
+                        color: AppTheme.surfaceContainerLow,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Text(
-                        '${mealsForType.fold<double>(0, (sum, m) => sum + m.totalCalories).toInt()} kcal',
-                        style: const TextStyle(
-                          color: AppTheme.primary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.add,
+                            size: 16,
+                            color: AppTheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Add',
+                            style: GoogleFonts.manrope(
+                              fontSize: 12,
+                              color: AppTheme.onSurfaceVariant,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               if (mealsForType.isEmpty)
                 GestureDetector(
                   onTap: () => context.go('/scanner'),
                   child: Container(
-                    padding: const EdgeInsets.all(16),
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
-                      borderRadius: BorderRadius.circular(12),
+                      color: AppTheme.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.grey.shade200,
+                        color: AppTheme.outlineVariant,
                         style: BorderStyle.solid,
                       ),
                     ),
@@ -233,12 +310,15 @@ class _DiaryPageState extends State<DiaryPage> {
                       children: [
                         Icon(
                           Icons.add_circle_outline,
-                          color: Colors.grey.shade400,
+                          color: AppTheme.onSurfaceVariant,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'Adicionar refeição',
-                          style: TextStyle(color: Colors.grey.shade600),
+                          style: GoogleFonts.manrope(
+                            color: AppTheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),
@@ -246,18 +326,21 @@ class _DiaryPageState extends State<DiaryPage> {
                 )
               else
                 ...mealsForType.map(
-                  (meal) => MealCard(
-                    meal: meal,
-                    onTap: () {},
-                    onDelete: () {
-                      context.read<MealBloc>().add(DeleteMeal(meal.id));
-                    },
+                  (meal) => Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: MealCard(
+                      meal: meal,
+                      onTap: () {},
+                      onDelete: () {
+                        context.read<MealBloc>().add(DeleteMeal(meal.id));
+                      },
+                    ),
                   ),
                 ),
             ],
           ),
         );
-      },
+      }).toList(),
     );
   }
 
@@ -278,11 +361,6 @@ class _DiaryPageState extends State<DiaryPage> {
 
   bool _isSameDay(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
-
-  String _getDayName(int weekday) {
-    const days = ['', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-    return days[weekday];
   }
 
   Future<void> _selectDate() async {
