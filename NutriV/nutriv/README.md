@@ -109,5 +109,8 @@ dependencies:
 MIT License
 
 ## 👨‍💻 Autor
+Fernando Santos Viana
+Douglas
+Jhonathan
 
 Desenvolvido com ❤️ usando Flutter
