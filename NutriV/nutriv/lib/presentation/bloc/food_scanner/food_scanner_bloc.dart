@@ -1,16 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/datasources/ai_food_service.dart';
+import '../../../data/datasources/usda_food_service.dart';
 import 'food_scanner_event.dart';
 import 'food_scanner_state.dart';
 
 class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
   final AiFoodService _aiFoodService;
+  final UsdaFoodService _usdaFoodService;
 
-  FoodScannerBloc(this._aiFoodService) : super(FoodScannerInitial()) {
+  FoodScannerBloc(this._aiFoodService, this._usdaFoodService)
+    : super(FoodScannerInitial()) {
     on<AnalyzeImage>(_onAnalyzeImage);
     on<AnalyzeText>(_onAnalyzeText);
+    on<SearchFoodByName>(_onSearchFoodByName);
     on<ClearScannedFoods>(_onClearScannedFoods);
     on<SelectFood>(_onSelectFood);
+    on<DeselectFood>(_onDeselectFood);
     on<UpdateFoodPortion>(_onUpdateFoodPortion);
     on<RemoveSelectedFood>(_onRemoveSelectedFood);
   }
@@ -57,6 +62,27 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
     }
   }
 
+  Future<void> _onSearchFoodByName(
+    SearchFoodByName event,
+    Emitter<FoodScannerState> emit,
+  ) async {
+    emit(FoodScannerLoading());
+    try {
+      final foods = await _usdaFoodService.searchFoodByName(event.query);
+      if (foods.isEmpty) {
+        emit(
+          const FoodScannerError(
+            'Nenhum alimento encontrado. Tente outro nome.',
+          ),
+        );
+      } else {
+        emit(FoodScannerAnalyzed(scannedFoods: foods));
+      }
+    } catch (e) {
+      emit(FoodScannerError(e.toString()));
+    }
+  }
+
   void _onClearScannedFoods(
     ClearScannedFoods event,
     Emitter<FoodScannerState> emit,
@@ -68,6 +94,16 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
     final currentState = state;
     if (currentState is FoodScannerAnalyzed) {
       final updatedSelected = [...currentState.selectedFoods, event.food];
+      emit(currentState.copyWith(selectedFoods: updatedSelected));
+    }
+  }
+
+  void _onDeselectFood(DeselectFood event, Emitter<FoodScannerState> emit) {
+    final currentState = state;
+    if (currentState is FoodScannerAnalyzed) {
+      final updatedSelected = currentState.selectedFoods
+          .where((f) => f.id != event.food.id)
+          .toList();
       emit(currentState.copyWith(selectedFoods: updatedSelected));
     }
   }

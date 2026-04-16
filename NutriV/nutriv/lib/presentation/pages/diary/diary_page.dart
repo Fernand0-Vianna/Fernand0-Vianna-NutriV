@@ -5,8 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../bloc/meal/meal_bloc.dart';
 import '../../bloc/meal/meal_event.dart';
 import '../../bloc/meal/meal_state.dart';
-import '../../bloc/user/user_bloc.dart';
-import '../../bloc/user/user_state.dart';
 import '../../widgets/meal_card.dart';
 import '../../../core/theme/app_theme.dart';
 
@@ -52,7 +50,7 @@ class _DiaryPageState extends State<DiaryPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.go('/scanner'),
-        backgroundColor: AppTheme.primaryColor,
+        backgroundColor: AppTheme.primary,
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text('Adicionar', style: TextStyle(color: Colors.white)),
       ),
@@ -98,7 +96,7 @@ class _DiaryPageState extends State<DiaryPage> {
               width: 50,
               margin: const EdgeInsets.symmetric(horizontal: 4),
               decoration: BoxDecoration(
-                color: isSelected ? AppTheme.primaryColor : Colors.white,
+                color: isSelected ? AppTheme.primary : Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: isSelected
                     ? null
@@ -182,7 +180,7 @@ class _DiaryPageState extends State<DiaryPage> {
                     children: [
                       Icon(
                         _getMealIcon(mealType),
-                        color: AppTheme.primaryColor,
+                        color: AppTheme.primary,
                         size: 20,
                       ),
                       const SizedBox(width: 8),
@@ -202,13 +200,13 @@ class _DiaryPageState extends State<DiaryPage> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                        color: AppTheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         '${mealsForType.fold<double>(0, (sum, m) => sum + m.totalCalories).toInt()} kcal',
                         style: const TextStyle(
-                          color: AppTheme.primaryColor,
+                          color: AppTheme.primary,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -288,6 +286,7 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Future<void> _selectDate() async {
+    final bloc = context.read<MealBloc>();
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
@@ -296,7 +295,7 @@ class _DiaryPageState extends State<DiaryPage> {
     );
     if (picked != null) {
       setState(() => _selectedDate = picked);
-      context.read<MealBloc>().add(LoadMeals(picked));
+      bloc.add(LoadMeals(picked));
     }
   }
 }

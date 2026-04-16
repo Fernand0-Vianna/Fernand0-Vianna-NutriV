@@ -42,11 +42,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF00C853), Color(0xFF00E676)],
+            colors: [AppTheme.primary, AppTheme.primaryDim],
           ),
         ),
         child: SafeArea(
@@ -131,7 +131,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         children: [
           const Row(
             children: [
-              Icon(Icons.person_outline, color: AppTheme.primaryColor),
+              Icon(Icons.person_outline, color: AppTheme.primary),
               SizedBox(width: 8),
               Text(
                 'Seu Perfil',
@@ -200,7 +200,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         children: [
           const Row(
             children: [
-              Icon(Icons.wc, color: AppTheme.primaryColor),
+              Icon(Icons.wc, color: AppTheme.primary),
               SizedBox(width: 8),
               Text(
                 'Gênero',
@@ -246,7 +246,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: selected ? AppTheme.primaryColor : Colors.grey.shade100,
+          color: selected ? AppTheme.primary : Colors.grey.shade100,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -285,7 +285,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         children: [
           const Row(
             children: [
-              Icon(Icons.directions_run, color: AppTheme.primaryColor),
+              Icon(Icons.directions_run, color: AppTheme.primary),
               SizedBox(width: 8),
               Text(
                 'Nível de Atividade',
@@ -295,7 +295,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<int>(
-            value: _activityLevel,
+            initialValue: _activityLevel,
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey.shade50,
@@ -338,7 +338,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         children: [
           const Row(
             children: [
-              Icon(Icons.flag, color: AppTheme.primaryColor),
+              Icon(Icons.flag, color: AppTheme.primary),
               SizedBox(width: 8),
               Text(
                 'Seu Objetivo',
@@ -374,7 +374,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: selected ? AppTheme.primaryColor : Colors.grey.shade100,
+          color: selected ? AppTheme.primary : Colors.grey.shade100,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -427,7 +427,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             onPressed: _saveProfile,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              foregroundColor: AppTheme.primaryColor,
+              foregroundColor: AppTheme.primary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),

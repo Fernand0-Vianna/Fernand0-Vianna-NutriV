@@ -27,6 +27,15 @@ class AnalyzeText extends FoodScannerEvent {
   List<Object?> get props => [text];
 }
 
+class SearchFoodByName extends FoodScannerEvent {
+  final String query;
+
+  const SearchFoodByName(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}
+
 class ClearScannedFoods extends FoodScannerEvent {}
 
 class SelectFood extends FoodScannerEvent {
@@ -52,6 +61,15 @@ class RemoveSelectedFood extends FoodScannerEvent {
   final FoodItem food;
 
   const RemoveSelectedFood(this.food);
+
+  @override
+  List<Object?> get props => [food];
+}
+
+class DeselectFood extends FoodScannerEvent {
+  final FoodItem food;
+
+  const DeselectFood(this.food);
 
   @override
   List<Object?> get props => [food];

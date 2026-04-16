@@ -169,12 +169,19 @@ class _ScannerPageState extends State<ScannerPage> {
   }
 
   Widget _buildFoodItem(FoodItem food) {
+    final scannerState = context.read<FoodScannerBloc>().state;
+    if (scannerState is! FoodScannerAnalyzed) {
+      return const SizedBox.shrink();
+    }
+    final isSelected = scannerState.selectedFoods.any((f) => f.id == food.id);
     return Card(
       child: CheckboxListTile(
-        value: false,
+        value: isSelected,
         onChanged: (selected) {
           if (selected == true) {
             context.read<FoodScannerBloc>().add(SelectFood(food));
+          } else {
+            context.read<FoodScannerBloc>().add(DeselectFood(food));
           }
         },
         title: Text(food.name),
@@ -190,7 +197,7 @@ class _ScannerPageState extends State<ScannerPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: DropdownButtonFormField<String>(
-        value: _selectedMealType,
+        initialValue: _selectedMealType,
         decoration: const InputDecoration(labelText: 'Tipo de refeição'),
         items: const [
           DropdownMenuItem(

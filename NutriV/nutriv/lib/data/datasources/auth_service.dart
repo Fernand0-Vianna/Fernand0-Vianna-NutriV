@@ -1,4 +1,5 @@
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart';
 import '../../domain/entities/user.dart';
 import '../repositories/user_repository.dart';
 
@@ -16,8 +17,7 @@ class AuthService {
         return null;
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      await googleUser.authentication;
 
       final user = User(
         id: googleUser.id,
@@ -40,7 +40,9 @@ class AuthService {
       await _userRepository.saveUser(user);
       return user;
     } catch (e) {
-      print('Error signing in with Google: $e');
+      if (kDebugMode) {
+        debugPrint('Error signing in with Google: $e');
+      }
       return null;
     }
   }

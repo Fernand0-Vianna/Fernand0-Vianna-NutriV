@@ -54,7 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: const EdgeInsets.all(24),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppTheme.primaryColor, Color(0xFF00E676)],
+          colors: [AppTheme.primary, Color(0xFF00E676)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -117,12 +117,12 @@ class _ProfilePageState extends State<ProfilePage> {
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.edit, size: 18, color: AppTheme.primaryColor),
+                  Icon(Icons.edit, size: 18, color: AppTheme.primary),
                   SizedBox(width: 8),
                   Text(
                     'Editar Perfil',
                     style: TextStyle(
-                      color: AppTheme.primaryColor,
+                      color: AppTheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -155,7 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           const Row(
             children: [
-              Icon(Icons.flag, color: AppTheme.primaryColor),
+              Icon(Icons.flag, color: AppTheme.primary),
               SizedBox(width: 8),
               Text(
                 'Metas Diárias',
@@ -168,7 +168,7 @@ class _ProfilePageState extends State<ProfilePage> {
             'Calorias',
             state.user.calorieGoal,
             'kcal',
-            AppTheme.primaryColor,
+            AppTheme.primary,
           ),
           const SizedBox(height: 12),
           _buildGoalRow(
@@ -240,7 +240,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           const Row(
             children: [
-              Icon(Icons.analytics, color: AppTheme.primaryColor),
+              Icon(Icons.analytics, color: AppTheme.primary),
               SizedBox(width: 8),
               Text(
                 'Estatísticas',
@@ -338,7 +338,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildSettingsItem(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
-      leading: Icon(icon, color: AppTheme.primaryColor),
+      leading: Icon(icon, color: AppTheme.primary),
       title: Text(title),
       trailing: const Icon(Icons.chevron_right, color: Colors.grey),
       onTap: onTap,
@@ -414,7 +414,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: selectedGoal,
+                  initialValue: selectedGoal,
                   decoration: const InputDecoration(labelText: 'Objetivo'),
                   items: const [
                     DropdownMenuItem(value: 'lose', child: Text('Perder peso')),

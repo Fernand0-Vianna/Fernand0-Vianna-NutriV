@@ -78,7 +78,7 @@ class MainShell extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppTheme.primaryColor.withValues(alpha: 0.1)
+              ? AppTheme.primary.withValues(alpha: 0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
         ),
@@ -87,7 +87,7 @@ class MainShell extends StatelessWidget {
           children: [
             Icon(
               isSelected ? activeIcon : icon,
-              color: isSelected ? AppTheme.primaryColor : Colors.grey,
+              color: isSelected ? AppTheme.primary : Colors.grey,
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -95,7 +95,7 @@ class MainShell extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: isSelected ? AppTheme.primaryColor : Colors.grey,
+                color: isSelected ? AppTheme.primary : Colors.grey,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
             ),

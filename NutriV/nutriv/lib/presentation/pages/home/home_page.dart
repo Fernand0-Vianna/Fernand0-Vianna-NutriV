@@ -8,7 +8,6 @@ import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_state.dart';
 import '../../bloc/water/water_bloc.dart';
 import '../../bloc/water/water_event.dart';
-import '../../widgets/macro_card.dart';
 import '../../widgets/calorie_ring.dart';
 import '../../widgets/meal_card.dart';
 import '../../widgets/water_tracker_widget.dart';
@@ -73,12 +72,12 @@ class _HomePageState extends State<HomePage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppTheme.primaryColor, Color(0xFF00E676)],
+        gradient: LinearGradient(
+          colors: [AppTheme.primary, AppTheme.primaryDim],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
         children: [
@@ -138,7 +137,6 @@ class _HomePageState extends State<HomePage> {
           consumed = mealState.totalCalories;
         }
 
-        final progress = goal > 0 ? consumed / goal : 0.0;
         final remaining = (goal - consumed).clamp(0, goal);
 
         return Container(
@@ -159,9 +157,9 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Calorias',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -169,13 +167,13 @@ class _HomePageState extends State<HomePage> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                      color: AppTheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       '${remaining.toInt()} restantes',
-                      style: const TextStyle(
-                        color: AppTheme.primaryColor,
+                      style: TextStyle(
+                        color: AppTheme.primary,
                         fontWeight: FontWeight.w600,
                         fontSize: 12,
                       ),
@@ -330,9 +328,9 @@ class _HomePageState extends State<HomePage> {
             ),
             TextButton(
               onPressed: () {},
-              child: const Text(
+              child: Text(
                 'Ver mais',
-                style: TextStyle(color: AppTheme.primaryColor),
+                style: TextStyle(color: AppTheme.primary),
               ),
             ),
           ],

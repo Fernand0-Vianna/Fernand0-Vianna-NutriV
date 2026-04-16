@@ -34,7 +34,7 @@ dependencies:
   mobile_scanner: ^7.0.1
   
   # Voice Input
-  speech_to_text: ^7.0.0
+
   
   # Charts
   fl_chart: ^0.71.0
@@ -47,7 +47,7 @@ dependencies:
 
   # Firebase
   firebase_core: ^3.13.0
-  firebase_auth: ^5.5.2
+  cloud_firestore: ^5.6.6
   google_sign_in: ^6.2.2
 
   # Supabase

@@ -29,13 +29,13 @@ class CalorieRing extends StatelessWidget {
                   sections: [
                     PieChartSectionData(
                       value: percentage * 100,
-                      color: AppTheme.primaryColor,
+                      color: AppTheme.primary,
                       radius: 18,
                       showTitle: false,
                     ),
                     PieChartSectionData(
                       value: (1 - percentage) * 100,
-                      color: Colors.grey.shade200,
+                      color: AppTheme.surfaceContainerHigh,
                       radius: 18,
                       showTitle: false,
                     ),
@@ -68,7 +68,7 @@ class CalorieRing extends StatelessWidget {
             _buildInfoColumn(
               'Consumidas',
               '${consumed.toInt()}',
-              AppTheme.primaryColor,
+              AppTheme.primary,
             ),
             _buildInfoColumn(
               'Restantes',

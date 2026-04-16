@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/di/injection.dart';
+import 'data/repositories/meal_repository.dart';
 import 'presentation/bloc/user/user_bloc.dart';
 import 'presentation/bloc/user/user_event.dart';
 import 'presentation/bloc/meal/meal_bloc.dart';
@@ -28,16 +30,15 @@ void main() async {
   try {
     await dotenv.load(fileName: '.env');
   } catch (e) {
-    // Use fallback values if .env file is not found in debug
+    debugPrint('Warning: Could not load .env file: $e');
   }
 
   try {
-    await Supabase.initialize(
-      url: dotenv.env['SUPABASE_URL'] ?? 'https://placeholder.supabase.co',
-      anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? 'placeholder_key',
-    );
+    await Firebase.initializeApp();
+    final firestore = FirebaseFirestore.instance;
+    getIt<MealRepository>().setFirestore(firestore);
   } catch (e) {
-    // Continue without Supabase if initialization fails
+    debugPrint('Warning: Could not initialize Firebase: $e');
   }
 
   await setupDependencies();
