@@ -22,52 +22,40 @@ class SyncMealRepository {
     return [];
   }
 
-  Future<void> syncToSupabase(Meal meal) async {
+  List<Meal> getMealsByDate(DateTime date) {
+    final meals = getAllMeals();
+    return meals
+        .where(
+          (m) =>
+              m.dateTime.year == date.year &&
+              m.dateTime.month == date.month &&
+              m.dateTime.day == date.day,
+        )
+        .toList();
+  }
+
+  Future<void> deleteMeal(String mealId) async {
+    final meals = getAllMeals();
+    meals.removeWhere((m) => m.id == mealId);
+    await _saveLocal(meals);
+
+    // Delete do Supabase - deleta todos os food_logs relacionados a esta refeição
     try {
-      await _supabase.from('meals').upsert({
-        'id': meal.id,
-        'name': meal.name,
-        'date_time': meal.dateTime.toIso8601String(),
-        'meal_type': meal.mealType,
-        'foods': jsonEncode(
-          meal.foods
-              .map(
-                (f) => {
-                  'id': f.id,
-                  'food': {
-                    'id': f.food.id,
-                    'name': f.food.name,
-                    'calories': f.food.calories,
-                    'protein': f.food.protein,
-                    'carbs': f.food.carbs,
-                    'fat': f.food.fat,
-                    'portion': f.food.portion,
-                  },
-                  'quantity': f.quantity,
-                },
-              )
-              .toList(),
-        ),
-        'notes': meal.notes,
-        'user_id': _supabase.auth.currentUser?.id,
-      });
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId != null) {
+        await _supabase
+            .from('food_logs')
+            .delete()
+            .eq('user_id', userId)
+            .eq('meal_type', mealId); // usando meal_id como identificador
+      }
     } catch (e) {
-      // Ignora erro de sync
+      debugPrint('Erro ao deletar do Supabase: $e');
     }
   }
 
-  Future<void> saveMeal(Meal meal) async {
-    final meals = getAllMeals();
-    final index = meals.indexWhere((m) => m.id == meal.id);
-
-    if (index >= 0) {
-      meals[index] = meal;
-    } else {
-      meals.add(meal);
-    }
-
-    await _saveLocal(meals);
-    await syncToSupabase(meal);
+  Future<void> updateMeal(Meal meal) async {
+    await saveMeal(meal);
   }
 
   Future<void> _saveLocal(List<Meal> meals) async {
@@ -77,45 +65,188 @@ class SyncMealRepository {
     await _prefs.setString(_localMealsKey, jsonEncode(mealsJson));
   }
 
-  Stream<List<Meal>> watchMeals() {
-    return _supabase
-        .from('meals')
-        .stream(primaryKey: ['id'])
-        .map((maps) => maps.map((m) => _parseSupabaseMeal(m)).toList());
+  Future<void> saveMeal(Meal meal) async {
+    // 1. Salvar localmente
+    final meals = getAllMeals();
+    final index = meals.indexWhere((m) => m.id == meal.id);
+
+    if (index >= 0) {
+      meals[index] = meal;
+    } else {
+      meals.add(meal);
+    }
+    await _saveLocal(meals);
+
+    // 2. Sincronizar com Supabase
+    await _syncMealToSupabase(meal);
   }
 
-  Meal _parseSupabaseMeal(Map<String, dynamic> map) {
-    final foods = <MealFood>[];
-    if (map['foods'] != null) {
-      final List<dynamic> foodsList = map['foods'] is String
-          ? jsonDecode(map['foods'])
-          : map['foods'];
-      for (var f in foodsList) {
-        foods.add(
-          MealFood(
-            id: f['id'],
-            food: FoodItem(
-              id: f['food']['id'],
-              name: f['food']['name'],
-              calories: (f['food']['calories'] as num).toDouble(),
-              protein: (f['food']['protein'] as num).toDouble(),
-              carbs: (f['food']['carbs'] as num).toDouble(),
-              fat: (f['food']['fat'] as num).toDouble(),
-              portion: (f['food']['portion'] as num).toDouble(),
+  Future<void> _syncMealToSupabase(Meal meal) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) {
+        debugPrint('Sync: Usuário não autenticado');
+        return;
+      }
+
+      final date =
+          '${meal.dateTime.year}-${meal.dateTime.month.toString().padLeft(2, '0')}-${meal.dateTime.day.toString().padLeft(2, '0')}';
+
+      // Para cada alimento na refeição, criar/atualizar um food_log
+      for (final mealFood in meal.foods) {
+        // Primeiro, garantir que o alimento existe na tabela foods
+        String foodId = await _ensureFoodExists(mealFood.food, userId);
+
+        // Inserir/atualizar o food_log
+        await _supabase.from('food_logs').upsert({
+          'user_id': userId,
+          'food_id': foodId,
+          'quantity': mealFood.quantity,
+          'meal_type': meal.mealType
+              .toLowerCase(), // breakfast, lunch, dinner, snack
+          'date': date,
+        }, onConflict: 'user_id,food_id,date,meal_type');
+      }
+
+      debugPrint('Sync: Refeição ${meal.name} sincronizada com sucesso');
+    } catch (e) {
+      debugPrint('Sync: Erro ao sincronizar refeição: $e');
+    }
+  }
+
+  Future<String> _ensureFoodExists(FoodItem food, String userId) async {
+    try {
+      // Tentar encontrar alimento existente pelo nome
+      final existing = await _supabase
+          .from('foods')
+          .select('id')
+          .eq('name', food.name)
+          .maybeSingle();
+
+      if (existing != null) {
+        return existing['id'] as String;
+      }
+
+      // Criar novo alimento
+      final result = await _supabase
+          .from('foods')
+          .insert({
+            'name': food.name,
+            'calories': food.calories,
+            'protein': food.protein,
+            'carbs': food.carbs,
+            'fat': food.fat,
+            'serving_size': food.portion,
+            'created_by': userId,
+          })
+          .select('id')
+          .single();
+
+      return result['id'] as String;
+    } catch (e) {
+      debugPrint('Erro ao garantir existência do alimento: $e');
+      // Retornar ID temporário em caso de erro
+      return food.id;
+    }
+  }
+
+  Stream<List<Meal>> watchMeals() {
+    final userId = _supabase.auth.currentUser?.id;
+    if (userId == null) return Stream.value([]);
+
+    return _supabase
+        .from('food_logs')
+        .stream(primaryKey: ['id'])
+        .eq('user_id', userId)
+        .asyncMap((logs) => _parseFoodLogsToMeals(logs));
+  }
+
+  Future<List<Meal>> _parseFoodLogsToMeals(
+    List<Map<String, dynamic>> logs,
+  ) async {
+    // Agrupar logs por data e meal_type
+    final Map<String, List<Map<String, dynamic>>> grouped = {};
+
+    for (final log in logs) {
+      final date = log['date'] as String;
+      final mealType = log['meal_type'] as String;
+      final key = '$date-$mealType';
+
+      grouped.putIfAbsent(key, () => []);
+      grouped[key]!.add(log);
+    }
+
+    final List<Meal> meals = [];
+
+    for (final entry in grouped.entries) {
+      final foods = <MealFood>[];
+
+      for (final log in entry.value) {
+        // Buscar detalhes do alimento
+        final foodData = await _supabase
+            .from('foods')
+            .select()
+            .eq('id', log['food_id'])
+            .maybeSingle();
+
+        if (foodData != null) {
+          foods.add(
+            MealFood(
+              id: log['id'] as String,
+              food: FoodItem(
+                id: foodData['id'] as String,
+                name: foodData['name'] as String,
+                calories: (foodData['calories'] as num).toDouble(),
+                protein: (foodData['protein'] as num?)?.toDouble() ?? 0,
+                carbs: (foodData['carbs'] as num?)?.toDouble() ?? 0,
+                fat: (foodData['fat'] as num?)?.toDouble() ?? 0,
+                portion: (foodData['serving_size'] as num?)?.toDouble() ?? 100,
+              ),
+              quantity: (log['quantity'] as num).toDouble(),
             ),
-            quantity: (f['quantity'] as num).toDouble(),
+          );
+        }
+      }
+
+      if (foods.isNotEmpty) {
+        final parts = entry.key.split('-');
+        final date = DateTime.parse(parts[0]);
+        final mealType = parts[1];
+
+        meals.add(
+          Meal(
+            id: entry.key,
+            name: _getMealName(mealType),
+            dateTime: date,
+            mealType: mealType,
+            foods: foods,
+            notes: null,
           ),
         );
       }
     }
 
-    return Meal(
-      id: map['id'],
-      name: map['name'],
-      dateTime: DateTime.parse(map['date_time']),
-      mealType: map['meal_type'],
-      foods: foods,
-      notes: map['notes'],
-    );
+    return meals;
   }
+
+  String _getMealName(String mealType) {
+    switch (mealType.toLowerCase()) {
+      case 'breakfast':
+        return 'Café da Manhã';
+      case 'lunch':
+        return 'Almoço';
+      case 'dinner':
+        return 'Jantar';
+      case 'snack':
+        return 'Lanche';
+      default:
+        return 'Refeição';
+    }
+  }
+}
+
+// Helper para debug
+void debugPrint(String message) {
+  // ignore: avoid_print
+  print('[SyncMealRepository] $message');
 }

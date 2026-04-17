@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_state.dart';
 import '../../bloc/user/user_event.dart';
+import '../../../core/di/injection.dart';
+import '../../../data/datasources/auth_service.dart';
 import '../../../core/utils/helpers.dart';
 import '../../../core/theme/app_theme.dart';
 import 'progress_page.dart';
@@ -523,7 +526,31 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: AppTheme.error,
                 ),
               ),
-              onTap: () {},
+              onTap: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Sair'),
+                    content: const Text('Tem certeza que deseja sair?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('Cancelar'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: const Text('Sair'),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirm == true) {
+                  await getIt<AuthService>().signOut();
+                  if (context.mounted) {
+                    context.go('/onboarding');
+                  }
+                }
+              },
             ),
           ),
         ],

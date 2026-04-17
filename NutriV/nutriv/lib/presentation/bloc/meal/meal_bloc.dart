@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../data/repositories/meal_repository.dart';
+import '../../../data/repositories/sync_meal_repository.dart';
 import 'meal_event.dart';
 import 'meal_state.dart';
 
 class MealBloc extends Bloc<MealEvent, MealState> {
-  final MealRepository _mealRepository;
+  final SyncMealRepository _mealRepository;
   DateTime _currentDate = DateTime.now();
 
   MealBloc(this._mealRepository) : super(MealInitial()) {

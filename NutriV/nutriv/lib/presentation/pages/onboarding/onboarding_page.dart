@@ -25,10 +25,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
   final _ageController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   bool _isMale = true;
   int _activityLevel = 1;
   String _goal = 'maintain';
+  bool _showEmailLogin = false;
 
   @override
   void dispose() {
@@ -36,6 +39,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     _weightController.dispose();
     _heightController.dispose();
     _ageController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -60,18 +65,32 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 32),
                         _buildHeader(),
                         const SizedBox(height: 32),
-                        _buildProfileCard(),
-                        const SizedBox(height: 20),
-                        _buildGenderCard(),
-                        const SizedBox(height: 20),
-                        _buildActivityCard(),
-                        const SizedBox(height: 20),
-                        _buildGoalCard(),
+                        _showEmailLogin
+                            ? _buildEmailLoginCard()
+                            : _buildLoginButtons(),
+                        const SizedBox(height: 24),
+                        _showEmailLogin
+                            ? const SizedBox.shrink()
+                            : _buildDivider(),
+                        const SizedBox(height: 24),
+                        _showEmailLogin
+                            ? const SizedBox.shrink()
+                            : _buildProfileCard(),
+                        if (!_showEmailLogin) ...[
+                          const SizedBox(height: 20),
+                          _buildGenderCard(),
+                          const SizedBox(height: 20),
+                          _buildActivityCard(),
+                          const SizedBox(height: 20),
+                          _buildGoalCard(),
+                        ],
                         const SizedBox(height: 32),
-                        _buildStartButton(),
+                        _showEmailLogin
+                            ? _buildEmailLoginButton()
+                            : _buildStartButton(),
                         const SizedBox(height: 24),
                       ],
                     ),
@@ -93,7 +112,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           height: 80,
           decoration: BoxDecoration(
             color: AppTheme.primaryContainer,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(32),
             boxShadow: [
               BoxShadow(
                 color: AppTheme.primary.withValues(alpha: 0.2),
@@ -102,11 +121,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ),
             ],
           ),
-          child: const Icon(
-            Icons.restaurant_menu,
-            size: 40,
-            color: AppTheme.primary,
-          ),
+          child: const Icon(Icons.eco, size: 48, color: AppTheme.primary),
         ),
         const SizedBox(height: 24),
         Text(
@@ -130,12 +145,67 @@ class _OnboardingPageState extends State<OnboardingPage> {
     );
   }
 
-  Widget _buildProfileCard() {
+  Widget _buildLoginButtons() {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton.icon(
+              onPressed: _signInWithGoogle,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.surfaceContainerLow,
+                foregroundColor: AppTheme.onSurface,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+                elevation: 0,
+              ),
+              icon: const Icon(Icons.g_mobiledata, size: 24),
+              label: Text(
+                'Continuar com Google',
+                style: GoogleFonts.manrope(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextButton(
+            onPressed: () => setState(() => _showEmailLogin = !_showEmailLogin),
+            child: Text(
+              _showEmailLogin ? 'Voltar' : 'Entrar com e-mail',
+              style: GoogleFonts.manrope(
+                color: AppTheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmailLoginCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -148,7 +218,148 @@ class _OnboardingPageState extends State<OnboardingPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Seu Perfil',
+            'Entrar',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              labelText: 'E-mail',
+              hintText: 'nome@exemplo.com',
+              prefixIcon: const Icon(Icons.mail_outline),
+              filled: true,
+              fillColor: AppTheme.surfaceContainerLow,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            validator: (v) => Validators.validateEmail(v),
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: 'Senha',
+              hintText: '••••••••',
+              prefixIcon: const Icon(Icons.lock_outline),
+              filled: true,
+              fillColor: AppTheme.surfaceContainerLow,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            validator: (v) => Validators.validateRequired(v, 'Senha'),
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () {
+                _showForgotPasswordDialog();
+              },
+              child: Text(
+                'Esqueceu a senha?',
+                style: GoogleFonts.manrope(
+                  color: AppTheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmailLoginButton() {
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: ElevatedButton(
+            onPressed: _signInWithEmail,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primary,
+              foregroundColor: AppTheme.onPrimary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(28),
+              ),
+              elevation: 0,
+            ),
+            child: Text(
+              'Entrar',
+              style: GoogleFonts.manrope(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextButton(
+          onPressed: () => setState(() => _showEmailLogin = false),
+          child: Text(
+            'Voltar',
+            style: GoogleFonts.manrope(
+              color: AppTheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDivider() {
+    return Row(
+      children: [
+        const Expanded(child: Divider(color: AppTheme.outlineVariant)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'OU CADASTRE-SE',
+            style: GoogleFonts.manrope(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.onSurfaceVariant,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+        const Expanded(child: Divider(color: AppTheme.outlineVariant)),
+      ],
+    );
+  }
+
+  Widget _buildProfileCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Crie sua conta',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -161,6 +372,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             decoration: InputDecoration(
               labelText: 'Nome',
               hintText: 'Seu nome',
+              prefixIcon: const Icon(Icons.person_outline),
               filled: true,
               fillColor: AppTheme.surfaceContainerLow,
               border: OutlineInputBorder(
@@ -191,6 +403,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   decoration: InputDecoration(
                     labelText: 'Peso (kg)',
                     hintText: '70',
+                    prefixIcon: const Icon(Icons.monitor_weight_outlined),
                     filled: true,
                     fillColor: AppTheme.surfaceContainerLow,
                     border: OutlineInputBorder(
@@ -214,6 +427,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   decoration: InputDecoration(
                     labelText: 'Altura (cm)',
                     hintText: '170',
+                    prefixIcon: const Icon(Icons.height),
                     filled: true,
                     fillColor: AppTheme.surfaceContainerLow,
                     border: OutlineInputBorder(
@@ -238,6 +452,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             decoration: InputDecoration(
               labelText: 'Idade',
               hintText: '25',
+              prefixIcon: const Icon(Icons.cake_outlined),
               filled: true,
               fillColor: AppTheme.surfaceContainerLow,
               border: OutlineInputBorder(
@@ -261,7 +476,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -351,7 +566,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -408,7 +623,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -485,71 +700,105 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget _buildStartButton() {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: _signInWithGoogle,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.surfaceContainerLow,
-              foregroundColor: AppTheme.onSurface,
-              padding: const EdgeInsets.symmetric(vertical: 18),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-              elevation: 0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.g_mobiledata, size: 24),
-                const SizedBox(width: 12),
-                Text(
-                  'Continuar com Google',
-                  style: GoogleFonts.manrope(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: _saveProfile,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppTheme.primary,
+          foregroundColor: AppTheme.onPrimary,
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
           ),
+          elevation: 0,
         ),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: _saveProfile,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primary,
-              foregroundColor: AppTheme.onPrimary,
-              padding: const EdgeInsets.symmetric(vertical: 18),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-              elevation: 0,
-            ),
-            child: Text(
-              'Começar',
-              style: GoogleFonts.manrope(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
+        child: Text(
+          'Começar',
+          style: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.w700),
         ),
-      ],
+      ),
     );
   }
 
-  Future<void> _signInWithGoogle() async {
-    final authService = getIt<AuthService>();
-    final user = await authService.signInWithGoogle();
+  void _showForgotPasswordDialog() {
+    final emailController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Recuperar Senha'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Digite seu e-mail para receber o link de recuperação.'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                labelText: 'E-mail',
+                hintText: 'nome@exemplo.com',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (emailController.text.isNotEmpty) {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Link de recuperação enviado para seu e-mail!',
+                    ),
+                  ),
+                );
+              }
+            },
+            child: const Text('Enviar'),
+          ),
+        ],
+      ),
+    );
+  }
 
-    if (user != null && mounted) {
-      context.read<UserBloc>().add(SaveUser(user));
-      context.go('/');
+  Future<void> _signInWithEmail() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Preencha e-mail e senha')));
+      return;
+    }
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Login com e-mail em breve!')));
+  }
+
+  Future<void> _signInWithGoogle() async {
+    try {
+      final authService = getIt<AuthService>();
+      final user = await authService.signInWithGoogle();
+
+      if (user != null && mounted) {
+        context.read<UserBloc>().add(SaveUser(user));
+        context.go('/');
+      } else if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Login cancelado')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro ao fazer login: $e')));
+      }
     }
   }
 

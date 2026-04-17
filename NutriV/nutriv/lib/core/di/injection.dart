@@ -45,12 +45,13 @@ Future<void> setupDependencies() async {
     AuthService(getIt<GoogleSignIn>(), getIt<UserRepository>()),
   );
 
-  getIt.registerSingleton<MealRepository>(
-    MealRepository(getIt<SharedPreferences>()),
-  );
-
   getIt.registerSingleton<SyncMealRepository>(
     SyncMealRepository(getIt<SharedPreferences>(), Supabase.instance.client),
+  );
+
+  // Mantido para compatibilidade com código legado
+  getIt.registerSingleton<MealRepository>(
+    MealRepository(getIt<SharedPreferences>()),
   );
 
   getIt.registerSingleton<DailyLogRepository>(
@@ -59,7 +60,7 @@ Future<void> setupDependencies() async {
 
   getIt.registerFactory<UserBloc>(() => UserBloc(getIt<UserRepository>()));
 
-  getIt.registerFactory<MealBloc>(() => MealBloc(getIt<MealRepository>()));
+  getIt.registerFactory<MealBloc>(() => MealBloc(getIt<SyncMealRepository>()));
 
   getIt.registerFactory<FoodScannerBloc>(
     () => FoodScannerBloc(getIt<AiFoodService>(), getIt<UsdaFoodService>()),

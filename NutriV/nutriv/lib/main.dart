@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/di/injection.dart';
-import 'data/repositories/meal_repository.dart';
 import 'presentation/bloc/user/user_bloc.dart';
 import 'presentation/bloc/user/user_event.dart';
 import 'presentation/bloc/meal/meal_bloc.dart';
@@ -34,11 +32,13 @@ void main() async {
   }
 
   try {
-    await Firebase.initializeApp();
-    final firestore = FirebaseFirestore.instance;
-    getIt<MealRepository>().setFirestore(firestore);
+    final supabaseUrl = dotenv.env['SUPABASE_URL'];
+    final supabaseKey = dotenv.env['SUPABASE_ANON_KEY'];
+    if (supabaseUrl != null && supabaseKey != null) {
+      await Supabase.initialize(url: supabaseUrl, anonKey: supabaseKey);
+    }
   } catch (e) {
-    debugPrint('Warning: Could not initialize Firebase: $e');
+    debugPrint('Warning: Could not initialize Supabase: $e');
   }
 
   await setupDependencies();

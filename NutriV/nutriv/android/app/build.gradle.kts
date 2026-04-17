@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.nutrivision.nutrivision"
+    namespace = "com.nutriv.nutriv"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

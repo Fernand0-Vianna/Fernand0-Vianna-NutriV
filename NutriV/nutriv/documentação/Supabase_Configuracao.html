@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuração do Supabase - NutriV</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #fff;
+        }
+        
+        h1 {
+            color: #10B981;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #10B981;
+            padding-bottom: 15px;
+        }
+        
+        h2 {
+            color: #059669;
+            font-size: 1.5em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid #10B981;
+        }
+        
+        h3 {
+            color: #047857;
+            font-size: 1.2em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+        
+        code {
+            background: #F3F4F6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
+            color: #DC2626;
+        }
+        
+        pre {
+            background: #1F2937;
+            color: #F9FAFB;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+        
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+        
+        .highlight {
+            background: #D1FAE5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #10B981;
+        }
+        
+        .warning {
+            background: #FEF3C7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #F59E0B;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #E5E7EB;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background: #10B981;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: #F9FAFB;
+        }
+        
+        .flow-diagram {
+            background: #F3F4F6;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+            font-family: 'Consolas', monospace;
+        }
+        
+        .box {
+            background: white;
+            border: 2px solid #10B981;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px auto;
+            max-width: 300px;
+        }
+        
+        .arrow {
+            font-size: 24px;
+            color: #10B981;
+            margin: 5px 0;
+        }
+        
+        .page-break {
+            page-break-after: always;
+        }
+        
+        @media print {
+            body {
+                padding: 20px;
+            }
+            
+            .no-print {
+                display: none;
+            }
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+        }
+        
+        hr {
+            border: none;
+            border-top: 2px solid #E5E7EB;
+            margin: 30px 0;
+        }
+        
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #E5E7EB;
+            text-align: center;
+            color: #6B7280;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="text-align: center; margin-bottom: 30px; padding: 15px; background: #D1FAE5; border-radius: 10px;">
+        <strong>💡 Dica:</strong> Para salvar como PDF, pressione <kbd>Ctrl+P</kbd> (Windows) ou <kbd>Cmd+P</kbd> (Mac) e selecione "Salvar como PDF"
+    </div>
+
+    <h1><span class="emoji">🚀</span> Configuração do Supabase - NutriV</h1>
+    
+    <div class="highlight">
+        <strong>Visão Geral:</strong> Este documento explica de forma simples como o Supabase está configurado no projeto NutriV.
+    </div>
+
+    <h2><span class="emoji">1</span> Dependência</h2>
+    <p>No arquivo <code>pubspec.yaml</code>:</p>
+    <pre><code>dependencies:
+  supabase_flutter: ^2.5.0</code></pre>
+
+    <h2><span class="emoji">2</span> Arquivo de Configuração (.env)</h2>
+    <p>Na raiz do projeto, crie um arquivo <code>.env</code> com:</p>
+    <pre><code>SUPABASE_URL=https://seu-projeto.supabase.co
+SUPABASE_ANON_KEY=sua-chave-publica-aqui</code></pre>
+
+    <div class="warning">
+        <strong>⚠️ Importante:</strong> Nunca compartilhe a chave anon em repositórios públicos!
+    </div>
+
+    <h2><span class="emoji">3</span> Como Funciona a Inicialização</h2>
+    
+    <h3>Padrão Singleton</h3>
+    <p>O Supabase no Flutter usa um padrão chamado <strong>Singleton</strong> - ele se auto-inicializa quando você acessa pela primeira vez.</p>
+    
+    <pre><code>// O cliente é acessado via:
+Supabase.instance.client</code></pre>
+
+    <h3>Fluxo de Inicialização</h3>
+    <div class="flow-diagram">
+        <div class="box">1. main.dart<br><small>Carrega .env (dotenv)</small></div>
+        <div class="arrow">↓</div>
+        <div class="box">2. setupDependencies()<br><small>Injeta SyncMealRepository</small></div>
+        <div class="arrow">↓</div>
+        <div class="box">3. SyncMealRepository<br><small>Recebe Supabase.instance.client</small></div>
+        <div class="arrow">↓</div>
+        <div class="box">4. Supabase<br><small>Auto-inicializa com dados do .env</small></div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2><span class="emoji">4</span> Onde é Usado</h2>
+    
+    <h3>Arquivo: <code>lib/data/repositories/sync_meal_repository.dart</code></h3>
+    <pre><code>class SyncMealRepository {
+  final SupabaseClient _supabase;
+  
+  SyncMealRepository(this._prefs, this._supabase);</code></pre>
+
+    <h3>Funções Principais</h3>
+    
+    <p><strong>Sincronizar Refeição:</strong></p>
+    <pre><code>Future&lt;void&gt; syncToSupabase(Meal meal) async {
+  await _supabase.from('meals').upsert({
+    'id': meal.id,
+    'name': meal.name,
+    'date_time': meal.dateTime.toIso8601String(),
+    'meal_type': meal.mealType,
+    'foods': jsonEncode(meal.foods),
+    'notes': meal.notes,
+    'user_id': _supabase.auth.currentUser?.id,
+  });
+}</code></pre>
+
+    <p><strong>Streaming em Tempo Real:</strong></p>
+    <pre><code>Stream&lt;List&lt;Meal&gt;&gt; watchMeals() {
+  return _supabase
+      .from('meals')
+      .stream(primaryKey: ['id'])
+      .map((maps) => maps.map((m) => _parseSupabaseMeal(m)).toList());
+}</code></pre>
+
+    <h2><span class="emoji">5</span> Injeção de Dependência</h2>
+    
+    <h3>Arquivo: <code>lib/core/di/injection.dart</code></h3>
+    <pre><code>Future&lt;void&gt; setupDependencies() async {
+  // ... outras dependências ...
+  
+  getIt.registerSingleton&lt;SyncMealRepository&gt;(
+    SyncMealRepository(
+      getIt&lt;SharedPreferences&gt;(), 
+      Supabase.instance.client  // ← Cliente Supabase
+    ),
+  );
+}</code></pre>
+
+    <div class="page-break"></div>
+
+    <h2><span class="emoji">6</span> Estrutura da Tabela no Supabase</h2>
+    
+    <h3>Tabela: <code>meals</code></h3>
+    <table>
+        <tr>
+            <th>Campo</th>
+            <th>Tipo</th>
+            <th>Descrição</th>
+        </tr>
+        <tr>
+            <td><code>id</code></td>
+            <td>uuid</td>
+            <td>ID único da refeição</td>
+        </tr>
+        <tr>
+            <td><code>name</code></td>
+            <td>text</td>
+            <td>Nome da refeição</td>
+        </tr>
+        <tr>
+            <td><code>date_time</code></td>
+            <td>timestamp</td>
+            <td>Data e hora</td>
+        </tr>
+        <tr>
+            <td><code>meal_type</code></td>
+            <td>text</td>
+            <td>Tipo (café, almoço, etc)</td>
+        </tr>
+        <tr>
+            <td><code>foods</code></td>
+            <td>json</td>
+            <td>Lista de alimentos</td>
+        </tr>
+        <tr>
+            <td><code>notes</code></td>
+            <td>text</td>
+            <td>Observações</td>
+        </tr>
+        <tr>
+            <td><code>user_id</code></td>
+            <td>uuid</td>
+            <td>ID do usuário (autenticação)</td>
+        </tr>
+    </table>
+
+    <h2><span class="emoji">7</span> Resumo Visual</h2>
+    
+    <div class="flow-diagram">
+<pre style="text-align: left; display: inline-block;">
+┌─────────────────┐
+│   main.dart     │
+│  (inicia app)   │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   .env file     │
+│ (credenciais)   │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  injection.dart │
+│ (registra deps) │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────────────┐
+│   SyncMealRepository    │
+│  (usa Supabase.client)  │
+└────────┬────────────────┘
+         │
+         ▼
+┌─────────────────────────┐
+│    Supabase Cloud       │
+│   (banco de dados)      │
+└─────────────────────────┘
+</pre>
+    </div>
+
+    <h2><span class="emoji">8</span> Observações Importantes</h2>
+    
+    <ul>
+        <li><span class="emoji">✅</span> O Supabase é usado apenas para <strong>sincronização de refeições</strong></li>
+        <li><span class="emoji">✅</span> Dados ficam salvos localmente no <code>SharedPreferences</code> e <code>SQLite</code></li>
+        <li><span class="emoji">✅</span> A autenticação é implícita via <code>auth.currentUser?.id</code></li>
+        <li><span class="emoji">⚠️</span> Se o <code>.env</code> não existir, o Supabase não funcionará</li>
+    </ul>
+
+    <h2><span class="emoji">9</span> Links Úteis</h2>
+    
+    <ul>
+        <li><a href="https://supabase.com/docs/guides/getting-started/tutorials/with-flutter">Documentação Supabase Flutter</a></li>
+        <li><a href="https://supabase.com/dashboard">Dashboard do Supabase</a></li>
+    </ul>
+
+    <hr>
+
+    <div class="footer">
+        <p><strong>Documento gerado em:</strong> Abril 2026</p>
+        <p><strong>Projeto:</strong> NutriV</p>
+        <p><strong>Caminho:</strong> <code>/nutriv/documentação/</code></p>
+    </div>
+</body>
+</html>
