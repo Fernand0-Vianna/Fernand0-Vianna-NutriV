@@ -5,6 +5,10 @@
 [build.environment]
   FLUTTER_VERSION = "stable"
 
+# Supabase Configuration (substitua pelos valores reais no Netlify Dashboard)
+  SUPABASE_URL = "https://lkfefyucixmcrmpvcazg.supabase.co"
+  # SUPABASE_ANON_KEY deve ser configurada no Netlify Dashboard como variável sensível
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

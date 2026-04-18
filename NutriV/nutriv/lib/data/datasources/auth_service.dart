@@ -1,61 +1,109 @@
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
-import '../../domain/entities/user.dart';
+import '../../domain/entities/user.dart' as app;
 import '../repositories/user_repository.dart';
 
 class AuthService {
-  final GoogleSignIn _googleSignIn;
+  final SupabaseClient _supabase;
   final UserRepository _userRepository;
 
-  AuthService(this._googleSignIn, this._userRepository);
+  AuthService(this._supabase, this._userRepository);
 
-  Future<User?> signInWithGoogle() async {
+  Future<app.User?> signInWithEmail(String email, String password) async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-      if (googleUser == null) {
-        return null;
-      }
-
-      await googleUser.authentication;
-
-      final user = User(
-        id: googleUser.id,
-        name: googleUser.displayName ?? 'Usuário',
-        email: googleUser.email,
-        photoUrl: googleUser.photoUrl,
-        weight: 0,
-        height: 0,
-        age: 0,
-        isMale: true,
-        activityLevel: 1,
-        goal: 'maintain',
-        calorieGoal: 2000,
-        proteinGoal: 150,
-        carbsGoal: 250,
-        fatGoal: 65,
-        waterGoal: 2000,
-        createdAt: DateTime.now(),
+      final response = await _supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
       );
-      await _userRepository.saveUser(user);
-      return user;
+
+      if (response.user != null) {
+        final user = _createUserFromSupabase(response.user!);
+        await _userRepository.saveUser(user);
+        return user;
+      }
+      return null;
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('Error signing in with Google: $e');
+        debugPrint('Error signing in with email: $e');
       }
       return null;
     }
   }
 
-  Future<void> signOut() async {
-    await _googleSignIn.signOut();
+  Future<app.User?> signUpWithEmail(String email, String password) async {
+    try {
+      final response = await _supabase.auth.signUp(
+        email: email,
+        password: password,
+      );
+
+      if (response.user != null) {
+        final user = _createUserFromSupabase(response.user!);
+        await _userRepository.saveUser(user);
+        return user;
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error signing up with email: $e');
+      }
+      return null;
+    }
   }
 
-  User? getCurrentUser() {
+  Future<bool> signInWithGoogle() async {
+    try {
+      await _supabase.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: 'https://nutrivisionh.netlify.app/',
+      );
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error signing in with Google: $e');
+      }
+      return false;
+    }
+  }
+
+  Future<void> signOut() async {
+    await _supabase.auth.signOut();
+    _userRepository.clearUser();
+  }
+
+  app.User? getCurrentUser() {
+    final currentUser = _supabase.auth.currentUser;
+    if (currentUser != null) {
+      return _createUserFromSupabase(currentUser);
+    }
     return _userRepository.getUser();
   }
 
   bool isSignedIn() {
-    return _googleSignIn.currentUser != null;
+    return _supabase.auth.currentUser != null;
+  }
+
+  app.User _createUserFromSupabase(User supabaseUser) {
+    return app.User(
+      id: supabaseUser.id,
+      name:
+          supabaseUser.userMetadata?['name'] ??
+          supabaseUser.email?.split('@').first ??
+          'Usuário',
+      email: supabaseUser.email,
+      photoUrl: supabaseUser.userMetadata?['avatar_url'],
+      weight: 0,
+      height: 0,
+      age: 0,
+      isMale: true,
+      activityLevel: 1,
+      goal: 'maintain',
+      calorieGoal: 2000,
+      proteinGoal: 150,
+      carbsGoal: 250,
+      fatGoal: 65,
+      waterGoal: 2000,
+      createdAt: DateTime.now(),
+    );
   }
 }

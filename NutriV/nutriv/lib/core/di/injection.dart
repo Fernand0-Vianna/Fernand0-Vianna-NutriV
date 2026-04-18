@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../data/datasources/local_data_source.dart';
@@ -28,7 +27,6 @@ Future<void> setupDependencies() async {
 
   getIt.registerSingleton<SharedPreferences>(prefs);
   getIt.registerSingleton<Dio>(Dio());
-  getIt.registerSingleton<GoogleSignIn>(GoogleSignIn());
 
   getIt.registerSingleton<LocalDataSource>(
     LocalDataSource(getIt<SharedPreferences>()),
@@ -42,14 +40,13 @@ Future<void> setupDependencies() async {
   );
 
   getIt.registerSingleton<AuthService>(
-    AuthService(getIt<GoogleSignIn>(), getIt<UserRepository>()),
+    AuthService(Supabase.instance.client, getIt<UserRepository>()),
   );
 
   getIt.registerSingleton<SyncMealRepository>(
     SyncMealRepository(getIt<SharedPreferences>(), Supabase.instance.client),
   );
 
-  // Mantido para compatibilidade com código legado
   getIt.registerSingleton<MealRepository>(
     MealRepository(getIt<SharedPreferences>()),
   );

@@ -492,15 +492,27 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       child: Column(
         children: [
-          _buildSettingsItem(Icons.person_outline, 'Meu Perfil', () {}),
+          _buildSettingsItem(
+            Icons.person_outline,
+            'Meu Perfil',
+            () => _showProfileInfo(context),
+          ),
           _buildSettingsItem(
             Icons.notifications_outlined,
             'Notificações',
-            () {},
+            () => _showNotificationsSettings(context),
             badge: '3',
           ),
-          _buildSettingsItem(Icons.favorite_outline, 'Favoritos', () {}),
-          _buildSettingsItem(Icons.settings_outlined, 'Configurações', () {}),
+          _buildSettingsItem(
+            Icons.favorite_outline,
+            'Favoritos',
+            () => _showFavorites(context),
+          ),
+          _buildSettingsItem(
+            Icons.settings_outlined,
+            'Configurações',
+            () => _showAppSettings(context),
+          ),
           const SizedBox(height: 8),
           Container(
             width: double.infinity,
@@ -554,6 +566,287 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showProfileInfo(BuildContext context) {
+    final userState = context.read<UserBloc>().state;
+    if (userState is! UserLoaded) return;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: AppTheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Informações do Perfil',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _infoRow('Nome', userState.user.name),
+            _infoRow('E-mail', userState.user.email ?? 'Não cadastrado'),
+            _infoRow('Peso', '${userState.user.weight} kg'),
+            _infoRow('Altura', '${userState.user.height} cm'),
+            _infoRow('Idade', '${userState.user.age} anos'),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _infoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant)),
+          Text(value, style: GoogleFonts.manrope(fontWeight: FontWeight.w600, color: AppTheme.onSurface)),
+        ],
+      ),
+    );
+  }
+
+  void _showNotificationsSettings(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setState) {
+          bool mealReminders = true;
+          bool waterReminders = true;
+          bool goalAlerts = true;
+          return Container(
+            padding: const EdgeInsets.all(24),
+            decoration: const BoxDecoration(
+              color: AppTheme.surfaceContainerLowest,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppTheme.outlineVariant,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Notificações',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _switchTile('Lembrete de Refeições', mealReminders, (v) => setState(() => mealReminders = v)),
+                _switchTile('Lembrete de Água', waterReminders, (v) => setState(() => waterReminders = v)),
+                _switchTile('Alertas de Meta', goalAlerts, (v) => setState(() => goalAlerts = v)),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Configurações salvas!', style: GoogleFonts.manrope()),
+                          backgroundColor: AppTheme.primary,
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primary,
+                      foregroundColor: AppTheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    ),
+                    child: Text('Salvar', style: GoogleFonts.manrope(fontWeight: FontWeight.w700)),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _switchTile(String label, bool value, Function(bool) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: GoogleFonts.manrope(color: AppTheme.onSurface)),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: AppTheme.primary,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showFavorites(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        height: MediaQuery.of(context).size.height * 0.6,
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: AppTheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Alimentos Favoritos',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.favorite_border, size: 64, color: AppTheme.onSurfaceVariant.withValues(alpha: 0.5)),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Nenhum favorito ainda',
+                      style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Adicione alimentos aos favoritos\npara encontrá-los mais rápido',
+                      style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant, fontSize: 12),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAppSettings(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: AppTheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Configurações',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ListTile(
+              leading: const Icon(Icons.dark_mode_outlined, color: AppTheme.primary),
+              title: Text('Tema Escuro', style: GoogleFonts.manrope(color: AppTheme.onSurface)),
+              trailing: Switch(
+                value: false,
+                onChanged: (v) {},
+                activeColor: AppTheme.primary,
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.language, color: AppTheme.primary),
+              title: Text('Idioma', style: GoogleFonts.manrope(color: AppTheme.onSurface)),
+              trailing: Text('Português', style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant)),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outline, color: AppTheme.primary),
+              title: Text('Sobre', style: GoogleFonts.manrope(color: AppTheme.onSurface)),
+              trailing: const Icon(Icons.chevron_right, color: AppTheme.onSurfaceVariant),
+              onTap: () {
+                showAboutDialog(
+                  context: context,
+                  applicationName: 'NutriV',
+                  applicationVersion: '1.0.0',
+                  applicationLegalese: '© 2024 NutriV',
+                );
+              },
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }

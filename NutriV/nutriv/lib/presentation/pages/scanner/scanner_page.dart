@@ -12,6 +12,7 @@ import '../../bloc/meal/meal_event.dart';
 import '../../../domain/entities/meal.dart';
 import '../../../domain/entities/food_item.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../widgets/voice_input_widget.dart';
 import 'barcode_scan_page.dart';
 
 class ScannerPage extends StatefulWidget {
@@ -197,6 +198,13 @@ class _ScannerPageState extends State<ScannerPage> {
                   label: 'Buscar Alimento',
                   subtitle: 'Pesquise pelo nome',
                   onTap: _showSearchDialog,
+                ),
+                const SizedBox(height: 16),
+                _buildOptionButton(
+                  icon: Icons.mic,
+                  label: 'Entrada por Voz',
+                  subtitle: 'Diga o nome do alimento',
+                  onTap: () => showVoiceInput(context),
                 ),
               ],
             ),

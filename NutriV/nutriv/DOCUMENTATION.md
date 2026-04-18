@@ -47,3 +47,17 @@ cloud_firestore: ^5.6.6
 O app usa Supabase para sincronização de dados:
 - URL: `https://lkfefyucixmcrmpvcazg.supabase.co`
 - Chave ANON configurada no arquivo `.env`
+
+## Netlify Deploy
+
+O projeto está configurado para deploy no Netlify:
+- **Site**: http://nutrivisionh.netlify.app
+- **Configuração**: `netlify.toml` na raiz do projeto
+- **Build**: `flutter build web --release`
+- **Publish directory**: `build/web`
+
+### Deploy manual
+```bash
+flutter build web --release
+# Ou use o Netlify CLI: netlify deploy --prod
+```

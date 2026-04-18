@@ -20,6 +20,7 @@ import 'presentation/pages/scanner/scanner_page.dart';
 import 'presentation/pages/profile/profile_page.dart';
 import 'presentation/pages/profile/progress_page.dart';
 import 'presentation/pages/onboarding/onboarding_page.dart';
+import 'presentation/pages/auth/auth_callback_page.dart';
 import 'presentation/pages/main/main_shell.dart';
 
 void main() async {
@@ -85,6 +86,10 @@ final _router = GoRouter(
     GoRoute(
       path: '/onboarding',
       builder: (context, state) => const OnboardingPage(),
+    ),
+    GoRoute(
+      path: '/auth/callback',
+      builder: (context, state) => const AuthCallbackPage(),
     ),
     ShellRoute(
       builder: (context, state, child) => MainShell(child: child),

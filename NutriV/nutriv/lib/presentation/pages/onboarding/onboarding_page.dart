@@ -775,30 +775,71 @@ class _OnboardingPageState extends State<OnboardingPage> {
       return;
     }
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Login com e-mail em breve!')));
+    if (!_emailController.text.contains('@') ||
+        !_emailController.text.contains('.')) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('E-mail inválido')));
+      return;
+    }
+
+    if (_passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Senha deve ter pelo menos 6 caracteres')),
+      );
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Criando conta...'),
+        duration: Duration(seconds: 1),
+      ),
+    );
+
+    final user = User(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: _emailController.text.split('@').first,
+      email: _emailController.text,
+      weight: double.tryParse(_weightController.text) ?? 70,
+      height: double.tryParse(_heightController.text) ?? 170,
+      age: int.tryParse(_ageController.text) ?? 25,
+      isMale: _isMale,
+      activityLevel: _activityLevel,
+      goal: _goal,
+      calorieGoal: 2000,
+      proteinGoal: 120,
+      carbsGoal: 250,
+      fatGoal: 65,
+      waterGoal: 2000,
+      createdAt: DateTime.now(),
+    );
+
+    if (mounted) {
+      context.read<UserBloc>().add(SaveUser(user));
+      context.go('/');
+    }
   }
 
   Future<void> _signInWithGoogle() async {
-    try {
-      final authService = getIt<AuthService>();
-      final user = await authService.signInWithGoogle();
+    final authService = getIt<AuthService>();
+    final success = await authService.signInWithGoogle();
 
-      if (user != null && mounted) {
+    if (success && mounted) {
+      final user = authService.getCurrentUser();
+      if (user != null) {
         context.read<UserBloc>().add(SaveUser(user));
         context.go('/');
-      } else if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Login cancelado')));
+      } else {
+        // Aguardando redirect do OAuth
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Redirecionando para login Google...')),
+        );
       }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Erro ao fazer login: $e')));
-      }
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao iniciar login com Google')),
+      );
     }
   }
 

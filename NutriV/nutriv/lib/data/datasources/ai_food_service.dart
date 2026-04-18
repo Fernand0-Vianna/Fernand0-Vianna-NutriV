@@ -63,9 +63,9 @@ class AiFoodService {
               .toList();
         }
       }
-      return [];
+      throw Exception('Resposta inválida da API');
     } catch (e) {
-      debugPrint('Error analyzing food image: $e, trying OpenAI');
+      debugPrint('Gemini image failed: $e, trying OpenAI');
       try {
         final bytes = await imageFile.readAsBytes();
         final base64Image = base64Encode(bytes);
@@ -103,10 +103,11 @@ class AiFoodService {
                 .toList();
           }
         }
+        throw Exception('OpenAI resposta inválida');
       } catch (e2) {
         debugPrint('OpenAI image failed: $e2');
+        return [];
       }
-      return [];
     }
   }
 
@@ -151,9 +152,9 @@ class AiFoodService {
               .toList();
         }
       }
-      return [];
+      throw Exception('Resposta inválida da API');
     } catch (e) {
-      debugPrint('Error analyzing food from text: $e, trying OpenAI');
+      debugPrint('Gemini failed: $e, trying OpenAI');
       try {
         final response = await _dio.post(
           'https://api.openai.com/v1/chat/completions',
@@ -180,6 +181,7 @@ class AiFoodService {
                 .toList();
           }
         }
+        throw Exception('OpenAI resposta inválida');
       } catch (e2) {
         debugPrint('OpenAI failed: $e2, trying OpenFoodFacts');
       }

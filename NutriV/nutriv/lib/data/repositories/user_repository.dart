@@ -19,6 +19,10 @@ class UserRepository {
     await _localDataSource.deleteUser();
   }
 
+  void clearUser() {
+    _localDataSource.deleteUser();
+  }
+
   bool hasUser() {
     return _localDataSource.getUser() != null;
   }

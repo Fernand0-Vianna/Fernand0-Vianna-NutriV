@@ -263,17 +263,31 @@ class _HomePageState extends State<HomePage> {
         _buildQuickActionButton(
           icon: Icons.qr_code_scanner,
           label: 'Scan',
-          onTap: () {},
+          onTap: () => context.go('/scanner'),
         ),
         _buildQuickActionButton(
           icon: Icons.bar_chart_rounded,
           label: 'Stats',
-          onTap: () {},
+          onTap: () => context.go('/progress'),
         ),
         _buildQuickActionButton(
           icon: Icons.restaurant_menu,
           label: 'Receitas',
-          onTap: () {},
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Em breve!',
+                  style: GoogleFonts.manrope(),
+                ),
+                backgroundColor: AppTheme.primary,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            );
+          },
         ),
       ],
     );
