@@ -1,0 +1,378 @@
+{
+  "nodes": [
+    {
+      "id": "nutriv",
+      "type": "text",
+      "text": "🔵 NutriV\nApp Flutter\nControle Alimentar + IA\n\n→ [[NutriV_Anotacoes_Gerais]]",
+      "x": 0,
+      "y": 0,
+      "width": 220,
+      "height": 100
+    },
+    {
+      "id": "tech",
+      "type": "text",
+      "text": "💻 Tech Stack\n\nFlutter 3.11+\nDart\nBLoC Pattern\ngo_router\nDio (HTTP)\n\n→ [[Estado_Atual#Tech]]",
+      "x": -350,
+      "y": -250,
+      "width": 180,
+      "height": 130
+    },
+    {
+      "id": "backend",
+      "type": "text",
+      "text": "☁️ Backend\n\nSupabase\n( PostgreSQL )\nGoogle Sign-In\nOAuth\n\n→ [[Estado_Atual#Backend]]",
+      "x": 350,
+      "y": -250,
+      "width": 180,
+      "height": 110
+    },
+    {
+      "id": "storage",
+      "type": "text",
+      "text": "💾 Armazenamento\n\nSharedPreferences\n(Dados locais)\nSQLite (futuro)\n\n→ [[Estado_Atual]]",
+      "x": 350,
+      "y": -80,
+      "width": 180,
+      "height": 80
+    },
+    {
+      "id": "gemini",
+      "type": "text",
+      "text": "🤖 Google Gemini\n2.0 Flash\n\n→ Análise imagem\n→ Identificação alimentos\n→ JSON nutritional\n\n→ [[Lista_Adicoes]]",
+      "x": -200,
+      "y": -350,
+      "width": 180,
+      "height": 110
+    },
+    {
+      "id": "openai",
+      "type": "text",
+      "text": "🧠 OpenAI\n\nGPT-4o-mini\n\n→ Fallback Gemini\n→ Análise texto\n\n→ [[Lista_Adicoes]]",
+      "x": -350,
+      "y": -350,
+      "width": 140,
+      "height": 90
+    },
+    {
+      "id": "usda",
+      "type": "text",
+      "text": "🌾 USDA\n\nFoodData Central\n\n→ Busca alimentos\n→ Dados nutricionais\n→ API oficial EUA\n\n→ [[Lista_Adicoes]]",
+      "x": 50,
+      "y": -350,
+      "width": 180,
+      "height": 100
+    },
+    {
+      "id": "off",
+      "type": "text",
+      "text": "📦 OpenFoodFacts\n\n→ Código barras\n→ Fallback geral\n→ Dados gratuitos\n\n→ [[Lista_Adicoes]]",
+      "x": 250,
+      "y": -350,
+      "width": 160,
+      "height": 80
+    },
+    {
+      "id": "ai_service",
+      "type": "text",
+      "text": "🔌 AiFoodService\n\n→ Gemini API\n→ OpenAI API\n→ _extractJson()\n→ Fallback chain\n\n→ [[Lista_Adicoes#services]]",
+      "x": -250,
+      "y": -150,
+      "width": 180,
+      "height": 100
+    },
+    {
+      "id": "usda_service",
+      "type": "text",
+      "text": "🔌 UsdaFoodService\n\n→ USDA API v1\n→ searchFoodByName()\n→ getFoodById()\n\n→ [[Lista_Adicoes#services]]",
+      "x": 50,
+      "y": -150,
+      "width": 180,
+      "height": 80
+    },
+    {
+      "id": "auth_service",
+      "type": "text",
+      "text": "🔐 AuthService\n\n→ GoogleSignIn\n→ signIn() / signOut()\n→ getTokens()\n\n→ [[Lista_Adicoes#services]]",
+      "x": 250,
+      "y": -150,
+      "width": 160,
+      "height": 80
+    },
+    {
+      "id": "local_ds",
+      "type": "text",
+      "text": "💿 LocalDataSource\n\n→ SharedPreferences\n→ getUser() / saveUser()\n→ getMeals() / saveMeal()\n\n→ [[Lista_Adicoes#services]]",
+      "x": 250,
+      "y": 0,
+      "width": 180,
+      "height": 90
+    },
+    {
+      "id": "user_model",
+      "type": "text",
+      "text": "👤 UserModel\n\nid, name, weight\nheight, age, goal\ncalorieGoal\nprotein/carbs/fatGoal\nwaterGoal\n\n→ [[Lista_Adicoes#models]]",
+      "x": -350,
+      "y": 80,
+      "width": 160,
+      "height": 120
+    },
+    {
+      "id": "meal_model",
+      "type": "text",
+      "text": "🍽️ MealModel\n\nid, name, dateTime\nmealType\nfoods (List)\nnotes\n\n→ [[Lista_Adicoes#models]]",
+      "x": -180,
+      "y": 80,
+      "width": 160,
+      "height": 80
+    },
+    {
+      "id": "food_model",
+      "type": "text",
+      "text": "🥗 FoodItemModel\n\nid, name\ncalories, protein\ncarbs, fat\nfiber, sugar, sodium\nportion, barcode\n\n→ [[Lista_Adicoes#models]]",
+      "x": 0,
+      "y": 80,
+      "width": 180,
+      "height": 100
+    },
+    {
+      "id": "user_bloc",
+      "type": "text",
+      "text": "⚡ UserBloc\n\nLoadUser\nSaveUser\nUpdateUser\nDeleteUser\n\n→ UserRepository\n\n→ [[Lista_Adicoes#bocs]]",
+      "x": -250,
+      "y": 200,
+      "width": 180,
+      "height": 100
+    },
+    {
+      "id": "meal_bloc",
+      "type": "text",
+      "text": "⚡ MealBloc\n\nLoadMeals\nAddMeal / UpdateMeal\nDeleteMeal\nAddFoodToMeal\nRemoveFoodFromMeal\n\n→ SyncMealRepository\n\n→ [[Lista_Adicoes#bocs]]",
+      "x": -50,
+      "y": 200,
+      "width": 200,
+      "height": 110
+    },
+    {
+      "id": "water_bloc",
+      "type": "text",
+      "text": "⚡ WaterBloc\n\nLoadWaterIntake\nAddWater / RemoveWater\nSetWaterGoal\nResetWaterIntake\n\n→ SharedPreferences\n\n→ [[Lista_Adicoes#controle-de-água]]",
+      "x": 180,
+      "y": 200,
+      "width": 180,
+      "height": 100
+    },
+    {
+      "id": "food_scanner_bloc",
+      "type": "text",
+      "text": "⚡ FoodScannerBloc\n\nAnalyzeImage (IA)\nAnalyzeText (IA)\nSearchFoodByName\nSelectFood / DeselectFood\n\n→ AiFoodService\n→ UsdaFoodService\n\n→ [[Lista_Adicoes#scanner-de-código-de-barras]]",
+      "x": -350,
+      "y": 320,
+      "width": 220,
+      "height": 110
+    },
+    {
+      "id": "barcode_bloc",
+      "type": "text",
+      "text": "⚡ BarcodeScannerBloc\n\nScanBarcode\nProcessBarcode\n\n→ OpenFoodFacts\n\n→ [[Lista_Adicoes#scanner-de-código-de-barras]]",
+      "x": -100,
+      "y": 320,
+      "width": 180,
+      "height": 80
+    },
+    {
+      "id": "home_page",
+      "type": "text",
+      "text": "🏠 Home\n\nDashboard principal\n• CalorieRing\n• Macros cards\n• WaterTracker\n• Meals list\n• QuickActions (BUG)\n\n→ [[Ideias/Ideias_e_Casos_Uso#Caso-3]]",
+      "x": -350,
+      "y": 420,
+      "width": 180,
+      "height": 110
+    },
+    {
+      "id": "diary_page",
+      "type": "text",
+      "text": "📓 Diary\n\nRegistro diário\n• DateSelector (14 dias)\n• MealCards por tipo\n• AddMeal button\n\n→ [[Ideias/Ideias_e_Casos_Uso#Caso-4]]",
+      "x": -150,
+      "y": 420,
+      "width": 160,
+      "height": 90
+    },
+    {
+      "id": "scanner_page",
+      "type": "text",
+      "text": "📷 Scanner\n\nAdicionar alimentos\n• Barcode scan\n• Camera photo\n• Gallery picker\n• Text search\n• MealType selector\n\n→ [[Lista_Adicoes#páginas]]",
+      "x": 30,
+      "y": 420,
+      "width": 180,
+      "height": 100
+    },
+    {
+      "id": "profile_page",
+      "type": "text",
+      "text": "👤 Profile\n\nPerfil usuário\n• Avatar + name\n• Stats (weight/height/age)\n• Goals card\n• Settings list\n• Edit profile modal\n\n→ [[Ideias/Ideias_e_Casos_Uso#Caso-2]]",
+      "x": 230,
+      "y": 420,
+      "width": 180,
+      "height": 100
+    },
+    {
+      "id": "progress_page",
+      "type": "text",
+      "text": "📊 Progress\n\nGráficos progresso\n• Weight chart\n• Calorie trends\n• fl_chart library\n\n→ [[Lista_Adicoes#página-de-progresso]]",
+      "x": 230,
+      "y": 330,
+      "width": 160,
+      "height": 70
+    },
+    {
+      "id": "onboarding",
+      "type": "text",
+      "text": "🎯 Onboarding\n\nTutorial inicial\nFluxo primeiro uso\n\n→ [[Lista_Adicoes#páginas]]",
+      "x": 430,
+      "y": 420,
+      "width": 140,
+      "height": 70
+    },
+    {
+      "id": "voice_widget",
+      "type": "text",
+      "text": "🎤 VoiceInput\n\nWidget criado\n⚠️ NÃO INTEGRADO\nao fluxo principal\n\n→ [[Lista_Melhorias#alta-prioridade]]",
+      "x": 430,
+      "y": 320,
+      "width": 160,
+      "height": 80
+    },
+    {
+      "id": "water_widget",
+      "type": "text",
+      "text": "💧 WaterTracker\n\nWidget funcional\n• Add/Remove water\n• Progress visual\n• Goal tracking\n\n→ [[Lista_Adicoes#controle-de-água]]",
+      "x": 430,
+      "y": 230,
+      "width": 160,
+      "height": 70
+    },
+    {
+      "id": "calorie_ring",
+      "type": "text",
+      "text": "⭕ CalorieRing\n\nVisualização\nconsumo calórico",
+      "x": 430,
+      "y": 130,
+      "width": 140,
+      "height": 60
+    },
+    {
+      "id": "macro_card",
+      "type": "text",
+      "text": "📊 MacroCard\n\nCards de macros\n• Protein / Carbs / Fat\n• Progress bar",
+      "x": 430,
+      "y": 40,
+      "width": 140,
+      "height": 60
+    },
+    {
+      "id": "issues",
+      "type": "text",
+      "text": "⚠️ PROBLEMAS\n\n❌ QuickActions\n   (Scan/Stats/Receitas)\n   não funcionam\n\n❌ VoiceInput\n   não integrado\n\n❌ BarcodeScan\n   parcial\n\n→ [[Lista_Melhorias#priorização]]",
+      "x": -500,
+      "y": 480,
+      "width": 200,
+      "height": 100
+    },
+    {
+      "id": "todo",
+      "type": "text",
+      "text": "📋 TODO\n\n1. Corrigir QuickActions\n2. Integrar VoiceInput\n3. Completar Barcode\n4. Modo offline\n5. Gamificação\n\n→ [[Lista_Melhorias]]",
+      "x": 500,
+      "y": 480,
+      "width": 180,
+      "height": 100
+    },
+    {
+      "id": "firebase_removed",
+      "type": "text",
+      "text": "🔥 Firebase\nREMOVIDO\n\n→ [[Lista_Remocoes]]",
+      "x": 500,
+      "y": 0,
+      "width": 140,
+      "height": 70
+    },
+    {
+      "id": "updates",
+      "type": "text",
+      "text": "🔄 Atualizações\n\n→ [[Atualizacao/Historico_Atualizacoes]]",
+      "x": 500,
+      "y": 100,
+      "width": 160,
+      "height": 60
+    }
+  ],
+  "edges": [
+    {"fromNode": "nutriv", "fromSide": "top", "toNode": "gemini", "toSide": "bottom"},
+    {"fromNode": "nutriv", "fromSide": "top", "toNode": "openai", "toSide": "bottom-right"},
+    {"fromNode": "nutriv", "fromSide": "top", "toNode": "usda", "toSide": "bottom"},
+    {"fromNode": "nutriv", "fromSide": "top", "toNode": "off", "toSide": "bottom-left"},
+    {"fromNode": "nutriv", "fromSide": "top-left", "toNode": "tech", "toSide": "right"},
+    {"fromNode": "nutriv", "fromSide": "top-right", "toNode": "backend", "toSide": "left"},
+    {"fromNode": "nutriv", "fromSide": "right", "toNode": "storage", "toSide": "left"},
+    {"fromNode": "nutriv", "fromSide": "bottom-right", "toNode": "firebase_removed", "toSide": "left"},
+    {"fromNode": "nutriv", "fromSide": "bottom-right", "toNode": "updates", "toSide": "left"},
+    
+    {"fromNode": "gemini", "fromSide": "left", "toNode": "openai", "toSide": "right"},
+    {"fromNode": "gemini", "fromSide": "bottom", "toNode": "ai_service", "toSide": "top"},
+    {"fromNode": "openai", "fromSide": "bottom", "toNode": "ai_service", "toSide": "top-right"},
+    {"fromNode": "usda", "fromSide": "bottom", "toNode": "usda_service", "toSide": "top"},
+    {"fromNode": "off", "fromSide": "bottom-left", "toNode": "usda_service", "toSide": "right"},
+    
+    {"fromNode": "ai_service", "fromSide": "left", "toNode": "tech", "toSide": "bottom"},
+    {"fromNode": "ai_service", "fromSide": "bottom", "toNode": "food_scanner_bloc", "toSide": "top"},
+    {"fromNode": "usda_service", "fromSide": "left", "toNode": "backend", "toSide": "bottom"},
+    {"fromNode": "usda_service", "fromSide": "bottom", "toNode": "food_scanner_bloc", "toSide": "right"},
+    {"fromNode": "auth_service", "fromSide": "top", "toNode": "backend", "toSide": "bottom"},
+    {"fromNode": "auth_service", "fromSide": "bottom", "toNode": "user_bloc", "toSide": "right"},
+    {"fromNode": "storage", "fromSide": "bottom", "toNode": "local_ds", "toSide": "top"},
+    {"fromNode": "local_ds", "fromSide": "bottom", "toNode": "user_model", "toSide": "top-right"},
+    {"fromNode": "local_ds", "fromSide": "bottom-right", "toNode": "meal_model", "toSide": "top"},
+    {"fromNode": "local_ds", "fromSide": "right", "toNode": "water_bloc", "toSide": "left"},
+    
+    {"fromNode": "user_model", "fromSide": "bottom", "toNode": "user_bloc", "toSide": "top"},
+    {"fromNode": "meal_model", "fromSide": "bottom", "toNode": "meal_bloc", "toSide": "top-left"},
+    {"fromNode": "food_model", "fromSide": "top", "toNode": "usda_service", "toSide": "bottom"},
+    {"fromNode": "food_model", "fromSide": "left", "toNode": "ai_service", "toSide": "right"},
+    {"fromNode": "food_model", "fromSide": "bottom", "toNode": "meal_bloc", "toSide": "top"},
+    
+    {"fromNode": "user_bloc", "fromSide": "bottom-left", "toNode": "home_page", "toSide": "top"},
+    {"fromNode": "user_bloc", "fromSide": "bottom-right", "toNode": "profile_page", "toSide": "top-left"},
+    {"fromNode": "meal_bloc", "fromSide": "left", "toNode": "home_page", "toSide": "right"},
+    {"fromNode": "meal_bloc", "fromSide": "right", "toNode": "diary_page", "toSide": "left"},
+    {"fromNode": "meal_bloc", "fromSide": "bottom", "toNode": "scanner_page", "toSide": "top"},
+    {"fromNode": "water_bloc", "fromSide": "left", "toNode": "home_page", "toSide": "bottom-right"},
+    {"fromNode": "water_bloc", "fromSide": "bottom", "toNode": "water_widget", "toSide": "top"},
+    {"fromNode": "food_scanner_bloc", "fromSide": "bottom-left", "toNode": "home_page", "toSide": "left"},
+    {"fromNode": "food_scanner_bloc", "fromSide": "bottom-right", "toNode": "scanner_page", "toSide": "right"},
+    {"fromNode": "food_scanner_bloc", "fromSide": "bottom", "toNode": "voice_widget", "toSide": "top"},
+    {"fromNode": "barcode_bloc", "fromSide": "bottom", "toNode": "scanner_page", "toSide": "left"},
+    
+    {"fromNode": "home_page", "fromSide": "left", "toNode": "issues", "toSide": "right"},
+    {"fromNode": "home_page", "fromSide": "right", "toNode": "calorie_ring", "toSide": "left"},
+    {"fromNode": "home_page", "fromSide": "right", "toNode": "macro_card", "toSide": "left"},
+    {"fromNode": "home_page", "fromSide": "right", "toNode": "profile_page", "toSide": "right"},
+    {"fromNode": "profile_page", "fromSide": "right", "toNode": "progress_page", "toSide": "left"},
+    {"fromNode": "profile_page", "fromSide": "right", "toNode": "onboarding", "toSide": "left"},
+    {"fromNode": "diary_page", "fromSide": "right", "toNode": "scanner_page", "toSide": "left"},
+    {"fromNode": "scanner_page", "fromSide": "right", "toNode": "todo", "toSide": "left"},
+    {"fromNode": "water_widget", "fromSide": "right", "toNode": "todo", "toSide": "left"},
+    {"fromNode": "voice_widget", "fromSide": "right", "toNode": "issues", "toSide": "bottom-left"},
+    {"fromNode": "calorie_ring", "fromSide": "right", "toNode": "macro_card", "toSide": "left"},
+    {"fromNode": "backend", "fromSide": "bottom", "toNode": "storage", "toSide": "right"},
+    {"fromNode": "tech", "fromSide": "bottom", "toNode": "ai_service", "toSide": "top-left"},
+    {"fromNode": "tech", "fromSide": "bottom-right", "toNode": "user_bloc", "toSide": "top"},
+    {"fromNode": "macro_card", "fromSide": "right", "toNode": "calorie_ring", "toSide": "right"},
+    {"fromNode": "issues", "fromSide": "bottom", "toNode": "todo", "toSide": "top"},
+    {"fromNode": "firebase_removed", "fromSide": "right", "toNode": "updates", "toSide": "left"},
+    {"fromNode": "updates", "fromSide": "bottom", "toNode": "todo", "toSide": "top-left"},
+    {"fromNode": "todo", "fromSide": "right", "toNode": "onboarding", "toSide": "bottom"},
+    {"fromNode": "voice_widget", "fromSide": "left", "toNode": "barcode_bloc", "toSide": "right"},
+    {"fromNode": "progress_page", "fromSide": "bottom", "toNode": "profile_page", "toSide": "right"}
+  ]
+}

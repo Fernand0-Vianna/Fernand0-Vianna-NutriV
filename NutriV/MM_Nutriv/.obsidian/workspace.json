@@ -11,10 +11,17 @@
             "id": "9e65fcdfe00055c8",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Visualização em gráfico"
+              "type": "canvas",
+              "state": {
+                "file": "NutriV_Mapa_Mental.canvas",
+                "viewState": {
+                  "x": 37.27230264859301,
+                  "y": 219.50292367190042,
+                  "zoom": -1.1571121672779823
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "NutriV_Mapa_Mental"
             }
           }
         ]
@@ -90,6 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "NutriV_Mapa_Mental.canvas",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -99,7 +107,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Links inversos"
+              "title": "Links inversos para NutriV_Mapa_Mental"
             }
           },
           {
@@ -108,11 +116,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "NutriV_Mapa_Mental.canvas",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Links de saída"
+              "title": "Links de saída para NutriV_Mapa_Mental"
             }
           },
           {
@@ -150,12 +159,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "NutriV_Mapa_Mental.canvas",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Sumário"
+              "title": "Sumário de NutriV_Mapa_Mental"
             }
           }
         ]
@@ -178,6 +188,36 @@
   },
   "active": "9e65fcdfe00055c8",
   "lastOpenFiles": [
-    "Bem-vindo.md"
+    "Indice.md",
+    "referencias/stitch_flutter_ui_design/verdant_health/DESIGN.md",
+    "Atualizacao/Historico_Atualizacoes.md",
+    "referencias/stitch_flutter_ui_design/estat_sticas_refinadas/screen.png",
+    "referencias/stitch_flutter_ui_design/perfil/screen.png",
+    "referencias/stitch_flutter_ui_design/pesquisa/screen.png",
+    "referencias/stitch_flutter_ui_design/tela_de_login/screen.png",
+    "referencias/stitch_flutter_ui_design/tela_inicial/screen.png",
+    "referencias/stitch_flutter_ui_design/tela_inicial_refinada/screen.png",
+    "referencias/Group 4.png",
+    "referencias/Group 3.png",
+    "referencias/Group 2.png",
+    "referencias/Group 1.png",
+    "Ideias/Ideias_e_Casos_Uso.md",
+    "referencias/stitch_flutter_ui_design/tela_inicial/code.html",
+    "referencias/stitch_flutter_ui_design/tela_de_login/code.html",
+    "referencias/stitch_flutter_ui_design/pesquisa/code.html",
+    "referencias/stitch_flutter_ui_design/perfil/code.html",
+    "referencias/stitch_flutter_ui_design/estat_sticas_refinadas/code.html",
+    "referencias/stitch_flutter_ui_design/verdant_health",
+    "referencias/stitch_flutter_ui_design/tela_inicial_refinada",
+    "referencias/stitch_flutter_ui_design/tela_inicial",
+    "referencias/stitch_flutter_ui_design/tela_de_login",
+    "referencias/stitch_flutter_ui_design/pesquisa",
+    "Relatorios/Estado_Atual.md",
+    "Bem-vindo.md",
+    "Remocoes/Lista_Remocoes.md",
+    "NutriV_Mapa_Mental.canvas",
+    "Melhorias/Lista_Melhorias.md",
+    "Anotacoes/NutriV_Anotacoes_Gerais.md",
+    "Adicoes/Lista_Adicoes.md"
   ]
 }
