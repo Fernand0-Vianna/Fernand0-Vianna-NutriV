@@ -11,17 +11,14 @@
             "id": "9e65fcdfe00055c8",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "NutriV_Mapa_Mental.canvas",
-                "viewState": {
-                  "x": -1876.380690334991,
-                  "y": 607.250214814821,
-                  "zoom": -1.5174126137648698
-                }
+                "file": "Anotacoes/NutriV_Anotacoes_Gerais.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "NutriV_Mapa_Mental"
+              "icon": "lucide-file",
+              "title": "NutriV_Anotacoes_Gerais"
             }
           }
         ]
@@ -188,9 +185,14 @@
   },
   "active": "9e65fcdfe00055c8",
   "lastOpenFiles": [
+    "Atualizacao/Historico_Atualizacoes.md",
+    "Falhas_Apk.md",
+    "Melhorias/Lista_Melhorias.md",
+    "Relatorios/Estado_Atual.md",
+    "Ideias/Ideias_e_Casos_Uso.md",
+    "NutriV_Mapa_Mental.canvas",
     "Indice.md",
     "referencias/stitch_flutter_ui_design/verdant_health/DESIGN.md",
-    "Atualizacao/Historico_Atualizacoes.md",
     "referencias/stitch_flutter_ui_design/estat_sticas_refinadas/screen.png",
     "referencias/stitch_flutter_ui_design/perfil/screen.png",
     "referencias/stitch_flutter_ui_design/pesquisa/screen.png",
@@ -201,7 +203,6 @@
     "referencias/Group 3.png",
     "referencias/Group 2.png",
     "referencias/Group 1.png",
-    "Ideias/Ideias_e_Casos_Uso.md",
     "referencias/stitch_flutter_ui_design/tela_inicial/code.html",
     "referencias/stitch_flutter_ui_design/tela_de_login/code.html",
     "referencias/stitch_flutter_ui_design/pesquisa/code.html",
@@ -212,11 +213,8 @@
     "referencias/stitch_flutter_ui_design/tela_inicial",
     "referencias/stitch_flutter_ui_design/tela_de_login",
     "referencias/stitch_flutter_ui_design/pesquisa",
-    "Relatorios/Estado_Atual.md",
     "Bem-vindo.md",
     "Remocoes/Lista_Remocoes.md",
-    "NutriV_Mapa_Mental.canvas",
-    "Melhorias/Lista_Melhorias.md",
     "Anotacoes/NutriV_Anotacoes_Gerais.md",
     "Adicoes/Lista_Adicoes.md"
   ]

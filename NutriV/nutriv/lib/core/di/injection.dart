@@ -3,20 +3,27 @@ import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:equatable/equatable.dart';
 
 import '../../data/datasources/local_data_source.dart';
 import '../../data/datasources/ai_food_service.dart';
 import '../../data/datasources/usda_food_service.dart';
 import '../../data/datasources/auth_service.dart';
 import '../../data/repositories/user_repository.dart';
+import '../../data/repositories/user_profile_repository.dart';
 import '../../data/repositories/meal_repository.dart';
+import '../../data/repositories/meal_repository_v2.dart';
 import '../../data/repositories/daily_log_repository.dart';
 import '../../data/repositories/sync_meal_repository.dart';
+import '../../data/repositories/water_repository.dart';
+import '../../data/repositories/weight_repository.dart';
+import '../../data/repositories/daily_summary_repository.dart';
 import '../../presentation/bloc/user/user_bloc.dart';
 import '../../presentation/bloc/meal/meal_bloc.dart';
 import '../../presentation/bloc/food_scanner/food_scanner_bloc.dart';
 import '../../presentation/bloc/water/water_bloc.dart';
 import '../../presentation/bloc/barcode/barcode_scanner_bloc.dart';
+import '../../presentation/bloc/weight/weight_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -43,6 +50,28 @@ Future<void> setupDependencies() async {
     AuthService(Supabase.instance.client, getIt<UserRepository>()),
   );
 
+  // Novos repositories v2
+  getIt.registerSingleton<UserProfileRepository>(
+    UserProfileRepository(Supabase.instance.client),
+  );
+
+  getIt.registerSingleton<MealRepositoryV2>(
+    MealRepositoryV2(Supabase.instance.client),
+  );
+
+  getIt.registerSingleton<WaterRepository>(
+    WaterRepository(Supabase.instance.client),
+  );
+
+  getIt.registerSingleton<WeightRepository>(
+    WeightRepository(Supabase.instance.client),
+  );
+
+  getIt.registerSingleton<DailySummaryRepository>(
+    DailySummaryRepository(Supabase.instance.client),
+  );
+
+  // Repositories antigos (mantidos para compatibilidade)
   getIt.registerSingleton<SyncMealRepository>(
     SyncMealRepository(getIt<SharedPreferences>(), Supabase.instance.client),
   );
@@ -66,4 +95,6 @@ Future<void> setupDependencies() async {
   getIt.registerFactory<WaterBloc>(() => WaterBloc(getIt<SharedPreferences>()));
 
   getIt.registerFactory<BarcodeScannerBloc>(() => BarcodeScannerBloc());
+
+  getIt.registerFactory<WeightBloc>(() => WeightBloc(getIt<WeightRepository>()));
 }

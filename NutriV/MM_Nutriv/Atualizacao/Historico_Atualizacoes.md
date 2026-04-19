@@ -2,6 +2,84 @@
 
 > Parte do [[NutriV_Anotacoes_Gerais]] | Ver também: [[Estado_Atual]] | [[Lista_Adicoes]] | [[Lista_Remocoes]]
 
+---
+
+## 📅 18 de Abril de 2026 - Grande Atualização (v2.0)
+
+### 🎯 Resumo
+Configuração completa de backend + reestruturação do banco de dados inspirado no FitCal
+
+### ✅ Concluído
+
+#### 1. Netlify + Supabase Configurados
+- **Site**: `nutrivisionh.netlify.app` deployado
+- **Variáveis de ambiente**: `SUPABASE_URL` e `SUPABASE_ANON_KEY` configuradas
+- **URL de callback**: `https://nutrivisionh.netlify.app/` validada
+- **Auth**: Google OAuth funcionando
+
+#### 2. Banco de Dados Reestruturado (v2.0)
+**Baseado no FitCal AI** - 10 tabelas criadas:
+- `user_profiles` - Perfil completo com BMR/TDEE calculados
+- `meals` - Refeições com **AI Scanner support**
+- `meal_items` - Itens dentro de refeições
+- `food_entries` - Diário alimentar
+- `water_intake` - Controle de hidratação
+- `weight_logs` - Histórico de peso (Progress Chart)
+- `daily_summaries` - Resumos **automáticos** (trigger)
+- `activity_logs` - Atividades físicas
+- `ai_recognition_cache` - Cache de reconhecimento de imagens
+- `foods` - Base de alimentos (mantida)
+
+#### 3. Segurança
+- **RLS** ativado em todas as tabelas
+- Políticas: cada usuário só acessa seus dados
+- Triggers automáticos para recalcular summaries
+
+#### 4. Código Flutter - Novos Repositories
+Criados e registrados na DI:
+- `UserProfileRepository` - Perfil e metas
+- `MealRepositoryV2` - Refeições com AI support
+- `WaterRepository` - Água
+- `WeightRepository` - Peso/progresso
+- `DailySummaryRepository` - Resumos diários
+
+#### 5. Models
+- `UserProfileModel` - Converte para/do Supabase
+
+#### 6. Documentação
+- `DATABASE_SCHEMA_V2.md` - Esquema completo
+- `NETLIFY_SUPABASE_SETUP.md` - Guia de configuração
+- `SETUP_CHECKLIST.md` - Checklist de deploy
+
+### 🔧 Arquivos Modificados
+- `netlify.toml` - Configurações de build
+- `lib/data/datasources/auth_service.dart` - Login Google corrigido
+- `lib/main.dart` - Rotas de login atualizadas
+- `lib/core/di/injection.dart` - Novos repositories registrados
+
+### 📦 Arquivos Criados
+```
+lib/
+├── data/
+│   ├── models/user_profile_model.dart
+│   └── repositories/
+│       ├── user_profile_repository.dart
+│       ├── meal_repository_v2.dart
+│       ├── water_repository.dart
+│       ├── weight_repository.dart
+│       └── daily_summary_repository.dart
+├── presentation/pages/auth/auth_callback_page.dart
+└── ...
+```
+
+### 🚀 Próximos Passos
+1. Implementar telas usando novos repositories
+2. Adicionar AI Scanner (foto → análise automática)
+3. Criar gráficos de progresso com `weight_logs`
+4. Implementar water tracking realtime
+
+---
+
 ## Atualizações Realizadas (Cronologia)
 
 ### 1. Migração de Backend

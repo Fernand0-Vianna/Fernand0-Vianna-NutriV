@@ -1,0 +1,47 @@
+redirectsOrigin = "config"
+headers = []
+
+[functions]
+
+[functions."*"]
+
+[[plugins]]
+origin = "ui"
+package = "@netlify/plugin-lighthouse"
+
+[plugins.inputs]
+
+[build]
+publish = "/media/nando/TERA/NutriV/NutriV/nutriv/build/web"
+publishOrigin = "config"
+commandOrigin = "config"
+base = "/media/nando/TERA/NutriV/NutriV/nutriv"
+command = "if [ ! -d \"flutter\" ]; then git clone https://github.com/flutter/flutter.git -b stable --depth 1; fi && export PATH=\"$PATH:`pwd`/flutter/bin\" && flutter config --no-analytics && flutter build web --release"
+
+[build.environment]
+FLUTTER_VERSION = "stable"
+SUPABASE_URL = "https://lkfefyucixmcrmpvcazg.supabase.co"
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]

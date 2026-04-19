@@ -1,6 +1,6 @@
 [build]
   publish = "build/web"
-  command = "git clone https://github.com/flutter/flutter.git -b stable --depth 1 && export PATH=\"$PATH:`pwd`/flutter/bin\" && flutter config --no-analytics && flutter precache && flutter build web --release"
+  command = "if [ ! -d \"flutter\" ]; then git clone https://github.com/flutter/flutter.git -b stable --depth 1; fi && export PATH=\"$PATH:`pwd`/flutter/bin\" && flutter config --no-analytics && flutter build web --release"
 
 [build.environment]
   FLUTTER_VERSION = "stable"

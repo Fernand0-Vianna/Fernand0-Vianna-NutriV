@@ -206,6 +206,13 @@ class _ScannerPageState extends State<ScannerPage> {
                   subtitle: 'Diga o nome do alimento',
                   onTap: () => showVoiceInput(context),
                 ),
+                const SizedBox(height: 16),
+                _buildOptionButton(
+                  icon: Icons.favorite,
+                  label: 'Pratos Favoritos',
+                  subtitle: 'Suas refeições salvas',
+                  onTap: () => _showFavoriteDishes(context),
+                ),
               ],
             ),
           ),
@@ -674,5 +681,87 @@ class _ScannerPageState extends State<ScannerPage> {
     if (result != null && result is FoodItem) {
       _addToMeal([result]);
     }
+  }
+
+  void _showFavoriteDishes(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (dialogContext) => Container(
+        height: MediaQuery.of(context).size.height * 0.6,
+        decoration: const BoxDecoration(
+          color: AppTheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
+          ),
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Pratos Favoritos',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Adicione refeições frequentes como favorito',
+              style: GoogleFonts.manrope(
+                fontSize: 14,
+                color: AppTheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.favorite_border,
+                      size: 64,
+                      color: AppTheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Nenhum prato favorito ainda',
+                      style: GoogleFonts.manrope(
+                        fontSize: 16,
+                        color: AppTheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Salve refeições do histórico',
+                      style: GoogleFonts.manrope(
+                        fontSize: 14,
+                        color: AppTheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
