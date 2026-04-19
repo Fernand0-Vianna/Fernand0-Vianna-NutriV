@@ -14,13 +14,13 @@ import 'presentation/bloc/food_scanner/food_scanner_bloc.dart';
 import 'presentation/bloc/water/water_bloc.dart';
 import 'presentation/bloc/water/water_event.dart';
 import 'presentation/bloc/barcode/barcode_scanner_bloc.dart';
+import 'presentation/pages/login/login_page.dart';
+import 'presentation/pages/login/register_page.dart';
 import 'presentation/pages/home/home_page.dart';
 import 'presentation/pages/diary/diary_page.dart';
 import 'presentation/pages/scanner/scanner_page.dart';
 import 'presentation/pages/profile/profile_page.dart';
 import 'presentation/pages/profile/progress_page.dart';
-import 'presentation/pages/onboarding/onboarding_page.dart';
-import 'presentation/pages/auth/auth_callback_page.dart';
 import 'presentation/pages/main/main_shell.dart';
 
 void main() async {
@@ -81,15 +81,15 @@ class NutriVApp extends StatelessWidget {
 }
 
 final _router = GoRouter(
-  initialLocation: '/onboarding',
+  initialLocation: '/login',
   routes: [
     GoRoute(
-      path: '/onboarding',
-      builder: (context, state) => const OnboardingPage(),
+      path: '/login',
+      builder: (context, state) => const LoginPage(),
     ),
     GoRoute(
-      path: '/auth/callback',
-      builder: (context, state) => const AuthCallbackPage(),
+      path: '/register',
+      builder: (context, state) => const RegisterPage(),
     ),
     ShellRoute(
       builder: (context, state, child) => MainShell(child: child),

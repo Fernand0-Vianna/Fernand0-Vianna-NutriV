@@ -26,28 +26,45 @@ class AuthService {
       if (kDebugMode) {
         debugPrint('Error signing in with email: $e');
       }
-      return null;
+      rethrow;
     }
   }
 
   Future<app.User?> signUpWithEmail(String email, String password) async {
     try {
+      if (kDebugMode) {
+        debugPrint('Attempting to sign up with email: $email');
+      }
+
       final response = await _supabase.auth.signUp(
         email: email,
         password: password,
       );
+
+      if (kDebugMode) {
+        debugPrint('Sign up response: ${response.user}');
+        debugPrint('Session: ${response.session}');
+        debugPrint('User metadata: ${response.user?.userMetadata}');
+      }
 
       if (response.user != null) {
         final user = _createUserFromSupabase(response.user!);
         await _userRepository.saveUser(user);
         return user;
       }
+
+      if (response.session != null) {
+        final user = _createUserFromSupabase(response.user!);
+        await _userRepository.saveUser(user);
+        return user;
+      }
+
       return null;
     } catch (e) {
       if (kDebugMode) {
         debugPrint('Error signing up with email: $e');
       }
-      return null;
+      rethrow;
     }
   }
 
