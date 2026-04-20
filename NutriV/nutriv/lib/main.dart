@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,7 @@ import 'presentation/bloc/food_scanner/food_scanner_bloc.dart';
 import 'presentation/bloc/water/water_bloc.dart';
 import 'presentation/bloc/water/water_event.dart';
 import 'presentation/bloc/barcode/barcode_scanner_bloc.dart';
+import 'presentation/bloc/favorite_dish/favorite_dish_bloc.dart';
 import 'presentation/pages/login/login_page.dart';
 import 'presentation/pages/login/register_page.dart';
 import 'presentation/pages/home/home_page.dart';
@@ -66,6 +68,9 @@ class NutriVApp extends StatelessWidget {
         ),
         BlocProvider<BarcodeScannerBloc>(
           create: (_) => getIt<BarcodeScannerBloc>(),
+        ),
+        BlocProvider<FavoriteDishBloc>(
+          create: (_) => getIt<FavoriteDishBloc>()..add(LoadFavoriteDishes()),
         ),
       ],
       child: MaterialApp.router(

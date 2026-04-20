@@ -11,14 +11,17 @@
             "id": "9e65fcdfe00055c8",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "canvas",
               "state": {
-                "file": "Anotacoes/NutriV_Anotacoes_Gerais.md",
-                "mode": "source",
-                "source": false
+                "file": "NutriV_Mapa_Mental.canvas",
+                "viewState": {
+                  "x": -1326.2450546741575,
+                  "y": 547.781084707547,
+                  "zoom": -1.392841585517866
+                }
               },
-              "icon": "lucide-file",
-              "title": "NutriV_Anotacoes_Gerais"
+              "icon": "lucide-layout-dashboard",
+              "title": "NutriV_Mapa_Mental"
             }
           }
         ]
@@ -185,9 +188,11 @@
   },
   "active": "9e65fcdfe00055c8",
   "lastOpenFiles": [
+    "Sem título.canvas",
+    "Melhorias/Lista_Melhorias.md",
+    "Anotacoes/NutriV_Anotacoes_Gerais.md",
     "Atualizacao/Historico_Atualizacoes.md",
     "Falhas_Apk.md",
-    "Melhorias/Lista_Melhorias.md",
     "Relatorios/Estado_Atual.md",
     "Ideias/Ideias_e_Casos_Uso.md",
     "NutriV_Mapa_Mental.canvas",
@@ -215,7 +220,6 @@
     "referencias/stitch_flutter_ui_design/pesquisa",
     "Bem-vindo.md",
     "Remocoes/Lista_Remocoes.md",
-    "Anotacoes/NutriV_Anotacoes_Gerais.md",
     "Adicoes/Lista_Adicoes.md"
   ]
 }

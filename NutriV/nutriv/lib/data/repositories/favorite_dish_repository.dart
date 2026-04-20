@@ -62,6 +62,13 @@ class FavoriteDishRepository {
     await _supabase.from('favorite_dishes').delete().eq('id', id);
   }
 
+  Future<void> updateTimesUsed(String id, int timesUsed) async {
+    await _supabase.from('favorite_dishes').update({
+      'times_used': timesUsed,
+      'updated_at': DateTime.now().toIso8601String(),
+    }).eq('id', id);
+  }
+
   Future<void> saveDishFromMeal({
     required String name,
     required List<FavoriteDishItem> items,
