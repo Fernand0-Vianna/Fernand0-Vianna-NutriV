@@ -4,7 +4,7 @@ class ApiConstants {
   static String get geminiApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
   static const String geminiBaseUrl =
       'https://generativelanguage.googleapis.com/v1beta';
-  static const String modelName = 'gemini-2.0-flash';
+  static const String modelName = 'gemini-2.5-flash';
 
   static String get openaiApiKey => dotenv.env['OPENAI_API_KEY'] ?? '';
   static const String openaiBaseUrl = 'https://api.openai.com/v1';

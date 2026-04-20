@@ -20,7 +20,7 @@ class AiFoodService {
       final base64Image = base64Encode(bytes);
 
       final response = await _dio.post(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
         queryParameters: {'key': ApiConstants.geminiApiKey},
         data: {
           'contents': [
@@ -114,7 +114,7 @@ class AiFoodService {
   Future<List<FoodItem>> analyzeFoodFromText(String text) async {
     try {
       final response = await _dio.post(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
         queryParameters: {'key': ApiConstants.geminiApiKey},
         data: {
           'contents': [
