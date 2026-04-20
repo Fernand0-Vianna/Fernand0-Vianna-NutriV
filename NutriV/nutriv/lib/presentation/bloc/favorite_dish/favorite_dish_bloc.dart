@@ -58,8 +58,9 @@ class FavoriteDishBloc extends Bloc<FavoriteDishEvent, FavoriteDishState> {
     Emitter<FavoriteDishState> emit,
   ) async {
     try {
-      if (event.dish.id != null) {
-        await _repository.updateTimesUsed(event.dish.id!, (event.dish.timesUsed ?? 0) + 1);
+      final dishId = event.dish.id;
+      if (dishId != null) {
+        await _repository.updateTimesUsed(dishId, event.dish.timesUsed + 1);
         add(LoadFavoriteDishes());
       }
     } catch (e) {

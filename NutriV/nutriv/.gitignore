@@ -36,6 +36,9 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Flutter SDK folder
+/flutter/
+
 # Symbolication related
 app.*.symbols
 

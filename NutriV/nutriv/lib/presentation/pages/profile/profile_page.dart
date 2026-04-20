@@ -625,8 +625,17 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant)),
-          Text(value, style: GoogleFonts.manrope(fontWeight: FontWeight.w600, color: AppTheme.onSurface)),
+          Text(
+            label,
+            style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+          ),
+          Text(
+            value,
+            style: GoogleFonts.manrope(
+              fontWeight: FontWeight.w600,
+              color: AppTheme.onSurface,
+            ),
+          ),
         ],
       ),
     );
@@ -671,9 +680,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _switchTile('Lembrete de Refeições', mealReminders, (v) => setState(() => mealReminders = v)),
-                _switchTile('Lembrete de Água', waterReminders, (v) => setState(() => waterReminders = v)),
-                _switchTile('Alertas de Meta', goalAlerts, (v) => setState(() => goalAlerts = v)),
+                _switchTile(
+                  'Lembrete de Refeições',
+                  mealReminders,
+                  (v) => setState(() => mealReminders = v),
+                ),
+                _switchTile(
+                  'Lembrete de Água',
+                  waterReminders,
+                  (v) => setState(() => waterReminders = v),
+                ),
+                _switchTile(
+                  'Alertas de Meta',
+                  goalAlerts,
+                  (v) => setState(() => goalAlerts = v),
+                ),
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
@@ -682,7 +703,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       Navigator.pop(ctx);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Configurações salvas!', style: GoogleFonts.manrope()),
+                          content: Text(
+                            'Configurações salvas!',
+                            style: GoogleFonts.manrope(),
+                          ),
                           backgroundColor: AppTheme.primary,
                         ),
                       );
@@ -691,9 +715,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       backgroundColor: AppTheme.primary,
                       foregroundColor: AppTheme.onPrimary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
-                    child: Text('Salvar', style: GoogleFonts.manrope(fontWeight: FontWeight.w700)),
+                    child: Text(
+                      'Salvar',
+                      style: GoogleFonts.manrope(fontWeight: FontWeight.w700),
+                    ),
                   ),
                 ),
               ],
@@ -714,7 +743,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
           ),
         ],
       ),
@@ -760,16 +789,25 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.favorite_border, size: 64, color: AppTheme.onSurfaceVariant.withValues(alpha: 0.5)),
+                    Icon(
+                      Icons.favorite_border,
+                      size: 64,
+                      color: AppTheme.onSurfaceVariant.withValues(alpha: 0.5),
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'Nenhum favorito ainda',
-                      style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+                      style: GoogleFonts.manrope(
+                        color: AppTheme.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Adicione alimentos aos favoritos\npara encontrá-los mais rápido',
-                      style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant, fontSize: 12),
+                      style: GoogleFonts.manrope(
+                        color: AppTheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -817,24 +855,42 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 24),
             ListTile(
-              leading: const Icon(Icons.dark_mode_outlined, color: AppTheme.primary),
-              title: Text('Tema Escuro', style: GoogleFonts.manrope(color: AppTheme.onSurface)),
+              leading: const Icon(
+                Icons.dark_mode_outlined,
+                color: AppTheme.primary,
+              ),
+              title: Text(
+                'Tema Escuro',
+                style: GoogleFonts.manrope(color: AppTheme.onSurface),
+              ),
               trailing: Switch(
                 value: false,
                 onChanged: (v) {},
-                activeColor: AppTheme.primary,
+                activeThumbColor: AppTheme.primary,
               ),
             ),
             ListTile(
               leading: const Icon(Icons.language, color: AppTheme.primary),
-              title: Text('Idioma', style: GoogleFonts.manrope(color: AppTheme.onSurface)),
-              trailing: Text('Português', style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant)),
+              title: Text(
+                'Idioma',
+                style: GoogleFonts.manrope(color: AppTheme.onSurface),
+              ),
+              trailing: Text(
+                'Português',
+                style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+              ),
               onTap: () {},
             ),
             ListTile(
               leading: const Icon(Icons.info_outline, color: AppTheme.primary),
-              title: Text('Sobre', style: GoogleFonts.manrope(color: AppTheme.onSurface)),
-              trailing: const Icon(Icons.chevron_right, color: AppTheme.onSurfaceVariant),
+              title: Text(
+                'Sobre',
+                style: GoogleFonts.manrope(color: AppTheme.onSurface),
+              ),
+              trailing: const Icon(
+                Icons.chevron_right,
+                color: AppTheme.onSurfaceVariant,
+              ),
               onTap: () {
                 showAboutDialog(
                   context: context,

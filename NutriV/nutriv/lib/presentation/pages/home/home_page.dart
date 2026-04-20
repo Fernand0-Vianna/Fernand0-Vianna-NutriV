@@ -10,7 +10,6 @@ import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_state.dart';
 import '../../bloc/water/water_bloc.dart';
 import '../../bloc/water/water_event.dart';
-import '../../widgets/calorie_ring.dart';
 import '../../widgets/meal_card.dart';
 import '../../widgets/water_tracker_widget.dart';
 import '../../../core/theme/app_theme.dart';
@@ -276,10 +275,7 @@ class _HomePageState extends State<HomePage> {
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(
-                  'Em breve!',
-                  style: GoogleFonts.manrope(),
-                ),
+                content: Text('Em breve!', style: GoogleFonts.manrope()),
                 backgroundColor: AppTheme.primary,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
@@ -560,7 +556,7 @@ class _HomePageState extends State<HomePage> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: state.meals.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                separatorBuilder: (_, _) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   return MealCard(meal: state.meals[index]);
                 },
