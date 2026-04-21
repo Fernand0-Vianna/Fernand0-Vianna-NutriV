@@ -1,20 +1,28 @@
 {
   "project_info": {
-    "project_number": "510166294031",
-    "project_id": "nutriv-app",
-    "storage_bucket": "nutriv-app.firebasestorage.app"
+    "project_number": "898677434008",
+    "project_id": "teste-da-silva-480519",
+    "storage_bucket": "teste-da-silva-480519.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:510166294031:android:96a9b79f782ada2f778d7a",
+        "mobilesdk_app_id": "1:898677434008:android:96a9b79f782ada2f778d7a",
         "android_client_info": {
           "package_name": "com.nutriv.nutriv"
         }
       },
       "oauth_client": [
         {
-          "client_id": "510166294031-xxxxxxxxxxxxxxxx.apps.googleusercontent.com",
+          "client_id": "898677434008-ve6hffbhb4bl5r2ebm79rrce4mdk0slq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nutriv.nutriv",
+            "certificate_hash": "620d0470d9e104c205497f15ae411e77865bfbf3"
+          }
+        },
+        {
+          "client_id": "898677434008-ve6hffbhb4bl5r2ebm79rrce4mdk0slq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +35,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "510166294031-xxxxxxxxxxxxxxxx.apps.googleusercontent.com",
+              "client_id": "898677434008-ve6hffbhb4bl5r2ebm79rrce4mdk0slq.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
