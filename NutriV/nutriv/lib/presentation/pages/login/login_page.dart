@@ -89,13 +89,39 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _signInWithGoogle() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Login Google temporariamente indisponível'),
-        backgroundColor: AppTheme.primary,
-      ),
-    );
+  Future<void> _signInWithGoogle() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final authService = getIt<AuthService>();
+      final success = await authService.signInWithGoogle();
+
+      if (success && mounted) {
+        final user = authService.getCurrentUser();
+        if (user != null) {
+          context.read<UserBloc>().add(SaveUser(user));
+          context.go('/');
+        }
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Falha ao fazer login com Google'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro: ${e.toString()}'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override

@@ -1,13 +1,13 @@
 {
   "project_info": {
     "project_number": "898677434008",
-    "project_id": "teste-da-silva-480519",
-    "storage_bucket": "teste-da-silva-480519.firebasestorage.app"
+    "project_id": "nutrivisionh",
+    "storage_bucket": "nutrivisionh.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:898677434008:android:96a9b79f782ada2f778d7a",
+        "mobilesdk_app_id": "1:898677434008:android:a79c7bcf2a8e9b9c",
         "android_client_info": {
           "package_name": "com.nutriv.nutriv"
         }
@@ -15,20 +15,12 @@
       "oauth_client": [
         {
           "client_id": "898677434008-ve6hffbhb4bl5r2ebm79rrce4mdk0slq.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.nutriv.nutriv",
-            "certificate_hash": "620d0470d9e104c205497f15ae411e77865bfbf3"
-          }
-        },
-        {
-          "client_id": "898677434008-ve6hffbhb4bl5r2ebm79rrce4mdk0slq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAtGLuk5XzQ2BUceSZD-IqKTlCWKJWNZgg"
+          "current_key": "AIzaSyDk7TYt19saxY2ZxAxV0H_ossVDusBmQlk"
         }
       ],
       "services": {

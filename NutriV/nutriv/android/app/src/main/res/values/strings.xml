@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="default_web_client_id">YOUR_CLIENT_ID.apps.googleusercontent.com</string>
-    <string name="google_api_key">YOUR_API_KEY</string>
-    <string name="gcm_defaultSenderId">YOUR_PROJECT_NUMBER</string>
-    <string name="app_name">nutriv</string>
+    <string name="default_web_client_id">898677434008-ve6hffbhb4bl5r2ebm79rrce4mdk0slq.apps.googleusercontent.com</string>
+    <string name="google_api_key">AIzaSyDk7TYt19saxY2ZxAxV0H_ossVDusBmQlk</string>
+    <string name="gcm_defaultSenderId">898677434008</string>
+    <string name="app_name">NutriV</string>
 </resources>
