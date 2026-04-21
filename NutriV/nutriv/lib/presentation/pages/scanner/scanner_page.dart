@@ -470,12 +470,22 @@ class _ScannerPageState extends State<ScannerPage> {
                 ],
               ),
             ),
-            Text(
-              '${food.portion.toInt()}g',
-              style: GoogleFonts.manrope(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
+            GestureDetector(
+              onTap: () => _showPortionEditor(food),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryContainer.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '${food.portion.toInt()}g',
+                  style: GoogleFonts.manrope(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.primary,
+                  ),
+                ),
               ),
             ),
           ],
@@ -497,6 +507,130 @@ class _ScannerPageState extends State<ScannerPage> {
           fontSize: 11,
           fontWeight: FontWeight.w600,
           color: color,
+        ),
+      ),
+    );
+  }
+
+  void _showPortionEditor(FoodItem food) {
+    final controller = TextEditingController(text: food.portion.toInt().toString());
+    String selectedUnit = 'g';
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: const BoxDecoration(
+            color: AppTheme.surfaceContainerLowest,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppTheme.outlineVariant,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Editar Quantidade',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    food.name,
+                    style: GoogleFonts.manrope(
+                      fontSize: 14,
+                      color: AppTheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controller,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          style: GoogleFonts.manrope(fontSize: 18),
+                          decoration: InputDecoration(
+                            labelText: 'Quantidade',
+                            labelStyle: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+                            filled: true,
+                            fillColor: AppTheme.surfaceContainerLow,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppTheme.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ToggleButtons(
+                          isSelected: [selectedUnit == 'g', selectedUnit == 'kg']
+                              .map((e) => e)
+                              .toList(),
+                          onPressed: (index) {
+                            setState(() => selectedUnit = index == 0 ? 'g' : 'kg');
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          constraints: const BoxConstraints(minWidth: 50, minHeight: 46),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: Text('g', style: GoogleFonts.manrope(fontWeight: FontWeight.w600)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: Text('kg', style: GoogleFonts.manrope(fontWeight: FontWeight.w600)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: () {
+                        final value = double.tryParse(controller.text) ?? food.portion;
+                        double finalPortion = selectedUnit == 'kg' ? value * 1000 : value;
+                        context.read<FoodScannerBloc>().add(
+                          UpdateFoodPortion(food: food, newPortion: finalPortion),
+                        );
+                        Navigator.pop(dialogContext);
+                      },
+                      child: Text('Salvar', style: GoogleFonts.manrope(fontWeight: FontWeight.w700)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

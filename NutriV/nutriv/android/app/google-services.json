@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "510166294031",
+    "project_id": "nutriv-app",
+    "storage_bucket": "nutriv-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510166294031:android:96a9b79f782ada2f778d7a",
+        "android_client_info": {
+          "package_name": "com.nutriv.nutriv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "510166294031-xxxxxxxxxxxxxxxx.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtGLuk5XzQ2BUceSZD-IqKTlCWKJWNZgg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "510166294031-xxxxxxxxxxxxxxxx.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

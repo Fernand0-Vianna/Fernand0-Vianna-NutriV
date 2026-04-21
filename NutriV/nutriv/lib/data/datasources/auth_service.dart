@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../domain/entities/user.dart' as app;
 import '../repositories/user_repository.dart';
 
@@ -70,11 +71,47 @@ class AuthService {
 
   Future<bool> signInWithGoogle() async {
     try {
-      await _supabase.auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: 'https://nutrivisionh.netlify.app/',
+      // Web: use OAuth redirect
+      if (kIsWeb) {
+        await _supabase.auth.signInWithOAuth(
+          OAuthProvider.google,
+          redirectTo: 'https://nutrivisionh.netlify.app/auth-callback',
+        );
+        return true;
+      }
+
+      // Mobile (Android/iOS): use Google Sign In nativo
+      final googleSignIn = GoogleSignIn(scopes: ['email', 'openid', 'profile']);
+
+      // Sign out first to force account picker
+      await googleSignIn.signOut();
+
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        // User canceled
+        return false;
+      }
+
+      final googleAuth = await googleUser.authentication;
+      final idToken = googleAuth.idToken;
+
+      if (idToken == null) {
+        throw 'Google Auth: ID Token is null';
+      }
+
+      // Sign in to Supabase with Google ID Token
+      final response = await _supabase.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
       );
-      return true;
+
+      if (response.user != null) {
+        final user = _createUserFromSupabase(response.user!);
+        await _userRepository.saveUser(user);
+        return true;
+      }
+
+      return false;
     } catch (e) {
       if (kDebugMode) {
         debugPrint('Error signing in with Google: $e');

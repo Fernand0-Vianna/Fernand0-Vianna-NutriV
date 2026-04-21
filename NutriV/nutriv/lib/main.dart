@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,6 +17,7 @@ import 'presentation/bloc/barcode/barcode_scanner_bloc.dart';
 import 'presentation/bloc/favorite_dish/favorite_dish_bloc.dart';
 import 'presentation/pages/login/login_page.dart';
 import 'presentation/pages/login/register_page.dart';
+import 'presentation/pages/auth/auth_callback_page.dart';
 import 'presentation/pages/home/home_page.dart';
 import 'presentation/pages/diary/diary_page.dart';
 import 'presentation/pages/scanner/scanner_page.dart';
@@ -88,13 +88,14 @@ class NutriVApp extends StatelessWidget {
 final _router = GoRouter(
   initialLocation: '/login',
   routes: [
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginPage(),
-    ),
+    GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterPage(),
+    ),
+    GoRoute(
+      path: '/auth-callback',
+      builder: (context, state) => const AuthCallbackPage(),
     ),
     ShellRoute(
       builder: (context, state, child) => MainShell(child: child),
