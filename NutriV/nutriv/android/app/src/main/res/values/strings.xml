@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="default_web_client_id">898677434008-ve6hffbhb4bl5r2ebm79rrce4mdk0slq.apps.googleusercontent.com</string>
-    <string name="google_api_key">AIzaSyDk7TYt19saxY2ZxAxV0H_ossVDusBmQlk</string>
-    <string name="gcm_defaultSenderId">898677434008</string>
+    <string name="default_web_client_id">510166294031-ehhl2r349bbd6n9q2pr22scqod2338hr.apps.googleusercontent.com</string>
+    <string name="google_api_key">AIzaSyAtGLuk5XzQ2BUceSZD-IqKTlCWKJWNZgg</string>
+    <string name="gcm_defaultSenderId">510166294031</string>
     <string name="app_name">NutriV</string>
 </resources>

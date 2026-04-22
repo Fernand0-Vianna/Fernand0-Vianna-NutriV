@@ -81,7 +81,13 @@ class AuthService {
       }
 
       // Mobile (Android/iOS): use Google Sign In nativo
-      final googleSignIn = GoogleSignIn(scopes: ['email', 'openid', 'profile']);
+      // serverClientId é o Web Client ID do Google Cloud Console (client_type: 3)
+      // necessário para autenticação com Supabase
+      final googleSignIn = GoogleSignIn(
+        scopes: ['email', 'openid', 'profile'],
+        serverClientId:
+            '510166294031-ehhl2r349bbd6n9q2pr22scqod2338hr.apps.googleusercontent.com',
+      );
 
       // Sign out first to force account picker
       await googleSignIn.signOut();
@@ -112,9 +118,10 @@ class AuthService {
       }
 
       return false;
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (kDebugMode) {
         debugPrint('Error signing in with Google: $e');
+        debugPrint('Stack trace: $stackTrace');
       }
       return false;
     }
