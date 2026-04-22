@@ -1,6 +1,39 @@
 # Atualizações - NutriV
 
-> Parte do [[NutriV_Anotacoes_Gerais]] | Ver também: [[Estado_Atual]] | [[Lista_Adicoes]] | [[Lista_Remocoes]]
+> Parte do [[NutriV_Anotacoes_Gerais]] | Ver também: [[Estado_Atual]] | [[Lista_Adicoes]] | [[Lista_Remocoes]] | [[Relatorio_Alteracoes_Recentes]]
+
+---
+
+## 📅 21 de Abril de 2026 - Estabilização de Auth e Expansão de Saúde
+
+### 🎯 Resumo
+Estabilização do login com Google e implementação de novos sistemas de rastreamento (peso, pedômetro, favoritos).
+
+### ✅ Concluído
+
+#### 1. Autenticação Google
+- Correção definitiva do fluxo de login e redirecionamento.
+- Validador de credenciais Google implementado no backend/datasources.
+
+#### 2. Novos Módulos de Saúde e Domínio
+- **PedometerService**: Integração com sensor de passos.
+- **WeightTracking**: Novo repositório e BLoC para histórico de peso.
+- **FavoriteDishes**: Sistema de salvamento de refeições favoritas.
+- **Skeleton Loaders**: Implementação de carregamento visual para uma UI mais fluida.
+
+#### 3. Melhorias na Camada de Dados
+- Finalização do `UserProfileRepository` e sincronização com Supabase.
+- Implementação do `DailySummaryRepository` para métricas consolidadas.
+
+### 🔧 Arquivos Modificados
+- `lib/data/datasources/auth_service.dart` - Melhoria na validação.
+- `lib/presentation/pages/login/login_page.dart` - UI atualizada.
+- `lib/presentation/pages/scanner/scanner_page.dart` - Refatoração de performance.
+
+### 📦 Novos Repositories/Services
+- `PedometerService`
+- `WeightRepository`
+- `FavoriteDishRepository`
 
 ---
 

@@ -25,6 +25,7 @@ graph LR
 | [[NutriV_Anotacoes_Gerais]] | Visão geral + índice | → Todos |
 | [[Estado_Atual]] | Arquitetura técnica atual | ← Anotações, Updates |
 | [[Atualizacao/Historico_Atualizacoes]] | Cronologia de mudanças | → Remoções, Adições |
+| [[Relatorio_Alteracoes_Recentes]] | Relatório detalhado das últimas mudanças | ← Git Log |
 | [[Lista_Adicoes]] | Funcionalidades adicionadas | → Melhorias, Ideias |
 | [[Lista_Remocoes]] | Remoções e pendências | ← Atualizações |
 | [[Lista_Melhorias]] | Lista priorizada de melhorias | ← Ideias, Adições |
@@ -99,5 +100,5 @@ Melhorias → (Ideias, Adições, Estado_Atual, Anotações)
 
 ---
 
-*Última atualização: $(date)*
+*Última atualização: 21 de Abril de 2026*
 *Documento faz parte do [[NutriV_Anotacoes_Gerais]]*
