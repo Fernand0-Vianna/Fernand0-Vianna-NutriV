@@ -23,8 +23,14 @@ class ScannerPage extends StatefulWidget {
 }
 
 class _ScannerPageState extends State<ScannerPage> {
-  final ImagePicker _picker = ImagePicker();
+  late final ImagePicker _picker;
   String _selectedMealType = 'Café da manhã';
+
+  @override
+  void initState() {
+    super.initState();
+    _picker = ImagePicker();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -552,14 +552,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               }
-              return ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: state.meals.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  return MealCard(meal: state.meals[index]);
-                },
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: MealCard(meal: state.meals[index]),
+                  ),
+                  childCount: state.meals.length,
+                ),
               );
             }
             return const Center(

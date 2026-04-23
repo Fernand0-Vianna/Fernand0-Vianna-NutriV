@@ -4,27 +4,42 @@
     "type": "split",
     "children": [
       {
-        "id": "15fae575f99b113c",
+        "id": "dd225a984fa5a25a",
         "type": "tabs",
         "children": [
           {
-            "id": "9e65fcdfe00055c8",
+            "id": "be2c21fdaeda3805",
             "type": "leaf",
             "state": {
               "type": "canvas",
               "state": {
                 "file": "NutriV_Mapa_Mental.canvas",
                 "viewState": {
-                  "x": -1326.2450546741575,
-                  "y": 547.781084707547,
-                  "zoom": -1.392841585517866
+                  "x": -731,
+                  "y": 328.5,
+                  "zoom": -2.192841585517866
                 }
               },
               "icon": "lucide-layout-dashboard",
               "title": "NutriV_Mapa_Mental"
             }
+          },
+          {
+            "id": "fb30bc4640bdaa91",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Sem título.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Sem título"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -186,8 +201,15 @@
       "bases:Criar nova base": false
     }
   },
-  "active": "9e65fcdfe00055c8",
+  "active": "fb30bc4640bdaa91",
   "lastOpenFiles": [
+    "Relatorios/Relatorio_Analise_Codigo_2026-04-23.md",
+    "NutriV_Mapa_Mental.canvas",
+    "Sem título.md",
+    "Indice.md",
+    "Clippings/Você disse NutriVision - preciso fazer essa ativid....md",
+    "Clippings",
+    "Adicoes/Lista_Adicoes.md",
     "Sem título.canvas",
     "Melhorias/Lista_Melhorias.md",
     "Anotacoes/NutriV_Anotacoes_Gerais.md",
@@ -195,8 +217,6 @@
     "Falhas_Apk.md",
     "Relatorios/Estado_Atual.md",
     "Ideias/Ideias_e_Casos_Uso.md",
-    "NutriV_Mapa_Mental.canvas",
-    "Indice.md",
     "referencias/stitch_flutter_ui_design/verdant_health/DESIGN.md",
     "referencias/stitch_flutter_ui_design/estat_sticas_refinadas/screen.png",
     "referencias/stitch_flutter_ui_design/perfil/screen.png",
@@ -217,9 +237,7 @@
     "referencias/stitch_flutter_ui_design/tela_inicial_refinada",
     "referencias/stitch_flutter_ui_design/tela_inicial",
     "referencias/stitch_flutter_ui_design/tela_de_login",
-    "referencias/stitch_flutter_ui_design/pesquisa",
     "Bem-vindo.md",
-    "Remocoes/Lista_Remocoes.md",
-    "Adicoes/Lista_Adicoes.md"
+    "Remocoes/Lista_Remocoes.md"
   ]
 }

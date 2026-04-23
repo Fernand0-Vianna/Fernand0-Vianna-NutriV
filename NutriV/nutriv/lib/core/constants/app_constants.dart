@@ -1,12 +1,26 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiConstants {
-  static String get geminiApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
+  static String get geminiApiKey {
+    final key = dotenv.env['GEMINI_API_KEY'];
+    if (key == null || key.isEmpty) {
+      throw Exception('[NutriV] GEMINI_API_KEY não configurada no arquivo .env');
+    }
+    return key;
+  }
+
   static const String geminiBaseUrl =
       'https://generativelanguage.googleapis.com/v1beta';
   static const String modelName = 'gemini-2.5-flash';
 
-  static String get openaiApiKey => dotenv.env['OPENAI_API_KEY'] ?? '';
+  static String get openaiApiKey {
+    final key = dotenv.env['OPENAI_API_KEY'];
+    if (key == null || key.isEmpty) {
+      throw Exception('[NutriV] OPENAI_API_KEY não configurada no arquivo .env');
+    }
+    return key;
+  }
+
   static const String openaiBaseUrl = 'https://api.openai.com/v1';
 }
 
