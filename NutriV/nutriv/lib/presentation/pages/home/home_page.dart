@@ -272,18 +272,7 @@ class _HomePageState extends State<HomePage> {
         _buildQuickActionButton(
           icon: Icons.restaurant_menu,
           label: 'Receitas',
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Em breve!', style: GoogleFonts.manrope()),
-                backgroundColor: AppTheme.primary,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-            );
-          },
+          onTap: () => context.go('/recipes'),
         ),
       ],
     );

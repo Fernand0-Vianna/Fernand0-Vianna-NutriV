@@ -18,11 +18,13 @@ import 'presentation/bloc/favorite_dish/favorite_dish_bloc.dart';
 import 'presentation/pages/login/login_page.dart';
 import 'presentation/pages/login/register_page.dart';
 import 'presentation/pages/auth/auth_callback_page.dart';
+import 'presentation/pages/splash/splash_page.dart';
 import 'presentation/pages/home/home_page.dart';
 import 'presentation/pages/diary/diary_page.dart';
 import 'presentation/pages/scanner/scanner_page.dart';
 import 'presentation/pages/profile/profile_page.dart';
 import 'presentation/pages/profile/progress_page.dart';
+import 'presentation/pages/recipes/recipes_page.dart';
 import 'presentation/pages/main/main_shell.dart';
 
 void main() async {
@@ -86,8 +88,9 @@ class NutriVApp extends StatelessWidget {
 }
 
 final _router = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/splash',
   routes: [
+    GoRoute(path: '/splash', builder: (context, state) => const SplashPage()),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
     GoRoute(
       path: '/register',
@@ -113,6 +116,10 @@ final _router = GoRouter(
         GoRoute(
           path: '/progress',
           builder: (context, state) => const ProgressPage(),
+        ),
+        GoRoute(
+          path: '/recipes',
+          builder: (context, state) => const RecipesPage(),
         ),
       ],
     ),

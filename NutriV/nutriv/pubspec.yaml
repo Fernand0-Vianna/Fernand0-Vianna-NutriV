@@ -36,7 +36,12 @@ dependencies:
   # Voice Input
   speech_to_text: ^7.0.0
 
-  
+  # Sensors for step counting
+  sensors_plus: ^7.0.0
+
+  # HTTP
+  http: ^1.2.0
+
   # Charts
   fl_chart: ^0.71.0
   
