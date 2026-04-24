@@ -27,6 +27,21 @@ linter:
 analyzer:
   exclude:
     - flutter/**
+    - build/**
+    - .dart_tool/**
+    - android/build/**
+    - ios/build/**
+    - linux/build/**
+    - web/build/**
+    - .gradle/**
+    - ios/Pods/**
+    - android/.gradle/**
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.mocks.dart"
+
+  errors:
+    invalid_annotation_target: ignore
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

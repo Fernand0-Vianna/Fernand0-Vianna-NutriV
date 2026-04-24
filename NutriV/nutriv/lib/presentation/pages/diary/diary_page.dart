@@ -7,8 +7,13 @@ import 'package:intl/intl.dart';
 import '../../bloc/meal/meal_bloc.dart';
 import '../../bloc/meal/meal_event.dart';
 import '../../bloc/meal/meal_state.dart';
+import '../../bloc/food_scanner/food_scanner_bloc.dart';
+import '../../bloc/food_scanner/food_scanner_event.dart';
+import '../../bloc/food_scanner/food_scanner_state.dart';
 import '../../widgets/meal_card.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../domain/entities/food_item.dart';
+import '../../../domain/entities/meal.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -260,32 +265,69 @@ class _DiaryPageState extends State<DiaryPage> {
                     ],
                   ),
                   if (mealsForType.isEmpty)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppTheme.surfaceContainerLow,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.add,
-                            size: 16,
-                            color: AppTheme.onSurfaceVariant,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Add',
-                            style: GoogleFonts.manrope(
-                              fontSize: 12,
-                              color: AppTheme.onSurfaceVariant,
-                              fontWeight: FontWeight.w600,
+                    GestureDetector(
+                      onTap: () => _showAddFoodDialog(mealType),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.add,
+                              size: 16,
+                              color: AppTheme.primary,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 4),
+                            Text(
+                              'Add',
+                              style: GoogleFonts.manrope(
+                                fontSize: 12,
+                                color: AppTheme.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  if (mealsForType.isNotEmpty)
+                    GestureDetector(
+                      onTap: () => _showAddFoodDialog(mealType),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.add,
+                              size: 16,
+                              color: AppTheme.primary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '+ Mais',
+                              style: GoogleFonts.manrope(
+                                fontSize: 12,
+                                color: AppTheme.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                 ],
@@ -375,5 +417,299 @@ class _DiaryPageState extends State<DiaryPage> {
       setState(() => _selectedDate = picked);
       bloc.add(LoadMeals(picked));
     }
+  }
+
+  void _showAddFoodDialog(String mealType) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _AddFoodSheet(
+        mealType: mealType,
+        date: _selectedDate,
+      ),
+    );
+  }
+}
+
+class _AddFoodSheet extends StatefulWidget {
+  final String mealType;
+  final DateTime date;
+
+  const _AddFoodSheet({required this.mealType, required this.date});
+
+  @override
+  State<_AddFoodSheet> createState() => _AddFoodSheetState();
+}
+
+class _AddFoodSheetState extends State<_AddFoodSheet> {
+  final _searchController = TextEditingController();
+  
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.75,
+      decoration: const BoxDecoration(
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 12),
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppTheme.outlineVariant,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Adicionar a ${widget.mealType}',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.onSurface,
+                  ),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        context.pop();
+                        context.go('/scanner');
+                      },
+                      icon: const Icon(Icons.camera_alt, color: AppTheme.primary),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.close, color: AppTheme.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Buscar alimento (ex: pão, ovo, leite...)',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {});
+                        },
+                      )
+                    : null,
+                filled: true,
+                fillColor: AppTheme.surfaceContainerLow,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              onSubmitted: (value) {
+                if (value.isNotEmpty) {
+                  _searchFood(value);
+                }
+              },
+              onChanged: (value) => setState(() {}),
+            ),
+          ),
+          Expanded(
+            child: BlocBuilder<FoodScannerBloc, FoodScannerState>(
+              builder: (context, state) {
+                if (state is FoodScannerLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: AppTheme.primary),
+                  );
+                }
+                if (state is FoodScannerAnalyzed) {
+                  return _buildFoodResults(state.scannedFoods);
+                }
+                if (state is FoodScannerError) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.search_off, size: 48, color: AppTheme.onSurfaceVariant),
+                          const SizedBox(height: 16),
+                          Text(
+                            state.message,
+                            style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.search, size: 48, color: AppTheme.onSurfaceVariant),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Digite o nome do alimento para buscar',
+                        style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+                      ),
+                      const SizedBox(height: 24),
+                      TextButton.icon(
+                        onPressed: () {
+                          context.pop();
+                          context.go('/scanner');
+                        },
+                        icon: const Icon(Icons.camera_alt),
+                        label: const Text('Usar câmera'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _searchFood(String query) {
+    context.read<FoodScannerBloc>().add(SearchFoodByName(query));
+  }
+
+  Widget _buildFoodResults(List<FoodItem> foods) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      itemCount: foods.length,
+      itemBuilder: (context, index) {
+        final food = foods[index];
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: AppTheme.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: ListTile(
+            title: Text(
+              food.name,
+              style: GoogleFonts.manrope(
+                fontWeight: FontWeight.w600,
+                color: AppTheme.onSurface,
+              ),
+            ),
+            subtitle: Text(
+              '${food.calories.toInt()} kcal por ${food.portion.toInt()}g',
+              style: GoogleFonts.manrope(
+                fontSize: 12,
+                color: AppTheme.onSurfaceVariant,
+              ),
+            ),
+            trailing: IconButton(
+              onPressed: () => _addFoodToMeal(food),
+              icon: const Icon(Icons.add_circle, color: AppTheme.primary),
+            ),
+            onTap: () => _showPortionDialog(food),
+          ),
+        );
+      },
+    );
+  }
+
+  void _addFoodToMeal(FoodItem food) {
+    final meal = widget.mealType.toLowerCase();
+    final mealFood = MealFood(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      food: food,
+      quantity: food.portion,
+    );
+    context.read<MealBloc>().add(AddMealFood(
+      mealType: meal,
+      food: mealFood,
+      quantity: food.portion,
+      date: widget.date,
+    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${food.name} adicionado ao ${widget.mealType}'),
+        backgroundColor: AppTheme.primary,
+      ),
+    );
+    Navigator.pop(context);
+  }
+
+  void _showPortionDialog(FoodItem food) {
+    final controller = TextEditingController(text: food.portion.toInt().toString());
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(food.name),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            labelText: 'Quantidade (g)',
+            suffixText: 'g',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final quantity = double.tryParse(controller.text) ?? food.portion;
+              _addFoodToMealWithQuantity(food, quantity);
+              Navigator.pop(ctx);
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _addFoodToMealWithQuantity(FoodItem food, double quantity) {
+    final meal = widget.mealType.toLowerCase();
+    final mealFood = MealFood(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      food: food,
+      quantity: quantity,
+    );
+    context.read<MealBloc>().add(AddMealFood(
+      mealType: meal,
+      food: mealFood,
+      quantity: quantity,
+      date: widget.date,
+    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${food.name} adicionado ao ${widget.mealType}'),
+        backgroundColor: AppTheme.primary,
+      ),
+    );
+    Navigator.pop(context);
   }
 }

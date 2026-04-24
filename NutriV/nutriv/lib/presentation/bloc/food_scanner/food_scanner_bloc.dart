@@ -27,6 +27,7 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
     emit(FoodScannerLoading());
     try {
       final foods = await _aiFoodService.analyzeFoodImage(event.imageFile);
+      
       if (foods.isEmpty) {
         emit(
           const FoodScannerError(
@@ -68,11 +69,20 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
   ) async {
     emit(FoodScannerLoading());
     try {
-      final foods = await _usdaFoodService.searchFoodByName(event.query);
+      var foods = await _usdaFoodService.searchFoodByName(event.query);
+      
+      if (foods.isEmpty) {
+        foods = await _aiFoodService.analyzeFoodFromText(event.query);
+      }
+      
+      if (foods.isEmpty) {
+        foods = await _aiFoodService.searchOpenFoodFacts(event.query);
+      }
+      
       if (foods.isEmpty) {
         emit(
           const FoodScannerError(
-            'Nenhum alimento encontrado. Tente outro nome.',
+            'Nenhum alimento encontrado. Tente outro nome ou use a câmera.',
           ),
         );
       } else {

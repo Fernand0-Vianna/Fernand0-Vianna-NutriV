@@ -31,7 +31,7 @@ class AuthService {
     }
   }
 
-  Future<app.User?> signUpWithEmail(String email, String password) async {
+Future<app.User?> signUpWithEmail(String email, String password) async {
     try {
       if (kDebugMode) {
         debugPrint('Attempting to sign up with email: $email');
@@ -42,30 +42,67 @@ class AuthService {
         password: password,
       );
 
-      if (kDebugMode) {
-        debugPrint('Sign up response: ${response.user}');
-        debugPrint('Session: ${response.session}');
-        debugPrint('User metadata: ${response.user?.userMetadata}');
-      }
-
       if (response.user != null) {
         final user = _createUserFromSupabase(response.user!);
         await _userRepository.saveUser(user);
+        
+        // Criar perfil no Supabase
+        await _createUserProfile(response.user!.id, email);
+        
         return user;
       }
 
-      if (response.session != null) {
+      if (response.session != null && response.user != null) {
         final user = _createUserFromSupabase(response.user!);
         await _userRepository.saveUser(user);
+        await _createUserProfile(response.user!.id, email);
         return user;
       }
 
       return null;
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('Error signing up with email: $e');
+        debugPrint('Error signing up: $e');
       }
       rethrow;
+    }
+  }
+
+  Future<void> _createUserProfile(String userId, String email) async {
+    try {
+      await _supabase.from('user_profiles').insert({
+        'id': userId,
+        'email': email,
+        'name': email.split('@').first,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error creating user profile: $e');
+      }
+    }
+  }
+
+  Future<void> _createUserProfileIfNotExists(String userId, String? email) async {
+    try {
+      final existing = await _supabase
+          .from('user_profiles')
+          .select('id')
+          .eq('id', userId)
+          .maybeSingle();
+      
+      if (existing == null && email != null) {
+        await _supabase.from('user_profiles').insert({
+          'id': userId,
+          'email': email,
+          'name': email.split('@').first,
+          'created_at': DateTime.now().toIso8601String(),
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error creating user profile if not exists: $e');
+      }
     }
   }
 
@@ -114,6 +151,10 @@ class AuthService {
       if (response.user != null) {
         final user = _createUserFromSupabase(response.user!);
         await _userRepository.saveUser(user);
+        
+        // Criar perfil se não existir
+        await _createUserProfileIfNotExists(response.user!.id, user.email);
+        
         return true;
       }
 
@@ -128,8 +169,15 @@ class AuthService {
   }
 
   Future<void> signOut() async {
-    await _supabase.auth.signOut();
-    _userRepository.clearUser();
+    try {
+      await _supabase.auth.signOut();
+      _userRepository.clearUser();
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('SignOut error: $e');
+      }
+      _userRepository.clearUser();
+    }
   }
 
   app.User? getCurrentUser() {

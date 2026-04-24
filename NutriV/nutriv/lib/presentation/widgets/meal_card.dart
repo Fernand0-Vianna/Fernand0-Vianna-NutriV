@@ -5,8 +5,15 @@ class MealCard extends StatelessWidget {
   final Meal meal;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
+  VoidCallback? onCopy;
 
-  const MealCard({super.key, required this.meal, this.onTap, this.onDelete});
+  MealCard({
+    super.key, 
+    required this.meal, 
+    this.onTap, 
+    this.onDelete,
+    this.onCopy,
+  });
 
   @override
   Widget build(BuildContext context) {

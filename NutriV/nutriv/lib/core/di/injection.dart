@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/theme/theme_notifier.dart';
 import '../../data/datasources/local_data_source.dart';
 import '../../data/datasources/ai_food_service.dart';
 import '../../data/datasources/usda_food_service.dart';
@@ -38,6 +39,10 @@ Future<void> setupDependencies() async {
 
   getIt.registerSingleton<LocalDataSource>(
     LocalDataSource(getIt<SharedPreferences>()),
+  );
+
+  getIt.registerSingleton<ThemeNotifier>(
+    ThemeNotifier(getIt<SharedPreferences>()),
   );
 
   getIt.registerSingleton<AiFoodService>(AiFoodService(getIt<Dio>()));
@@ -94,7 +99,10 @@ Future<void> setupDependencies() async {
   getIt.registerFactory<MealBloc>(() => MealBloc(getIt<SyncMealRepository>()));
 
   getIt.registerFactory<FoodScannerBloc>(
-    () => FoodScannerBloc(getIt<AiFoodService>(), getIt<UsdaFoodService>()),
+    () => FoodScannerBloc(
+      getIt<AiFoodService>(), 
+      getIt<UsdaFoodService>(),
+    ),
   );
 
   getIt.registerFactory<WaterBloc>(() => WaterBloc(getIt<SharedPreferences>()));

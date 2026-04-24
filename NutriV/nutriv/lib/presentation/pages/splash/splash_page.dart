@@ -113,68 +113,53 @@ class _SplashPageState extends State<SplashPage>
 
   Widget _buildLogo() {
     return Container(
-      width: 140,
-      height: 140,
+      width: 160,
+      height: 160,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 40,
+            offset: const Offset(0, 20),
           ),
         ],
       ),
       child: Center(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.primary,
-                    AppTheme.tertiary,
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Icon(
-                Icons.restaurant_menu,
-                size: 44,
+        child: Container(
+          width: 120,
+          height: 120,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppTheme.primary,
+                AppTheme.primaryDim,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.eco,
+                size: 50,
                 color: Colors.white,
               ),
-            ),
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: AppTheme.secondary,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.secondary.withValues(alpha: 0.4),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.auto_awesome,
-                  size: 20,
+              const SizedBox(height: 4),
+              Text(
+                'V',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w800,
                   color: Colors.white,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

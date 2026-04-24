@@ -53,7 +53,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       await _userRepository.deleteUser();
       emit(UserNotFound());
     } catch (e) {
-      emit(UserError(e.toString()));
+      emit(UserNotFound());
     }
   }
 }

@@ -53,3 +53,15 @@ app.*.map.json
 # Node modules (large files)
 .netlify/plugins/node_modules/
 
+# Additional optimizations
+android/build/
+ios/build/
+linux/build/
+web/build/
+.gradle/
+ios/Pods/
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+android/.gradle/
+

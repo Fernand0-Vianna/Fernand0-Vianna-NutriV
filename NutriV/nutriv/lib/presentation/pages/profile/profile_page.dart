@@ -3,13 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/di/injection.dart';
+import '../../../core/theme/theme_notifier.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/helpers.dart';
+import '../../../data/datasources/auth_service.dart';
+import '../../../data/repositories/sync_meal_repository.dart';
 import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_state.dart';
 import '../../bloc/user/user_event.dart';
-import '../../../core/di/injection.dart';
-import '../../../data/datasources/auth_service.dart';
-import '../../../core/utils/helpers.dart';
-import '../../../core/theme/app_theme.dart';
 import 'progress_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -513,6 +515,11 @@ class _ProfilePageState extends State<ProfilePage> {
             'Configurações',
             () => _showAppSettings(context),
           ),
+          _buildSettingsItem(
+            Icons.download,
+            'Exportar Dados',
+            () => _showExportOptions(context),
+          ),
           const SizedBox(height: 8),
           Container(
             width: double.infinity,
@@ -557,7 +564,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 );
                 if (confirm == true) {
-                  await getIt<AuthService>().signOut();
+                  try {
+                    await getIt<AuthService>().signOut();
+                    context.read<UserBloc>().add(DeleteUser());
+                  } catch (_) {
+                    context.read<UserBloc>().add(DeleteUser());
+                  }
                   if (context.mounted) {
                     context.go('/onboarding');
                   }
@@ -820,7 +832,106 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void _showAppSettings(BuildContext context) {
+void _showAppSettings(BuildContext context) {
+    final themeNotifier = getIt<ThemeNotifier>();
+    
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) => ListenableBuilder(
+        listenable: themeNotifier,
+        builder: (ctx, _) {
+          return Container(
+            padding: const EdgeInsets.all(24),
+            decoration: const BoxDecoration(
+              color: AppTheme.surfaceContainerLowest,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppTheme.outlineVariant,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Configurações',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ListTile(
+                  leading: const Icon(
+                    Icons.dark_mode_outlined,
+                    color: AppTheme.primary,
+                  ),
+                  title: Text(
+                    'Tema Escuro',
+                    style: GoogleFonts.manrope(color: AppTheme.onSurface),
+                  ),
+                  trailing: Switch(
+                    value: themeNotifier.isDarkMode,
+                    onChanged: (v) {
+                      themeNotifier.setThemeMode(
+                        v ? ThemeMode.dark : ThemeMode.light,
+                      );
+                    },
+                    activeThumbColor: AppTheme.primary,
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.language, color: AppTheme.primary),
+                  title: Text(
+                    'Idioma',
+                    style: GoogleFonts.manrope(color: AppTheme.onSurface),
+                  ),
+                  trailing: Text(
+                    'Português',
+                    style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+                  ),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const Icon(Icons.info_outline, color: AppTheme.primary),
+                  title: Text(
+                    'Sobre',
+                    style: GoogleFonts.manrope(color: AppTheme.onSurface),
+                  ),
+                  trailing: const Icon(
+                    Icons.chevron_right,
+                    color: AppTheme.onSurfaceVariant,
+                  ),
+                  onTap: () {
+                    showAboutDialog(
+                      context: context,
+                      applicationName: 'NutriV',
+                      applicationVersion: '1.0.0',
+                      applicationLegalese: '© 2024 NutriV',
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showExportOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -846,63 +957,65 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Configurações',
+              'Exportar Dados',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 color: AppTheme.onSurface,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             ListTile(
-              leading: const Icon(
-                Icons.dark_mode_outlined,
-                color: AppTheme.primary,
-              ),
-              title: Text(
-                'Tema Escuro',
-                style: GoogleFonts.manrope(color: AppTheme.onSurface),
-              ),
-              trailing: Switch(
-                value: false,
-                onChanged: (v) {},
-                activeThumbColor: AppTheme.primary,
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.language, color: AppTheme.primary),
-              title: Text(
-                'Idioma',
-                style: GoogleFonts.manrope(color: AppTheme.onSurface),
-              ),
-              trailing: Text(
-                'Português',
-                style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline, color: AppTheme.primary),
-              title: Text(
-                'Sobre',
-                style: GoogleFonts.manrope(color: AppTheme.onSurface),
-              ),
-              trailing: const Icon(
-                Icons.chevron_right,
-                color: AppTheme.onSurfaceVariant,
-              ),
+              leading: const Icon(Icons.restaurant_menu, color: AppTheme.primary),
+              title: Text('Diário Alimentar', style: GoogleFonts.manrope(color: AppTheme.onSurface)),
+              subtitle: Text('CSV das refeições', style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant)),
               onTap: () {
-                showAboutDialog(
-                  context: context,
-                  applicationName: 'NutriV',
-                  applicationVersion: '1.0.0',
-                  applicationLegalese: '© 2024 NutriV',
-                );
+                Navigator.pop(ctx);
+                _exportDiary();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.monitor_weight, color: AppTheme.primary),
+              title: Text(' Histórico de Peso', style: GoogleFonts.manrope(color: AppTheme.onSurface)),
+              subtitle: Text('CSV do peso', style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _exportWeight();
               },
             ),
             const SizedBox(height: 24),
           ],
         ),
+      ),
+    );
+  }
+
+  void _exportDiary() async {
+    try {
+      final meals = getIt<SyncMealRepository>().getAllMeals();
+      final csv = getIt<SyncMealRepository>().exportMealsToCsv(meals);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${meals.length} refeições exportadas'),
+          backgroundColor: AppTheme.primary,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao exportar: $e'),
+          backgroundColor: AppTheme.error,
+        ),
+      );
+    }
+  }
+
+  void _exportWeight() async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Em desenvolvimento'),
+        backgroundColor: AppTheme.primary,
       ),
     );
   }

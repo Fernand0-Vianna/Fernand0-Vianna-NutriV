@@ -243,6 +243,24 @@ class SyncMealRepository {
         return 'Refeição';
     }
   }
+
+  String exportMealsToCsv(List<Meal> meals) {
+    final buffer = StringBuffer();
+    buffer.writeln('Data,Refeição,Alimento,Quantidade (g),Calorias,Proteína (g),Carboidratos (g),Gordura (g)');
+    
+    for (final meal in meals) {
+      for (final food in meal.foods) {
+        final date = '${meal.dateTime.day}/${meal.dateTime.month}/${meal.dateTime.year}';
+        buffer.writeln(
+          '$date,${meal.name},${food.food.name},${food.quantity.toInt()},'
+          '${food.food.calories.toInt()},${food.food.protein.toInt()},'
+          '${food.food.carbs.toInt()},${food.food.fat.toInt()}'
+        );
+      }
+    }
+    
+    return buffer.toString();
+  }
 }
 
 // Helper para debug

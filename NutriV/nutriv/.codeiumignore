@@ -1,0 +1,35 @@
+# Codeium/Windsurf ignore patterns
+# Exclude generated and build files to reduce memory usage
+
+# Build directories
+build/
+android/build/
+ios/build/
+linux/build/
+web/
+
+# Dart tool directories
+.dart_tool/
+.flutter-plugins*
+.flutter-plugins-dependencies
+
+# Android specific
+android/app/build/
+android/.gradle/
+.idea/
+
+# iOS specific
+ios/Pods/
+ios/.symlinks/
+
+# Generated files
+*.g.dart
+*.freezed.dart
+
+# Lock files
+pubspec.lock
+
+# Cache directories
+.dart_cache/
+.cache/
+.gradle/

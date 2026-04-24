@@ -63,3 +63,20 @@ class RemoveFoodFromMeal extends MealEvent {
   @override
   List<Object?> get props => [mealId, foodId];
 }
+
+class AddMealFood extends MealEvent {
+  final String mealType;
+  final MealFood food;
+  final double quantity;
+  final DateTime date;
+
+  const AddMealFood({
+    required this.mealType,
+    required this.food,
+    required this.quantity,
+    required this.date,
+  });
+
+  @override
+  List<Object?> get props => [mealType, food, quantity, date];
+}

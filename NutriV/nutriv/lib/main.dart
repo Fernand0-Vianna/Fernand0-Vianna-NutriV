@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_notifier.dart';
 import 'core/di/injection.dart';
 import 'presentation/bloc/user/user_bloc.dart';
 import 'presentation/bloc/user/user_event.dart';
@@ -55,34 +56,40 @@ class NutriVApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<UserBloc>(
-          create: (_) => getIt<UserBloc>()..add(LoadUser()),
-        ),
-        BlocProvider<MealBloc>(
-          create: (_) => getIt<MealBloc>()..add(LoadMeals(DateTime.now())),
-        ),
-        BlocProvider<FoodScannerBloc>(create: (_) => getIt<FoodScannerBloc>()),
-        BlocProvider<WaterBloc>(
-          create: (_) =>
-              getIt<WaterBloc>()..add(LoadWaterIntake(DateTime.now())),
-        ),
-        BlocProvider<BarcodeScannerBloc>(
-          create: (_) => getIt<BarcodeScannerBloc>(),
-        ),
-        BlocProvider<FavoriteDishBloc>(
-          create: (_) => getIt<FavoriteDishBloc>()..add(LoadFavoriteDishes()),
-        ),
-      ],
-      child: MaterialApp.router(
-        title: 'NutriV',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        routerConfig: _router,
-      ),
+    return ListenableBuilder(
+      listenable: getIt<ThemeNotifier>(),
+      builder: (context, _) {
+        final themeNotifier = getIt<ThemeNotifier>();
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<UserBloc>(
+              create: (_) => getIt<UserBloc>()..add(LoadUser()),
+            ),
+            BlocProvider<MealBloc>(
+              create: (_) => getIt<MealBloc>()..add(LoadMeals(DateTime.now())),
+            ),
+            BlocProvider<FoodScannerBloc>(create: (_) => getIt<FoodScannerBloc>()),
+            BlocProvider<WaterBloc>(
+              create: (_) =>
+                  getIt<WaterBloc>()..add(LoadWaterIntake(DateTime.now())),
+            ),
+            BlocProvider<BarcodeScannerBloc>(
+              create: (_) => getIt<BarcodeScannerBloc>(),
+            ),
+            BlocProvider<FavoriteDishBloc>(
+              create: (_) => getIt<FavoriteDishBloc>()..add(LoadFavoriteDishes()),
+            ),
+          ],
+          child: MaterialApp.router(
+            title: 'NutriV',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeNotifier.themeMode,
+            routerConfig: _router,
+          ),
+        );
+      },
     );
   }
 }
