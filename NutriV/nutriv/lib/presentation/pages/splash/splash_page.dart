@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_theme.dart';
@@ -75,11 +76,7 @@ class _SplashPageState extends State<SplashPage>
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              AppTheme.primary,
-              AppTheme.primaryDim,
-              AppTheme.surface,
-            ],
+            colors: [AppTheme.primary, AppTheme.primaryDim, AppTheme.surface],
           ),
         ),
         child: AnimatedBuilder(
@@ -127,38 +124,13 @@ class _SplashPageState extends State<SplashPage>
         ],
       ),
       child: Center(
-        child: Container(
+        child: SizedBox(
           width: 120,
           height: 120,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppTheme.primary,
-                AppTheme.primaryDim,
-              ],
-            ),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.eco,
-                size: 50,
-                color: Colors.white,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'V',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                ),
-              ),
-            ],
+          child: SvgPicture.asset(
+            'assets/images/logo.svg',
+            width: 120,
+            height: 120,
           ),
         ),
       ),

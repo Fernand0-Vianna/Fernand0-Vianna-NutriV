@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -108,29 +109,48 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return Column(
       children: [
         Container(
-          width: 80,
-          height: 80,
+          width: 100,
+          height: 100,
           decoration: BoxDecoration(
-            color: AppTheme.primaryContainer,
+            color: AppTheme.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(32),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primary.withValues(alpha: 0.2),
+                color: AppTheme.primary.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
-          child: const Icon(Icons.eco, size: 48, color: AppTheme.primary),
+          child: Center(
+            child: SvgPicture.asset(
+              'assets/images/logo.svg',
+              width: 70,
+              height: 70,
+            ),
+          ),
         ),
         const SizedBox(height: 24),
-        Text(
-          'NutriV',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 32,
-            fontWeight: FontWeight.w800,
-            color: AppTheme.onSurface,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Nutri',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 32,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.onSurface,
+              ),
+            ),
+            Text(
+              'V',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 32,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.primary,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
         Text(

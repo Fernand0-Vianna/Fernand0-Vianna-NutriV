@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/repositories/sync_meal_repository.dart';
 import '../../../domain/entities/meal.dart';
@@ -119,7 +118,7 @@ class MealBloc extends Bloc<MealEvent, MealState> {
     try {
       final existingMeals = _mealRepository.getMealsByDate(event.date);
       final mealTypeKey = event.mealType;
-      
+
       Meal meal;
       try {
         meal = existingMeals.firstWhere((m) => m.mealType == mealTypeKey);
@@ -132,12 +131,12 @@ class MealBloc extends Bloc<MealEvent, MealState> {
           foods: [],
         );
       }
-      
+
       final updatedFoods = [...meal.foods, event.food];
       final updatedMeal = meal.copyWith(foods: updatedFoods);
-      
+
       await _mealRepository.saveMeal(updatedMeal);
-      
+
       final meals = _mealRepository.getMealsByDate(event.date);
       emit(MealLoaded(date: event.date, meals: meals));
     } catch (e) {

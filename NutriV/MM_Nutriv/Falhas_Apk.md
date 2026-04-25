@@ -4,13 +4,12 @@
 
 ---
 
-## Build: 18/04/2026 - 
+## Build: 25/04/2026 - 
 
 ### ⚠️ Pendências/Tarefas
 
-- O registro de usuario no aplicativo, não consigo acessar o app com a conta google e criando uma nova, não houve registro no supabase do usario;
-- Continuar com a conta google está indisponivel;
-- Quando crio um usario novo, ele não cria na tabela do supa;
+- Problema de adição de alimentos no Diario do meu APP;
+- O Botão do pesquisar 
 
 
 ---

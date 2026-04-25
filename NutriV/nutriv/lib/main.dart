@@ -68,7 +68,9 @@ class NutriVApp extends StatelessWidget {
             BlocProvider<MealBloc>(
               create: (_) => getIt<MealBloc>()..add(LoadMeals(DateTime.now())),
             ),
-            BlocProvider<FoodScannerBloc>(create: (_) => getIt<FoodScannerBloc>()),
+            BlocProvider<FoodScannerBloc>(
+              create: (_) => getIt<FoodScannerBloc>(),
+            ),
             BlocProvider<WaterBloc>(
               create: (_) =>
                   getIt<WaterBloc>()..add(LoadWaterIntake(DateTime.now())),
@@ -77,7 +79,8 @@ class NutriVApp extends StatelessWidget {
               create: (_) => getIt<BarcodeScannerBloc>(),
             ),
             BlocProvider<FavoriteDishBloc>(
-              create: (_) => getIt<FavoriteDishBloc>()..add(LoadFavoriteDishes()),
+              create: (_) =>
+                  getIt<FavoriteDishBloc>()..add(LoadFavoriteDishes()),
             ),
           ],
           child: MaterialApp.router(

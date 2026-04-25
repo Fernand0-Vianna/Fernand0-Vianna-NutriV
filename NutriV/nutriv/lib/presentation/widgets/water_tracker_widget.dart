@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_theme.dart';
 
 class WaterTrackerWidget extends StatelessWidget {
   final double currentIntake;
@@ -22,12 +24,12 @@ class WaterTrackerWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
@@ -41,30 +43,54 @@ class WaterTrackerWidget extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        colors: [
+                          AppTheme.secondaryContainer,
+                          AppTheme.secondaryContainer.withValues(alpha: 0.6),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Icon(
-                      Icons.water_drop,
-                      color: Colors.blue,
-                      size: 20,
+                    child: Icon(
+                      Icons.water_drop_outlined,
+                      color: AppTheme.secondary,
+                      size: 22,
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Text(
+                  Text(
                     'Água',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.onSurface,
+                    ),
                   ),
                 ],
               ),
-              Text(
-                '${currentIntake.toInt()} / ${goal.toInt()} ml',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w600,
-                ),
+              Row(
+                children: [
+                  Text(
+                    currentIntake.toInt().toString(),
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.secondary,
+                    ),
+                  ),
+                  Text(
+                    ' / ${goal.toInt()}ml',
+                    style: GoogleFonts.manrope(
+                      fontSize: 14,
+                      color: AppTheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -73,58 +99,65 @@ class WaterTrackerWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: Colors.blue.shade100,
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+              backgroundColor: AppTheme.secondaryContainer.withValues(alpha: 0.5),
+              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.secondary),
               minHeight: 10,
             ),
           ),
           const SizedBox(height: 12),
-          Text(
-            '${remaining.toInt()} ml restantes',
-            style: const TextStyle(
-              color: Colors.blue,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildQuickAddButton(150),
-              _buildQuickAddButton(250),
-              _buildQuickAddButton(350),
-              _buildQuickAddButton(500),
+              Text(
+                '${remaining.toInt()} ml restantes',
+                style: GoogleFonts.manrope(
+                  color: AppTheme.secondary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: onRemoveWater,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceContainerLow,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.remove,
+                        size: 18,
+                        color: AppTheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: onAddWater,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppTheme.secondary, AppTheme.secondary.withValues(alpha: 0.8)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(
+                        Icons.add,
+                        size: 18,
+                        color: AppTheme.onSecondary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildQuickAddButton(int amount) {
-    return GestureDetector(
-      onTap: onAddWater,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.blue.shade50,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.blue.shade100),
-        ),
-        child: Column(
-          children: [
-            const Icon(Icons.add, color: Colors.blue, size: 18),
-            const SizedBox(height: 4),
-            Text(
-              '${amount}ml',
-              style: const TextStyle(
-                color: Colors.blue,
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

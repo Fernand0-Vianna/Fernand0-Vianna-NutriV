@@ -12,7 +12,9 @@ import '../../bloc/water/water_bloc.dart';
 import '../../bloc/water/water_event.dart';
 import '../../widgets/meal_card.dart';
 import '../../widgets/water_tracker_widget.dart';
+import '../../widgets/skeleton_loader.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/app_animations.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,16 +23,30 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  late AnimationController _caloriesAnimationController;
+
   @override
   void initState() {
     super.initState();
     context.read<MealBloc>().add(LoadMeals(DateTime.now()));
+    _caloriesAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+    _caloriesAnimationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _caloriesAnimationController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.surface,
       body: BlocBuilder<UserBloc, UserState>(
         builder: (context, userState) {
           if (userState is UserLoaded) {
@@ -39,18 +55,27 @@ class _HomePageState extends State<HomePage> {
                 context.read<MealBloc>().add(LoadMeals(DateTime.now()));
               },
               color: AppTheme.primary,
+              backgroundColor: AppTheme.surfaceContainerLowest,
               child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
                 slivers: [
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(24, 60, 24, 0),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildHeader(userState.user.name),
+                          FadeIn(child: _buildHeader(userState.user.name)),
                           const SizedBox(height: 24),
-                          _buildHeroCard(userState),
+                          FadeIn(
+                            delay: const Duration(milliseconds: 100),
+                            child: _buildHeroCard(userState),
+                          ),
                           const SizedBox(height: 24),
-                          _buildQuickActions(),
+                          FadeIn(
+                            delay: const Duration(milliseconds: 200),
+                            child: _buildQuickActions(),
+                          ),
                           const SizedBox(height: 24),
                         ],
                       ),
@@ -62,11 +87,20 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildMacrosSection(userState),
+                          FadeIn(
+                            delay: const Duration(milliseconds: 300),
+                            child: _buildMacrosSection(userState),
+                          ),
                           const SizedBox(height: 24),
-                          _buildWaterSection(),
+                          FadeIn(
+                            delay: const Duration(milliseconds: 400),
+                            child: _buildWaterSection(),
+                          ),
                           const SizedBox(height: 24),
-                          _buildMealsSection(),
+                          FadeIn(
+                            delay: const Duration(milliseconds: 500),
+                            child: _buildMealsSection(),
+                          ),
                           const SizedBox(height: 100),
                         ],
                       ),
@@ -76,10 +110,51 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           }
-          return const Center(
-            child: CircularProgressIndicator(color: AppTheme.primary),
-          );
+          return _buildLoadingState();
         },
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 60, 24, 0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SkeletonLoader(height: 16, width: 80),
+                  const SizedBox(height: 8),
+                  SkeletonLoader(height: 32, width: 150),
+                ],
+              ),
+              SkeletonLoader(height: 44, width: 44, borderRadius: 22),
+            ],
+          ),
+          const SizedBox(height: 24),
+          SkeletonLoader(height: 200, borderRadius: 32),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              for (int i = 0; i < 3; i++)
+                SkeletonLoader(height: 80, width: 80, borderRadius: 16),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              for (int i = 0; i < 3; i++) ...[
+                Expanded(child: SkeletonLoader(height: 100, borderRadius: 20)),
+                if (i < 2) const SizedBox(width: 12),
+              ],
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -98,39 +173,55 @@ class _HomePageState extends State<HomePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              greeting,
-              style: GoogleFonts.manrope(
-                fontSize: 14,
-                color: AppTheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                greeting,
+                style: GoogleFonts.manrope(
+                  fontSize: 14,
+                  color: AppTheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              name,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 24,
-                fontWeight: FontWeight.w800,
-                color: AppTheme.onSurface,
+              const SizedBox(height: 4),
+              Text(
+                name,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.onSurface,
+                ),
               ),
-            ),
-          ],
-        ),
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: AppTheme.surfaceContainerLow,
-            shape: BoxShape.circle,
+            ],
           ),
-          child: const Icon(
-            Icons.notifications_outlined,
-            color: AppTheme.onSurface,
-            size: 22,
+        ),
+        GestureDetector(
+          onTap: () => context.go('/profile'),
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppTheme.primary, AppTheme.primaryDim],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primary.withValues(alpha: 0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.person,
+              color: AppTheme.onPrimary,
+              size: 24,
+            ),
           ),
         ),
       ],
@@ -152,101 +243,111 @@ class _HomePageState extends State<HomePage> {
 
         return Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [AppTheme.primary, AppTheme.primaryDim],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primary.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
+                color: AppTheme.primary.withValues(alpha: 0.25),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
               ),
             ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Meta Diária',
-                        style: GoogleFonts.manrope(
-                          fontSize: 14,
-                          color: AppTheme.onPrimary.withValues(alpha: 0.8),
-                          fontWeight: FontWeight.w500,
+              AnimatedBuilder(
+                animation: _caloriesAnimationController,
+                builder: (context, child) {
+                  return SizedBox(
+                    width: 120,
+                    height: 120,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        CircularProgressIndicator(
+                          value: progress.clamp(0, 1) * _caloriesAnimationController.value,
+                          strokeWidth: 10,
+                          backgroundColor: AppTheme.onPrimary.withValues(alpha: 0.15),
+                          valueColor: const AlwaysStoppedAnimation(AppTheme.onPrimary),
+                          strokeCap: StrokeCap.round,
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${consumed.toInt()} kcal',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 36,
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.onPrimary,
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                consumed.toInt().toString(),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppTheme.onPrimary,
+                                ),
+                              ),
+                              Text(
+                                'kcal',
+                                style: GoogleFonts.manrope(
+                                  fontSize: 12,
+                                  color: AppTheme.onPrimary.withValues(alpha: 0.7),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
+                      ],
                     ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryContainer.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      '${remaining.toInt()} restantes',
+                  );
+                },
+              ),
+              const SizedBox(width: 24),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Meta Diária',
                       style: GoogleFonts.manrope(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: AppTheme.onPrimary.withValues(alpha: 0.8),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${goal.toInt()} kcal',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
                         color: AppTheme.onPrimary,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: LinearProgressIndicator(
-                  value: progress.clamp(0, 1),
-                  backgroundColor: AppTheme.onPrimary.withValues(alpha: 0.2),
-                  valueColor: const AlwaysStoppedAnimation(AppTheme.onPrimary),
-                  minHeight: 10,
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.onPrimary.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${remaining.toInt()} restantes',
+                        style: GoogleFonts.manrope(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.onPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${(progress * 100).toInt()}% completado',
-                    style: GoogleFonts.manrope(
-                      fontSize: 13,
-                      color: AppTheme.onPrimary.withValues(alpha: 0.9),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    'Meta: ${goal.toInt()} kcal',
-                    style: GoogleFonts.manrope(
-                      fontSize: 13,
-                      color: AppTheme.onPrimary.withValues(alpha: 0.9),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
@@ -260,7 +361,7 @@ class _HomePageState extends State<HomePage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildQuickActionButton(
-          icon: Icons.qr_code_scanner,
+          icon: Icons.camera_alt_outlined,
           label: 'Scan',
           onTap: () => context.go('/scanner'),
         ),
@@ -288,19 +389,26 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           Container(
-            width: 52,
-            height: 52,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
-              color: AppTheme.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(16),
+              color: AppTheme.surfaceContainerLowest,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            child: Icon(icon, color: AppTheme.primary, size: 24),
+            child: Icon(icon, color: AppTheme.primary, size: 26),
           ),
           const SizedBox(height: 8),
           Text(
             label,
             style: GoogleFonts.manrope(
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: AppTheme.onSurfaceVariant,
             ),
@@ -343,8 +451,8 @@ class _HomePageState extends State<HomePage> {
                     'Proteína',
                     protein,
                     proteinGoal,
-                    AppTheme.primary,
-                    'g',
+                    AppTheme.proteinColor,
+                    Icons.egg_alt_outlined,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -353,8 +461,8 @@ class _HomePageState extends State<HomePage> {
                     'Carboidratos',
                     carbs,
                     carbsGoal,
-                    AppTheme.tertiary,
-                    'g',
+                    AppTheme.carbsColor,
+                    Icons.grain_outlined,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -363,8 +471,8 @@ class _HomePageState extends State<HomePage> {
                     'Gorduras',
                     fat,
                     fatGoal,
-                    AppTheme.error,
-                    'g',
+                    AppTheme.fatColor,
+                    Icons.opacity_outlined,
                   ),
                 ),
               ],
@@ -380,7 +488,7 @@ class _HomePageState extends State<HomePage> {
     double value,
     double goal,
     Color color,
-    String unit,
+    IconData icon,
   ) {
     final progress = goal > 0 ? value / goal : 0.0;
 
@@ -400,17 +508,23 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: GoogleFonts.manrope(
-              fontSize: 12,
-              color: AppTheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
+          Row(
+            children: [
+              Icon(icon, size: 18, color: color),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: GoogleFonts.manrope(
+                  fontSize: 12,
+                  color: AppTheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(
-            '${value.toInt()}$unit',
+            '${value.toInt()}g',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -422,9 +536,9 @@ class _HomePageState extends State<HomePage> {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: progress.clamp(0, 1),
-              backgroundColor: color.withValues(alpha: 0.2),
+              backgroundColor: color.withValues(alpha: 0.15),
               valueColor: AlwaysStoppedAnimation(color),
-              minHeight: 4,
+              minHeight: 5,
             ),
           ),
         ],
@@ -467,11 +581,16 @@ class _HomePageState extends State<HomePage> {
             ),
             TextButton(
               onPressed: () => context.go('/diary'),
+              style: TextButton.styleFrom(
+                foregroundColor: AppTheme.primary,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              ),
               child: Text(
                 'Ver mais',
                 style: GoogleFonts.manrope(
                   color: AppTheme.primary,
                   fontWeight: FontWeight.w600,
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -482,81 +601,80 @@ class _HomePageState extends State<HomePage> {
           builder: (context, state) {
             if (state is MealLoaded) {
               if (state.meals.isEmpty) {
-                return Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(32),
-                  decoration: BoxDecoration(
-                    color: AppTheme.surfaceContainerLowest,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: AppTheme.surfaceContainerLow,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.restaurant_outlined,
-                          size: 32,
-                          color: AppTheme.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Nenhuma refeição hoje',
-                        style: GoogleFonts.manrope(
-                          fontSize: 16,
-                          color: AppTheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () => context.go('/scanner'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primary,
-                          foregroundColor: AppTheme.onPrimary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.add, size: 20),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Adicionar',
-                              style: GoogleFonts.manrope(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+                return _buildEmptyMealsState();
               }
-              return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => Padding(
+              return Column(
+                children: state.meals.take(3).map((meal) {
+                  return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: MealCard(meal: state.meals[index]),
-                  ),
-                  childCount: state.meals.length,
-                ),
+                    child: MealCard(meal: meal),
+                  );
+                }).toList(),
               );
             }
             return const Center(
-              child: CircularProgressIndicator(color: AppTheme.primary),
+              child: Padding(
+                padding: EdgeInsets.all(48),
+                child: CircularProgressIndicator(color: AppTheme.primary),
+              ),
             );
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildEmptyMealsState() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppTheme.outline.withValues(alpha: 0.5)),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppTheme.primaryContainer, AppTheme.surfaceContainerLow],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.restaurant_outlined,
+              size: 32,
+              color: AppTheme.primary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Nenhuma refeição hoje',
+            style: GoogleFonts.manrope(
+              fontSize: 16,
+              color: AppTheme.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () => context.go('/scanner'),
+            icon: const Icon(Icons.add, size: 20),
+            label: Text(
+              'Adicionar',
+              style: GoogleFonts.manrope(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

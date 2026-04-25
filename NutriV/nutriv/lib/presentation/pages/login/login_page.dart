@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/foundation.dart';
 
 import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_event.dart';
@@ -38,11 +39,11 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final authService = getIt<AuthService>();
-      
+
       if (kDebugMode) {
         debugPrint('Tentando login com: ${_emailController.text.trim()}');
       }
-      
+
       final user = await authService.signInWithEmail(
         _emailController.text.trim(),
         _passwordController.text,
@@ -66,20 +67,22 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       if (mounted) {
         String errorMessage = 'Erro ao fazer login';
-        
-        if (e.toString().contains('invalid') || e.toString().contains('credentials')) {
+
+        if (e.toString().contains('invalid') ||
+            e.toString().contains('credentials')) {
           errorMessage = 'E-mail ou senha incorretos';
-        } else if (e.toString().contains('network') || e.toString().contains('SocketException')) {
+        } else if (e.toString().contains('network') ||
+            e.toString().contains('SocketException')) {
           errorMessage = 'Erro de conexão. Verifique sua internet';
         }
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errorMessage),
             backgroundColor: AppTheme.error,
           ),
         );
-        
+
         if (kDebugMode) {
           debugPrint('Login error: $e');
         }
@@ -127,34 +130,26 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppTheme.surface, AppTheme.surfaceContainerLow],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 40),
-                  _buildHeader(),
-                  const SizedBox(height: 40),
-                  _buildLoginCard(),
-                  const SizedBox(height: 24),
-                  _buildDivider(),
-                  const SizedBox(height: 24),
-                  _buildGoogleButton(),
-                  const SizedBox(height: 24),
-                  _buildRegisterLink(),
-                ],
-              ),
+      backgroundColor: AppTheme.surface,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 60),
+                _buildHeader(),
+                const SizedBox(height: 48),
+                _buildLoginCard(),
+                const SizedBox(height: 24),
+                _buildDivider(),
+                const SizedBox(height: 24),
+                _buildGoogleButton(),
+                const SizedBox(height: 32),
+                _buildRegisterLink(),
+              ],
             ),
           ),
         ),
@@ -165,30 +160,55 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildHeader() {
     return Column(
       children: [
+        // Logo com círculo verde gradiente
         Container(
-          width: 80,
-          height: 80,
+          width: 110,
+          height: 110,
           decoration: BoxDecoration(
-            color: AppTheme.primaryContainer,
+            gradient: const LinearGradient(
+              colors: [AppTheme.primary, AppTheme.primaryDim],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             borderRadius: BorderRadius.circular(32),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primary.withValues(alpha: 0.2),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+                color: AppTheme.primary.withValues(alpha: 0.25),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
               ),
             ],
           ),
-          child: const Icon(Icons.eco, size: 48, color: AppTheme.primary),
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'NutriV',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 32,
-            fontWeight: FontWeight.w800,
-            color: AppTheme.onSurface,
+          child: Center(
+            child: SvgPicture.asset(
+              'assets/images/logo.svg',
+              width: 70,
+              height: 70,
+            ),
           ),
+        ),
+        const SizedBox(height: 28),
+        // Nome do app - Nutri em verde, V em laranja
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Nutri',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 36,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.primary,
+              ),
+            ),
+            Text(
+              'V',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 36,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.secondary,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
         Text(
@@ -205,15 +225,15 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildLoginCard() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: AppTheme.primary.withValues(alpha: 0.08),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -223,24 +243,35 @@ class _LoginPageState extends State<LoginPage> {
           Text(
             'Entrar',
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 20,
+              fontSize: 22,
               fontWeight: FontWeight.w700,
               color: AppTheme.onSurface,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               labelText: 'E-mail',
               hintText: 'seu@email.com',
-              prefixIcon: const Icon(Icons.mail_outline),
+              prefixIcon: Icon(
+                Icons.mail_outline,
+                color: AppTheme.primary.withValues(alpha: 0.6),
+              ),
               filled: true,
               fillColor: AppTheme.surfaceContainerLow,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: AppTheme.outline, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: AppTheme.primary, width: 1.5),
               ),
             ),
             validator: (value) {
@@ -260,12 +291,23 @@ class _LoginPageState extends State<LoginPage> {
             decoration: InputDecoration(
               labelText: 'Senha',
               hintText: '••••••••',
-              prefixIcon: const Icon(Icons.lock_outline),
+              prefixIcon: Icon(
+                Icons.lock_outline,
+                color: AppTheme.primary.withValues(alpha: 0.6),
+              ),
               filled: true,
               fillColor: AppTheme.surfaceContainerLow,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: AppTheme.outline, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: AppTheme.primary, width: 1.5),
               ),
               suffixIcon: IconButton(
                 icon: Icon(
@@ -307,15 +349,31 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          SizedBox(
+          const SizedBox(height: 20),
+          Container(
             width: double.infinity,
             height: 56,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppTheme.primary, AppTheme.primaryDim],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primary.withValues(alpha: 0.3),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
             child: ElevatedButton(
               onPressed: _isLoading ? null : _signIn,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primary,
+                backgroundColor: Colors.transparent,
                 foregroundColor: AppTheme.onPrimary,
+                shadowColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(28),
                 ),
@@ -369,22 +427,24 @@ class _LoginPageState extends State<LoginPage> {
     return SizedBox(
       width: double.infinity,
       height: 56,
-      child: ElevatedButton.icon(
+      child: OutlinedButton.icon(
         onPressed: _signInWithGoogle,
-        style: ElevatedButton.styleFrom(
+        style: OutlinedButton.styleFrom(
           backgroundColor: AppTheme.surfaceContainerLow,
           foregroundColor: AppTheme.onSurface,
+          side: BorderSide(color: AppTheme.outline, width: 1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
           ),
           elevation: 0,
         ),
-        icon: const Icon(Icons.g_mobiledata, size: 24),
+        icon: Icon(Icons.g_mobiledata, size: 24, color: AppTheme.secondary),
         label: Text(
           'Continuar com Google',
           style: GoogleFonts.manrope(
             fontSize: 16,
             fontWeight: FontWeight.w700,
+            color: AppTheme.onSurface,
           ),
         ),
       ),
@@ -399,6 +459,7 @@ class _LoginPageState extends State<LoginPage> {
           'Não tem uma conta? ',
           style: GoogleFonts.manrope(
             color: AppTheme.onSurfaceVariant,
+            fontSize: 15,
           ),
         ),
         GestureDetector(
@@ -408,6 +469,7 @@ class _LoginPageState extends State<LoginPage> {
             style: GoogleFonts.manrope(
               color: AppTheme.primary,
               fontWeight: FontWeight.w700,
+              fontSize: 15,
             ),
           ),
         ),

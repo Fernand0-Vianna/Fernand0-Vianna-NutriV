@@ -30,12 +30,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Sem título.md",
+                "file": "Falhas_Apk.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Sem título"
+              "title": "Falhas_Apk"
             }
           }
         ],
@@ -203,10 +203,11 @@
   },
   "active": "fb30bc4640bdaa91",
   "lastOpenFiles": [
+    "Indice.md",
+    "Sem título.md",
+    "Pendencias_Amanha.md",
     "Relatorios/Relatorio_Analise_Codigo_2026-04-23.md",
     "NutriV_Mapa_Mental.canvas",
-    "Sem título.md",
-    "Indice.md",
     "Clippings/Você disse NutriVision - preciso fazer essa ativid....md",
     "Clippings",
     "Adicoes/Lista_Adicoes.md",
