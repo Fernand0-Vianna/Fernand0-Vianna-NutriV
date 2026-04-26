@@ -9,7 +9,7 @@ class Recipe {
   final int calories;
   final int totalTime;
   final int yield_;
-  final List<String> Ingredients;
+  final List<String> ingredients;
   final double protein;
   final double carbs;
   final double fat;
@@ -22,7 +22,7 @@ class Recipe {
     required this.calories,
     required this.totalTime,
     required this.yield_,
-    required this.Ingredients,
+    required this.ingredients,
     required this.protein,
     required this.carbs,
     required this.fat,
@@ -38,7 +38,7 @@ class Recipe {
       calories: (recipe['calories'] ?? 0).toInt(),
       totalTime: recipe['totalTime'] ?? 0,
       yield_: recipe['yield'] ?? 0,
-      Ingredients: List<String>.from(recipe['ingredientLines'] ?? []),
+      ingredients: List<String>.from(recipe['ingredientLines'] ?? []),
       protein: (recipe['totalNutrients']?['PROCNT']?['quantity'] ?? 0).toDouble(),
       carbs: (recipe['totalNutrients']?['CHOCDF']?['quantity'] ?? 0).toDouble(),
       fat: (recipe['totalNutrients']?['FAT']?['quantity'] ?? 0).toDouble(),
@@ -143,7 +143,7 @@ class RecipeService {
         calories: 350,
         totalTime: 15,
         yield_: 2,
-        Ingredients: [
+        ingredients: [
           '2 xícaras de alface romana',
           '1 peito de frango grelhado',
           '2 colheres de parmesão',
@@ -162,7 +162,7 @@ class RecipeService {
         calories: 420,
         totalTime: 25,
         yield_: 2,
-        Ingredients: [
+        ingredients: [
           '2 filés de salmão',
           '2 xícaras de brócolis',
           '1 limão',
@@ -181,7 +181,7 @@ class RecipeService {
         calories: 380,
         totalTime: 20,
         yield_: 1,
-        Ingredients: [
+        ingredients: [
           '1 xícara quinoa',
           '1/2/abacate',
           '1 ovo frito',
@@ -200,7 +200,7 @@ class RecipeService {
         calories: 280,
         totalTime: 5,
         yield_: 1,
-        Ingredients: [
+        ingredients: [
           '1 scoop proteína',
           '1 banana',
           '1 xícara leite',
@@ -219,7 +219,7 @@ class RecipeService {
         calories: 450,
         totalTime: 30,
         yield_: 2,
-        Ingredients: [
+        ingredients: [
           '2 peitos de frango',
           '1 xícara arroz integral',
           '1 xícara brócolis',
@@ -238,7 +238,7 @@ class RecipeService {
         calories: 180,
         totalTime: 10,
         yield_: 1,
-        Ingredients: [
+        ingredients: [
           '4 claras',
           '1/2 xícara espinafre',
           '1 tomate',

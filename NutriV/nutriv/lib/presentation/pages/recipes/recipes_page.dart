@@ -285,7 +285,7 @@ class _RecipesPageState extends State<RecipesPage> {
           ),
           const SizedBox(height: 12),
           Text(
-            '${recipe.Ingredients.length} ingredientes',
+            '${recipe.ingredients.length} ingredientes',
             style: GoogleFonts.manrope(
               fontSize: 13,
               color: AppTheme.primary,

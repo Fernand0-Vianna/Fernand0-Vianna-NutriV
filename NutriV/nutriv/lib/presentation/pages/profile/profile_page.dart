@@ -566,11 +566,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 if (confirm == true) {
                   try {
                     await getIt<AuthService>().signOut();
-                    context.read<UserBloc>().add(DeleteUser());
-                  } catch (_) {
-                    context.read<UserBloc>().add(DeleteUser());
-                  }
+                  } catch (_) {}
                   if (context.mounted) {
+                    context.read<UserBloc>().add(DeleteUser());
                     context.go('/onboarding');
                   }
                 }
@@ -993,7 +991,7 @@ void _showAppSettings(BuildContext context) {
   void _exportDiary() async {
     try {
       final meals = getIt<SyncMealRepository>().getAllMeals();
-      final csv = getIt<SyncMealRepository>().exportMealsToCsv(meals);
+      getIt<SyncMealRepository>().exportMealsToCsv(meals);
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

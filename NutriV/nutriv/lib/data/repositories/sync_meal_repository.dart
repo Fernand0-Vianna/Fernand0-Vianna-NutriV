@@ -39,15 +39,19 @@ class SyncMealRepository {
     meals.removeWhere((m) => m.id == mealId);
     await _saveLocal(meals);
 
-    // Delete do Supabase - deleta todos os food_logs relacionados a esta refeição
+    // Delete do Supabase - deleta a refeição e seus itens
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId != null) {
+        // Primeiro deletar os meal_items relacionados
+        await _supabase.from('meal_items').delete().eq('meal_id', mealId);
+
+        // Depois deletar a refeição
         await _supabase
-            .from('food_logs')
+            .from('meals')
             .delete()
-            .eq('user_id', userId)
-            .eq('meal_type', mealId); // usando meal_id como identificador
+            .eq('id', mealId)
+            .eq('user_id', userId);
       }
     } catch (e) {
       debugPrint('Erro ao deletar do Supabase: $e');
@@ -92,20 +96,44 @@ class SyncMealRepository {
       final date =
           '${meal.dateTime.year}-${meal.dateTime.month.toString().padLeft(2, '0')}-${meal.dateTime.day.toString().padLeft(2, '0')}';
 
-      // Para cada alimento na refeição, criar/atualizar um food_log
+      // 1. Criar/atualizar a refeição principal
+      final mealData = await _supabase
+          .from('meals')
+          .upsert({
+            'id': meal.id,
+            'user_id': userId,
+            'name': meal.name,
+            'meal_type': meal.mealType.toLowerCase(),
+            'consumed_at': meal.dateTime.toIso8601String(),
+            'date': date,
+            'input_method': 'manual',
+          }, onConflict: 'id,user_id')
+          .select('id')
+          .maybeSingle();
+
+      if (mealData == null) {
+        debugPrint('Sync: Erro ao criar refeição principal');
+        return;
+      }
+
+      // 2. Para cada alimento na refeição, criar meal_items
       for (final mealFood in meal.foods) {
         // Primeiro, garantir que o alimento existe na tabela foods
         String foodId = await _ensureFoodExists(mealFood.food, userId);
 
-        // Inserir/atualizar o food_log
-        await _supabase.from('food_logs').upsert({
-          'user_id': userId,
+        // Criar o meal_item
+        await _supabase.from('meal_items').upsert({
+          'meal_id': mealData['id'],
           'food_id': foodId,
-          'quantity': mealFood.quantity,
-          'meal_type': meal.mealType
-              .toLowerCase(), // breakfast, lunch, dinner, snack
-          'date': date,
-        }, onConflict: 'user_id,food_id,date,meal_type');
+          'food_name': mealFood.food.name,
+          'quantity_g': mealFood.quantity,
+          'calories': mealFood.food.calories * (mealFood.quantity / 100),
+          'protein_g': mealFood.food.protein * (mealFood.quantity / 100),
+          'carbs_g': mealFood.food.carbs * (mealFood.quantity / 100),
+          'fat_g': mealFood.food.fat * (mealFood.quantity / 100),
+          'fiber_g': mealFood.food.fiber * (mealFood.quantity / 100),
+          'input_method': 'manual',
+        }, onConflict: 'meal_id,food_id');
       }
 
       debugPrint('Sync: Refeição ${meal.name} sincronizada com sucesso');
@@ -155,78 +183,62 @@ class SyncMealRepository {
     if (userId == null) return Stream.value([]);
 
     return _supabase
-        .from('food_logs')
+        .from('meals')
         .stream(primaryKey: ['id'])
         .eq('user_id', userId)
-        .asyncMap((logs) => _parseFoodLogsToMeals(logs));
+        .order('consumed_at', ascending: false)
+        .asyncMap((meals) => _parseMealsToMealList(meals));
   }
 
-  Future<List<Meal>> _parseFoodLogsToMeals(
-    List<Map<String, dynamic>> logs,
+  Future<List<Meal>> _parseMealsToMealList(
+    List<Map<String, dynamic>> meals,
   ) async {
-    // Agrupar logs por data e meal_type
-    final Map<String, List<Map<String, dynamic>>> grouped = {};
+    final List<Meal> mealList = [];
 
-    for (final log in logs) {
-      final date = log['date'] as String;
-      final mealType = log['meal_type'] as String;
-      final key = '$date-$mealType';
+    for (final mealData in meals) {
+      // Buscar meal_items relacionados
+      final items = await _supabase
+          .from('meal_items')
+          .select('*, foods(*)')
+          .eq('meal_id', mealData['id']);
 
-      grouped.putIfAbsent(key, () => []);
-      grouped[key]!.add(log);
-    }
-
-    final List<Meal> meals = [];
-
-    for (final entry in grouped.entries) {
       final foods = <MealFood>[];
 
-      for (final log in entry.value) {
-        // Buscar detalhes do alimento
-        final foodData = await _supabase
-            .from('foods')
-            .select()
-            .eq('id', log['food_id'])
-            .maybeSingle();
-
-        if (foodData != null) {
-          foods.add(
-            MealFood(
-              id: log['id'] as String,
-              food: FoodItem(
-                id: foodData['id'] as String,
-                name: foodData['name'] as String,
-                calories: (foodData['calories'] as num).toDouble(),
-                protein: (foodData['protein'] as num?)?.toDouble() ?? 0,
-                carbs: (foodData['carbs'] as num?)?.toDouble() ?? 0,
-                fat: (foodData['fat'] as num?)?.toDouble() ?? 0,
-                portion: (foodData['serving_size'] as num?)?.toDouble() ?? 100,
-              ),
-              quantity: (log['quantity'] as num).toDouble(),
+      for (final item in items) {
+        final foodData = item['foods'] as Map<String, dynamic>;
+        foods.add(
+          MealFood(
+            id: item['id'] as String,
+            food: FoodItem(
+              id: foodData['id'] as String,
+              name: foodData['name'] as String,
+              calories: (foodData['calories'] as num?)?.toDouble() ?? 0,
+              protein: (foodData['protein'] as num?)?.toDouble() ?? 0,
+              carbs: (foodData['carbs'] as num?)?.toDouble() ?? 0,
+              fat: (foodData['fat'] as num?)?.toDouble() ?? 0,
+              fiber: (foodData['fiber'] as num?)?.toDouble() ?? 0,
+              portion: (foodData['serving_size'] as num?)?.toDouble() ?? 100,
             ),
-          );
-        }
+            quantity: (item['quantity_g'] as num).toDouble(),
+          ),
+        );
       }
 
       if (foods.isNotEmpty) {
-        final parts = entry.key.split('-');
-        final date = DateTime.parse(parts[0]);
-        final mealType = parts[1];
-
-        meals.add(
+        mealList.add(
           Meal(
-            id: entry.key,
-            name: _getMealName(mealType),
-            dateTime: date,
-            mealType: mealType,
+            id: mealData['id'] as String,
+            name: mealData['name'] as String,
+            dateTime: DateTime.parse(mealData['consumed_at'] as String),
+            mealType: mealData['meal_type'] as String,
             foods: foods,
-            notes: null,
+            notes: mealData['notes'] as String?,
           ),
         );
       }
     }
 
-    return meals;
+    return mealList;
   }
 
   String _getMealName(String mealType) {
@@ -246,19 +258,22 @@ class SyncMealRepository {
 
   String exportMealsToCsv(List<Meal> meals) {
     final buffer = StringBuffer();
-    buffer.writeln('Data,Refeição,Alimento,Quantidade (g),Calorias,Proteína (g),Carboidratos (g),Gordura (g)');
-    
+    buffer.writeln(
+      'Data,Refeição,Alimento,Quantidade (g),Calorias,Proteína (g),Carboidratos (g),Gordura (g)',
+    );
+
     for (final meal in meals) {
       for (final food in meal.foods) {
-        final date = '${meal.dateTime.day}/${meal.dateTime.month}/${meal.dateTime.year}';
+        final date =
+            '${meal.dateTime.day}/${meal.dateTime.month}/${meal.dateTime.year}';
         buffer.writeln(
           '$date,${meal.name},${food.food.name},${food.quantity.toInt()},'
           '${food.food.calories.toInt()},${food.food.protein.toInt()},'
-          '${food.food.carbs.toInt()},${food.food.fat.toInt()}'
+          '${food.food.carbs.toInt()},${food.food.fat.toInt()}',
         );
       }
     }
-    
+
     return buffer.toString();
   }
 }

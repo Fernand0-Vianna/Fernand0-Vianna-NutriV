@@ -143,10 +143,6 @@ class _PineappleLogoV2Painter extends CustomPainter {
   }
 
   void _drawFruitBody(Canvas canvas, Offset center, double radius) {
-    final paint = Paint()
-      ..color = fruitColor
-      ..style = PaintingStyle.fill;
-
     final gradient = RadialGradient(
       center: const Alignment(-0.3, -0.3),
       colors: [
@@ -181,7 +177,6 @@ class _PineappleLogoV2Painter extends CustomPainter {
     for (double row = 0; row < 6; row++) {
       final rowOffset = row * radius * 0.28;
       final y = center.dy - radius * 0.5 + rowOffset + radius * 0.15;
-      final scaleSpacing = radius * 0.28;
 
       final startX = center.dx - radius * (0.9 - row * 0.15);
       final endX = center.dx + radius * (0.9 - row * 0.15);
@@ -220,10 +215,6 @@ class _PineappleLogoV2Painter extends CustomPainter {
       ..color = const Color(0xFF404040)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
-
-    final innerPaint = Paint()
-      ..color = lensColor
-      ..style = PaintingStyle.fill;
 
     final bluePaint = Paint()
       ..color = const Color(0xFF4A90D9)
@@ -307,7 +298,7 @@ class _PineappleLogoV2Painter extends CustomPainter {
     120: -0.5, 135: -0.707, 150: -0.866, 180: -1.0,
     210: -0.866, 225: -0.707, 240: -0.5, 270: 0.0,
     300: 0.5, 315: 0.707, 330: 0.866, 360: 1.0,
-    0 + 360: 0.0, 30 + 360: 0.5, 45 + 360: 0.707,
+    30 + 360: 0.5, 45 + 360: 0.707,
     60 + 360: 0.866, 90 + 360: 1.0, 120 + 360: 0.866,
     135 + 360: 0.707, 150 + 360: 0.5, 180 + 360: 0.0,
     210 + 360: -0.5, 225 + 360: -0.707, 240 + 360: -0.866,
