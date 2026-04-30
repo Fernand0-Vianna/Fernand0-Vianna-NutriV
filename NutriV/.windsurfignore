@@ -1,0 +1,27 @@
+# Build e cache
+build/
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.gradle/
+android/build/
+ios/build/
+linux/build/
+web/build/
+ios/Pods/
+
+# CMake
+**/CMakeFiles/
+**/*.cmake
+**/Makefile
+**/cmake_install.cmake
+
+# IDEs
+.vscode/
+.cursor/
+.claude/
+.continue/
+.windsurf/skills/
+
+# Git
+.git/

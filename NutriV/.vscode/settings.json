@@ -1,3 +1,27 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "files.exclude": {
+        "**/build": true,
+        "**/.dart_tool": true,
+        "**/CMakeFiles": true,
+        "**/*.cmake": true,
+        "**/Makefile": true,
+        "**/cmake_install.cmake": true,
+        "**/.gradle": true,
+        "**/android/build": true,
+        "**/ios/build": true,
+        "**/linux/build": true,
+        "**/web/build": true,
+        "**/ios/Pods": true
+    },
+    "search.exclude": {
+        "**/build": true,
+        "**/.dart_tool": true,
+        "**/CMakeFiles": true,
+        "**/.gradle": true,
+        "**/android/build": true,
+        "**/ios/build": true,
+        "**/linux/build": true,
+        "**/web/build": true
+    }
 }
