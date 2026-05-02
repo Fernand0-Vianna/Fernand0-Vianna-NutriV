@@ -30,12 +30,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Falhas_Apk.md",
+                "file": "Relatorios/Correcoes_Analise_25_04_2026.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Falhas_Apk"
+              "title": "Correcoes_Analise_25_04_2026"
             }
           }
         ],
@@ -203,11 +203,14 @@
   },
   "active": "fb30bc4640bdaa91",
   "lastOpenFiles": [
-    "Indice.md",
+    "Relatorios/Estado_Atual.md",
+    "Relatorios/Implementacoes_24_04_2026.md",
+    "NutriV_Mapa_Mental.canvas",
     "Sem título.md",
     "Pendencias_Amanha.md",
+    "Falhas_Apk.md",
+    "Indice.md",
     "Relatorios/Relatorio_Analise_Codigo_2026-04-23.md",
-    "NutriV_Mapa_Mental.canvas",
     "Clippings/Você disse NutriVision - preciso fazer essa ativid....md",
     "Clippings",
     "Adicoes/Lista_Adicoes.md",
@@ -215,8 +218,6 @@
     "Melhorias/Lista_Melhorias.md",
     "Anotacoes/NutriV_Anotacoes_Gerais.md",
     "Atualizacao/Historico_Atualizacoes.md",
-    "Falhas_Apk.md",
-    "Relatorios/Estado_Atual.md",
     "Ideias/Ideias_e_Casos_Uso.md",
     "referencias/stitch_flutter_ui_design/verdant_health/DESIGN.md",
     "referencias/stitch_flutter_ui_design/estat_sticas_refinadas/screen.png",

@@ -25,6 +25,10 @@ graph LR
 | [[NutriV_Anotacoes_Gerais]] | Visão geral + índice | → Todos |
 | [[Estado_Atual]] | Arquitetura técnica atual | ← Anotações, Updates |
 | [[Atualizacao/Historico_Atualizacoes]] | Cronologia de mudanças | → Remoções, Adições |
+| [[Relatorios/Sessao_QA_Correcoes_Criticas_02_05_2026]] | Sessão completa de QA e correções | ← Git Log |
+| [[Relatorios/Relatorio_QA_Completo]] | Primeira rodada de análise QA | → Correções |
+| [[Relatorios/Relatorio_QA_Completo_Revisao_Final]] | Segunda rodada pós-correções | ← Relatorio QA |
+| [[Relatorios/Correcoes_QA_02_05_2026]] | Log detalhado das correções | ← Sessão QA |
 | [[Relatorio_Alteracoes_Recentes]] | Relatório detalhado das últimas mudanças | ← Git Log |
 | [[Lista_Adicoes]] | Funcionalidades adicionadas | → Melhorias, Ideias |
 | [[Lista_Remocoes]] | Remoções e pendências | ← Atualizações |
@@ -65,8 +69,9 @@ Melhorias → (Ideias, Adições, Estado_Atual, Anotações)
 1. **Para entender o projeto**: Comece por [[NutriV_Anotacoes_Gerais]]
 2. **Para ver a tecnologia**: Vá para [[Estado_Atual]]
 3. **Para ver o que foi feito**: Veja [[Lista_Adicoes]] e [[Atualizacao/Historico_Atualizacoes]]
-4. **Para ver o que falta**: Consulte [[Lista_Melhorias]] e [[Ideias/Ideias_e_Casos_Uso]]
-5. **Para ver o que foi removido**: Veja [[Lista_Remocoes]]
+4. **Para ver relatórios de QA**: Consulte [[Relatorios/Sessao_QA_Correcoes_Criticas_02_05_2026]]
+5. **Para ver o que falta**: Consulte [[Lista_Melhorias]] e [[Ideias/Ideias_e_Casos_Uso]]
+6. **Para ver o que foi removido**: Veja [[Lista_Remocoes]]
 
 ---
 
@@ -100,5 +105,5 @@ Melhorias → (Ideias, Adições, Estado_Atual, Anotações)
 
 ---
 
-*Última atualização: 21 de Abril de 2026*
+*Última atualização: 02 de Maio de 2026*
 *Documento faz parte do [[NutriV_Anotacoes_Gerais]]*
