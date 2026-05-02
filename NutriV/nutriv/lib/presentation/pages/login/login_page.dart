@@ -66,20 +66,29 @@ class _LoginPageState extends State<LoginPage> {
       }
     } catch (e) {
       if (mounted) {
-        String errorMessage = 'Erro ao fazer login';
+        String errorMessage = 'Erro ao fazer login. Tente novamente.';
 
-        if (e.toString().contains('invalid') ||
-            e.toString().contains('credentials')) {
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('invalid') ||
+            errorStr.contains('credentials') ||
+            errorStr.contains('invalid login credentials')) {
           errorMessage = 'E-mail ou senha incorretos';
-        } else if (e.toString().contains('network') ||
-            e.toString().contains('SocketException')) {
+        } else if (errorStr.contains('network') ||
+            errorStr.contains('socketexception') ||
+            errorStr.contains('connection')) {
           errorMessage = 'Erro de conexão. Verifique sua internet';
+        } else if (errorStr.contains('too many requests') ||
+            errorStr.contains('rate limit')) {
+          errorMessage = 'Muitas tentativas. Aguarde um momento';
+        } else if (errorStr.contains('email not confirmed')) {
+          errorMessage = 'E-mail não confirmado. Verifique sua caixa de entrada';
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errorMessage),
             backgroundColor: AppTheme.error,
+            behavior: SnackBarBehavior.floating,
           ),
         );
 
@@ -102,25 +111,59 @@ class _LoginPageState extends State<LoginPage> {
       if (success && mounted) {
         final user = authService.getCurrentUser();
         if (user != null) {
+          if (kDebugMode) {
+            debugPrint('Google login - User: ${user.name}, ${user.email}');
+          }
           context.read<UserBloc>().add(SaveUser(user));
           context.go('/');
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Usuário não encontrado após login Google'),
+                backgroundColor: AppTheme.error,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
         }
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Falha ao fazer login com Google'),
             backgroundColor: AppTheme.error,
+            behavior: SnackBarBehavior.floating,
           ),
         );
       }
     } catch (e) {
       if (mounted) {
+        String errorMessage = 'Erro ao fazer login com Google';
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('network') || errorStr.contains('socketexception')) {
+          errorMessage = 'Erro de conexão. Verifique sua internet';
+        } else if (errorStr.contains('cancelled') || errorStr.contains('abort')) {
+          errorMessage = 'Login cancelado';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              backgroundColor: AppTheme.onSurfaceVariant,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+          return;
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro: ${e.toString()}'),
+            content: Text(errorMessage),
             backgroundColor: AppTheme.error,
+            behavior: SnackBarBehavior.floating,
           ),
         );
+        if (kDebugMode) {
+          debugPrint('Google login error: $e');
+        }
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -252,6 +295,7 @@ class _LoginPageState extends State<LoginPage> {
           TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
+            autocorrect: false,
             decoration: InputDecoration(
               labelText: 'E-mail',
               hintText: 'seu@email.com',
@@ -278,7 +322,10 @@ class _LoginPageState extends State<LoginPage> {
               if (value == null || value.isEmpty) {
                 return 'Digite seu e-mail';
               }
-              if (!value.contains('@') || !value.contains('.')) {
+              final emailRegex = RegExp(
+                r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+              );
+              if (!emailRegex.hasMatch(value)) {
                 return 'E-mail inválido';
               }
               return null;
@@ -471,6 +518,7 @@ class _LoginPageState extends State<LoginPage> {
               fontWeight: FontWeight.w700,
               fontSize: 15,
             ),
+            semanticsLabel: 'Cadastre-se, criar nova conta',
           ),
         ),
       ],

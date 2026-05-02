@@ -180,6 +180,17 @@ Future<app.User?> signUpWithEmail(String email, String password) async {
     }
   }
 
+  Future<void> resetPassword(String email) async {
+    try {
+      await _supabase.auth.resetPasswordForEmail(email);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('ResetPassword error: $e');
+      }
+      rethrow;
+    }
+  }
+
   app.User? getCurrentUser() {
     final currentUser = _supabase.auth.currentUser;
     if (currentUser != null) {

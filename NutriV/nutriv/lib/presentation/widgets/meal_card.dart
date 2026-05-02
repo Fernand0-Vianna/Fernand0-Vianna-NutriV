@@ -33,88 +33,107 @@ class MealCard extends StatelessWidget {
       ),
       child: Material(
         color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppTheme.primaryContainer,
-                            AppTheme.primaryContainer.withValues(alpha: 0.6),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(
-                        _getMealIcon(meal.mealType),
-                        color: AppTheme.primary,
-                        size: 22,
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            meal.name.isNotEmpty ? meal.name : meal.mealType,
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: AppTheme.onSurface,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+        child: Semantics(
+          label: '${meal.name.isNotEmpty ? meal.name : meal.mealType}, ${meal.totalCalories.toInt()} calorias, ${meal.foods.length} alimentos',
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(20),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppTheme.primaryContainer,
+                              AppTheme.primaryContainer.withValues(alpha: 0.6),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          if (meal.foods.isNotEmpty) ...[
-                            const SizedBox(height: 4),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(
+                          _getMealIcon(meal.mealType),
+                          color: AppTheme.primary,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Text(
-                              meal.foods.map((f) => f.food.name).join(', '),
-                              style: GoogleFonts.manrope(
-                                fontSize: 13,
-                                color: AppTheme.onSurfaceVariant,
+                              meal.name.isNotEmpty ? meal.name : meal.mealType,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.onSurface,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
+                            if (meal.foods.isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                meal.foods.map((f) => f.food.name).join(', '),
+                                style: GoogleFonts.manrope(
+                                  fontSize: 13,
+                                  color: AppTheme.onSurfaceVariant,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            '${meal.totalCalories.toInt()}',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: AppTheme.primary,
+                            ),
+                          ),
+                          Text(
+                            'kcal',
+                            style: GoogleFonts.manrope(
+                              fontSize: 11,
+                              color: AppTheme.onSurfaceVariant,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ],
                       ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '${meal.totalCalories.toInt()}',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            color: AppTheme.primary,
-                          ),
-                        ),
-                        Text(
-                          'kcal',
-                          style: GoogleFonts.manrope(
-                            fontSize: 11,
-                            color: AppTheme.onSurfaceVariant,
-                            fontWeight: FontWeight.w500,
+                      if (onDelete != null) ...[
+                        const SizedBox(width: 8),
+                        Semantics(
+                          label: 'Excluir refeição',
+                          child: IconButton(
+                            onPressed: onDelete,
+                            icon: Icon(
+                              Icons.delete_outline,
+                              size: 20,
+                              color: AppTheme.error.withValues(alpha: 0.7),
+                            ),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
                           ),
                         ),
                       ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 14),
                 Container(

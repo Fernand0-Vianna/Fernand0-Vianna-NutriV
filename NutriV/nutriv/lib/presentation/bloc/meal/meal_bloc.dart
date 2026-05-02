@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/repositories/sync_meal_repository.dart';
 import '../../../domain/entities/meal.dart';
@@ -18,14 +19,15 @@ class MealBloc extends Bloc<MealEvent, MealState> {
     on<AddMealFood>(_onAddMealFood);
   }
 
-  void _onLoadMeals(LoadMeals event, Emitter<MealState> emit) {
+  Future<void> _onLoadMeals(LoadMeals event, Emitter<MealState> emit) async {
     emit(MealLoading());
     _currentDate = event.date;
     try {
       final meals = _mealRepository.getMealsByDate(event.date);
       emit(MealLoaded(date: event.date, meals: meals));
     } catch (e) {
-      emit(MealError(e.toString()));
+      debugPrint('MealBloc LoadMeals error: $e');
+      emit(MealError('Erro ao carregar refeições'));
     }
   }
 
@@ -35,7 +37,8 @@ class MealBloc extends Bloc<MealEvent, MealState> {
       final meals = _mealRepository.getMealsByDate(_currentDate);
       emit(MealLoaded(date: _currentDate, meals: meals));
     } catch (e) {
-      emit(MealError(e.toString()));
+      debugPrint('MealBloc AddMeal error: $e');
+      emit(MealError('Erro ao adicionar refeição'));
     }
   }
 
@@ -45,7 +48,8 @@ class MealBloc extends Bloc<MealEvent, MealState> {
       final meals = _mealRepository.getMealsByDate(_currentDate);
       emit(MealLoaded(date: _currentDate, meals: meals));
     } catch (e) {
-      emit(MealError(e.toString()));
+      debugPrint('MealBloc UpdateMeal error: $e');
+      emit(MealError('Erro ao atualizar refeição'));
     }
   }
 
@@ -55,7 +59,8 @@ class MealBloc extends Bloc<MealEvent, MealState> {
       final meals = _mealRepository.getMealsByDate(_currentDate);
       emit(MealLoaded(date: _currentDate, meals: meals));
     } catch (e) {
-      emit(MealError(e.toString()));
+      debugPrint('MealBloc DeleteMeal error: $e');
+      emit(MealError('Erro ao excluir refeição'));
     }
   }
 
@@ -79,7 +84,8 @@ class MealBloc extends Bloc<MealEvent, MealState> {
           emit(MealLoaded(date: _currentDate, meals: meals));
         }
       } catch (e) {
-        emit(MealError(e.toString()));
+        debugPrint('MealBloc AddFoodToMeal error: $e');
+        emit(MealError('Erro ao adicionar alimento'));
       }
     }
   }
@@ -106,7 +112,8 @@ class MealBloc extends Bloc<MealEvent, MealState> {
           emit(MealLoaded(date: _currentDate, meals: meals));
         }
       } catch (e) {
-        emit(MealError(e.toString()));
+        debugPrint('MealBloc RemoveFoodFromMeal error: $e');
+        emit(MealError('Erro ao remover alimento'));
       }
     }
   }
@@ -140,9 +147,8 @@ class MealBloc extends Bloc<MealEvent, MealState> {
       final meals = _mealRepository.getMealsByDate(event.date);
       emit(MealLoaded(date: event.date, meals: meals));
     } catch (e) {
-      // ignore: avoid_print
-      print('Error adding meal food: $e');
-      emit(MealError(e.toString()));
+      debugPrint('MealBloc AddMealFood error: $e');
+      emit(MealError('Erro ao adicionar alimento à refeição'));
     }
   }
 

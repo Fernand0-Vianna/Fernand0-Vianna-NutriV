@@ -118,12 +118,14 @@ class _DiaryPageState extends State<DiaryPage> {
           final isSelected = _isSameDay(date, _selectedDate);
           final isToday = _isSameDay(date, DateTime.now());
 
-          return GestureDetector(
-            onTap: () {
-              setState(() => _selectedDate = date);
-              context.read<MealBloc>().add(LoadMeals(date));
-            },
-            child: AnimatedContainer(
+          return Semantics(
+            label: '${isSelected ? "Selecionado, " : ""}${isToday ? "Hoje, " : ""}${DateFormat('dd/MM').format(date)}',
+            child: GestureDetector(
+              onTap: () {
+                setState(() => _selectedDate = date);
+                context.read<MealBloc>().add(LoadMeals(date));
+              },
+              child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: 60,
               margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -183,7 +185,9 @@ class _DiaryPageState extends State<DiaryPage> {
                 ],
               ),
             ),
-          );
+          ),
+        );
+          ),
         },
       ),
     );

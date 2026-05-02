@@ -33,6 +33,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   int _activityLevel = 1;
   String _goal = 'maintain';
   bool _showEmailLogin = false;
+  bool _isLoading = false;
+  bool _isSignUp = true;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -265,11 +268,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
           const SizedBox(height: 16),
           TextFormField(
             controller: _passwordController,
-            obscureText: true,
+            obscureText: _obscurePassword,
             decoration: InputDecoration(
               labelText: 'Senha',
               hintText: '••••••••',
               prefixIcon: const Icon(Icons.lock_outline),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: () =>
+                    setState(() => _obscurePassword = !_obscurePassword),
+              ),
               filled: true,
               fillColor: AppTheme.surfaceContainerLow,
               border: OutlineInputBorder(
@@ -295,6 +305,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ),
             ),
           ),
+          const SizedBox(height: 8),
+          Center(
+            child: TextButton(
+              onPressed: () => setState(() => _isSignUp = !_isSignUp),
+              child: Text(
+                _isSignUp
+                    ? 'Já tem conta? Fazer login'
+                    : 'Não tem conta? Criar conta',
+                style: GoogleFonts.manrope(
+                  color: AppTheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -307,7 +332,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           width: double.infinity,
           height: 56,
           child: ElevatedButton(
-            onPressed: _signInWithEmail,
+            onPressed: _isLoading ? null : _signInWithEmail,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primary,
               foregroundColor: AppTheme.onPrimary,
@@ -316,18 +341,27 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ),
               elevation: 0,
             ),
-            child: Text(
-              'Entrar',
-              style: GoogleFonts.manrope(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+            child: _isLoading
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      color: AppTheme.onPrimary,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Text(
+                    _isSignUp ? 'Criar Conta' : 'Entrar',
+                    style: GoogleFonts.manrope(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
           ),
         ),
         const SizedBox(height: 12),
         TextButton(
-          onPressed: () => setState(() => _showEmailLogin = false),
+          onPressed: _isLoading ? null : () => setState(() => _showEmailLogin = false),
           child: Text(
             'Voltar',
             style: GoogleFonts.manrope(
@@ -723,7 +757,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _saveProfile,
+        onPressed: _isLoading ? null : _saveProfile,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primary,
           foregroundColor: AppTheme.onPrimary,
@@ -733,56 +767,100 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
           elevation: 0,
         ),
-        child: Text(
-          'Começar',
-          style: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.w700),
-        ),
+        child: _isLoading
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  color: AppTheme.onPrimary,
+                  strokeWidth: 2,
+                ),
+              )
+            : Text(
+                'Começar',
+                style: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.w700),
+              ),
       ),
     );
   }
 
   void _showForgotPasswordDialog() {
     final emailController = TextEditingController();
+    bool isLoading = false;
+
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Recuperar Senha'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Digite seu e-mail para receber o link de recuperação.'),
-            const SizedBox(height: 16),
-            TextField(
-              controller: emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                labelText: 'E-mail',
-                hintText: 'nome@exemplo.com',
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('Recuperar Senha'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Digite seu e-mail para receber o link de recuperação.',
               ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'E-mail',
+                  hintText: 'nome@exemplo.com',
+                ),
+              ),
+              if (isLoading)
+                const Padding(
+                  padding: EdgeInsets.only(top: 16),
+                  child: CircularProgressIndicator(),
+                ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isLoading ? null : () => Navigator.pop(ctx),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      if (emailController.text.isEmpty) return;
+                      setDialogState(() => isLoading = true);
+
+                      try {
+                        final authService = getIt<AuthService>();
+                        await authService
+                            .resetPassword(emailController.text.trim());
+
+                        if (mounted) {
+                          Navigator.pop(ctx);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Link de recuperação enviado para seu e-mail!',
+                              ),
+                              backgroundColor: AppTheme.success,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        setDialogState(() => isLoading = false);
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Erro ao enviar link: ${e.toString()}',
+                              ),
+                              backgroundColor: AppTheme.error,
+                            ),
+                          );
+                        }
+                      }
+                    },
+              child: const Text('Enviar'),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () {
-              if (emailController.text.isNotEmpty) {
-                Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Link de recuperação enviado para seu e-mail!',
-                    ),
-                  ),
-                );
-              }
-            },
-            child: const Text('Enviar'),
-          ),
-        ],
       ),
     );
   }
@@ -795,8 +873,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
       return;
     }
 
-    if (!_emailController.text.contains('@') ||
-        !_emailController.text.contains('.')) {
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
+    if (!emailRegex.hasMatch(_emailController.text)) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('E-mail inválido')));
@@ -810,34 +890,98 @@ class _OnboardingPageState extends State<OnboardingPage> {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Criando conta...'),
-        duration: Duration(seconds: 1),
-      ),
-    );
+    setState(() => _isLoading = true);
 
-    final user = User(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      name: _emailController.text.split('@').first,
-      email: _emailController.text,
-      weight: double.tryParse(_weightController.text) ?? 70,
-      height: double.tryParse(_heightController.text) ?? 170,
-      age: int.tryParse(_ageController.text) ?? 25,
-      isMale: _isMale,
-      activityLevel: _activityLevel,
-      goal: _goal,
-      calorieGoal: 2000,
-      proteinGoal: 120,
-      carbsGoal: 250,
-      fatGoal: 65,
-      waterGoal: 2000,
-      createdAt: DateTime.now(),
-    );
+    try {
+      final authService = getIt<AuthService>();
+      dynamic userResult;
 
-    if (mounted) {
-      context.read<UserBloc>().add(SaveUser(user));
-      context.go('/');
+      if (_isSignUp) {
+        userResult = await authService.signUpWithEmail(
+          _emailController.text.trim(),
+          _passwordController.text,
+        );
+      } else {
+        userResult = await authService.signInWithEmail(
+          _emailController.text.trim(),
+          _passwordController.text,
+        );
+      }
+
+      if (userResult != null && mounted) {
+        final weight = double.tryParse(_weightController.text) ?? 70;
+        final height = double.tryParse(_heightController.text) ?? 170;
+        final age = int.tryParse(_ageController.text) ?? 25;
+
+        final bmr = NutritionUtils.calculateBMR(
+          weight: weight,
+          height: height,
+          age: age,
+          isMale: _isMale,
+        );
+
+        final tdee = NutritionUtils.calculateTDEE(bmr, _activityLevel);
+        final goalCalories = NutritionUtils.calculateGoalCalories(tdee, _goal);
+
+        final proteinGoal = _goal == 'lose' ? weight * 2.0 : weight * 1.6;
+        final carbsGoal = goalCalories * 0.4 / 4;
+        final fatGoal = goalCalories * 0.3 / 9;
+
+        final user = User(
+          id: userResult.id,
+          name: _nameController.text.isNotEmpty
+              ? _nameController.text
+              : _emailController.text.split('@').first,
+          email: _emailController.text.trim(),
+          weight: weight,
+          height: height,
+          age: age,
+          isMale: _isMale,
+          activityLevel: _activityLevel,
+          goal: _goal,
+          calorieGoal: goalCalories,
+          proteinGoal: proteinGoal,
+          carbsGoal: carbsGoal,
+          fatGoal: fatGoal,
+          waterGoal: AppConstants.defaultWaterGoal,
+          createdAt: DateTime.now(),
+        );
+
+        context.read<UserBloc>().add(SaveUser(user));
+        context.go('/');
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _isSignUp
+                  ? 'Erro ao criar conta. E-mail pode já estar em uso.'
+                  : 'E-mail ou senha incorretos.',
+            ),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        String errorMessage = _isSignUp ? 'Erro ao criar conta' : 'Erro ao fazer login';
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('email') || errorStr.contains('already')) {
+          errorMessage = 'E-mail inválido ou já está em uso';
+        } else if (errorStr.contains('password') || errorStr.contains('invalid') || errorStr.contains('credentials')) {
+          errorMessage = 'E-mail ou senha incorretos';
+        } else if (errorStr.contains('network') || errorStr.contains('socketexception')) {
+          errorMessage = 'Erro de conexão. Verifique sua internet';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -863,8 +1007,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
     }
   }
 
-  void _saveProfile() {
-    if (_formKey.currentState!.validate()) {
+  Future<void> _saveProfile() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
       final weight = double.parse(_weightController.text);
       final height = double.parse(_heightController.text);
       final age = int.parse(_ageController.text);
@@ -901,7 +1049,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
       );
 
       context.read<UserBloc>().add(SaveUser(user));
-      context.go('/');
+      if (mounted) context.go('/');
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao criar perfil: ${e.toString()}'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 }

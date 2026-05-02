@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/repositories/user_repository.dart';
 import 'user_event.dart';
@@ -13,7 +14,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<DeleteUser>(_onDeleteUser);
   }
 
-  void _onLoadUser(LoadUser event, Emitter<UserState> emit) {
+  Future<void> _onLoadUser(LoadUser event, Emitter<UserState> emit) async {
     emit(UserLoading());
     try {
       final user = _userRepository.getUser();
@@ -23,7 +24,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(UserNotFound());
       }
     } catch (e) {
-      emit(UserError(e.toString()));
+      debugPrint('UserBloc LoadUser error: $e');
+      emit(UserError('Erro ao carregar dados do usuário'));
     }
   }
 
@@ -33,17 +35,23 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       await _userRepository.saveUser(event.user);
       emit(UserLoaded(event.user));
     } catch (e) {
-      emit(UserError(e.toString()));
+      debugPrint('UserBloc SaveUser error: $e');
+      emit(UserError('Erro ao salvar dados do usuário'));
     }
   }
 
   Future<void> _onUpdateUser(UpdateUser event, Emitter<UserState> emit) async {
+    final currentState = state;
     emit(UserLoading());
     try {
       await _userRepository.saveUser(event.user);
       emit(UserLoaded(event.user));
     } catch (e) {
-      emit(UserError(e.toString()));
+      debugPrint('UserBloc UpdateUser error: $e');
+      if (currentState is UserState) {
+        emit(currentState);
+      }
+      emit(UserError('Erro ao atualizar dados do usuário'));
     }
   }
 
@@ -53,7 +61,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       await _userRepository.deleteUser();
       emit(UserNotFound());
     } catch (e) {
-      emit(UserNotFound());
+      debugPrint('UserBloc DeleteUser error: $e');
+      emit(UserError('Erro ao excluir dados do usuário'));
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/datasources/ai_food_service.dart';
 import '../../../data/datasources/usda_food_service.dart';
@@ -31,14 +32,19 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
       if (foods.isEmpty) {
         emit(
           const FoodScannerError(
-            'Não foi possível identificar os alimentos. Tente novamente.',
+            'Não foi possível identificar os alimentos. Tente novamente com uma imagem mais clara.',
           ),
         );
       } else {
         emit(FoodScannerAnalyzed(scannedFoods: foods));
       }
     } catch (e) {
-      emit(FoodScannerError(e.toString()));
+      debugPrint('FoodScannerBloc AnalyzeImage error: $e');
+      emit(
+        const FoodScannerError(
+          'Erro ao analisar imagem. Verifique sua conexão e tente novamente.',
+        ),
+      );
     }
   }
 
@@ -52,14 +58,19 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
       if (foods.isEmpty) {
         emit(
           const FoodScannerError(
-            'Não foi possível identificar os alimentos. Tente novamente.',
+            'Não foi possível identificar os alimentos. Tente ser mais específico.',
           ),
         );
       } else {
         emit(FoodScannerAnalyzed(scannedFoods: foods));
       }
     } catch (e) {
-      emit(FoodScannerError(e.toString()));
+      debugPrint('FoodScannerBloc AnalyzeText error: $e');
+      emit(
+        const FoodScannerError(
+          'Erro ao buscar alimento. Verifique sua conexão e tente novamente.',
+        ),
+      );
     }
   }
 
@@ -82,14 +93,19 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
       if (foods.isEmpty) {
         emit(
           const FoodScannerError(
-            'Nenhum alimento encontrado. Tente outro nome ou use a câmera.',
+            'Nenhum alimento encontrado. Tente outro nome ou use a câmera para fotografar.',
           ),
         );
       } else {
         emit(FoodScannerAnalyzed(scannedFoods: foods));
       }
     } catch (e) {
-      emit(FoodScannerError(e.toString()));
+      debugPrint('FoodScannerBloc SearchFoodByName error: $e');
+      emit(
+        const FoodScannerError(
+          'Erro ao buscar alimento. Verifique sua conexão e tente novamente.',
+        ),
+      );
     }
   }
 

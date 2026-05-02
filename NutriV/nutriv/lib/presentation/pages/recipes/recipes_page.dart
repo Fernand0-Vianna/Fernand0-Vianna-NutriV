@@ -15,6 +15,7 @@ class _RecipesPageState extends State<RecipesPage> {
   final RecipeService _recipeService = RecipeService();
   List<Recipe> _recipes = [];
   bool _isLoading = true;
+  bool _hasError = false;
   String _selectedCategory = 'healthy';
 
   @override
@@ -24,7 +25,10 @@ class _RecipesPageState extends State<RecipesPage> {
   }
 
   Future<void> _loadRecipes() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _hasError = false;
+    });
 
     try {
       final recipes = await _recipeService.searchRecipes(
@@ -38,7 +42,10 @@ class _RecipesPageState extends State<RecipesPage> {
         _isLoading = false;
       });
     } catch (e) {
-      setState(() => _isLoading = false);
+      setState(() {
+        _hasError = true;
+        _isLoading = false;
+      });
     }
   }
 
@@ -65,6 +72,84 @@ class _RecipesPageState extends State<RecipesPage> {
             const SliverFillRemaining(
               child: Center(
                 child: CircularProgressIndicator(color: AppTheme.primary),
+              ),
+            )
+          else if (_hasError)
+            SliverFillRemaining(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: AppTheme.error,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Erro ao carregar receitas',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Verifique sua conexão e tente novamente',
+                      style: GoogleFonts.manrope(
+                        fontSize: 14,
+                        color: AppTheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: _loadRecipes,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primary,
+                        foregroundColor: AppTheme.onPrimary,
+                      ),
+                      child: Text(
+                        'Tentar novamente',
+                        style: GoogleFonts.manrope(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else if (_recipes.isEmpty)
+            SliverFillRemaining(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.restaurant_menu,
+                      size: 64,
+                      color: AppTheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Nenhuma receita encontrada',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Tente outra categoria',
+                      style: GoogleFonts.manrope(
+                        fontSize: 14,
+                        color: AppTheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             )
           else
@@ -136,9 +221,16 @@ class _RecipesPageState extends State<RecipesPage> {
             color: AppTheme.surfaceContainerLow,
             borderRadius: BorderRadius.circular(14),
           ),
-          child: const Icon(
-            Icons.search,
-            color: AppTheme.onSurface,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: _showSearchDialog,
+              child: const Icon(
+                Icons.search,
+                color: AppTheme.onSurface,
+              ),
+            ),
           ),
         ),
       ],
@@ -322,6 +414,40 @@ class _RecipesPageState extends State<RecipesPage> {
               fontSize: 12,
               color: color,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSearchDialog() {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Buscar Receitas'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: 'Ex: frango, salada, sopa...',
+            prefixIcon: Icon(Icons.search),
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (controller.text.isNotEmpty) {
+                setState(() => _selectedCategory = controller.text);
+                Navigator.pop(ctx);
+                _loadRecipes();
+              }
+            },
+            child: const Text('Buscar'),
           ),
         ],
       ),

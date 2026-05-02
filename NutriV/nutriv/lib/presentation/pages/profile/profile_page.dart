@@ -503,7 +503,6 @@ class _ProfilePageState extends State<ProfilePage> {
             Icons.notifications_outlined,
             'Notificações',
             () => _showNotificationsSettings(context),
-            badge: '3',
           ),
           _buildSettingsItem(
             Icons.favorite_outline,
@@ -569,7 +568,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   } catch (_) {}
                   if (context.mounted) {
                     context.read<UserBloc>().add(DeleteUser());
-                    context.go('/onboarding');
+                    context.go('/login');
                   }
                 }
               },
@@ -916,7 +915,7 @@ void _showAppSettings(BuildContext context) {
                       context: context,
                       applicationName: 'NutriV',
                       applicationVersion: '1.0.0',
-                      applicationLegalese: '© 2024 NutriV',
+                      applicationLegalese: '© 2026 NutriV',
                     );
                   },
                 ),
@@ -1001,8 +1000,8 @@ void _showAppSettings(BuildContext context) {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erro ao exportar: $e'),
+        const SnackBar(
+          content: Text('Erro ao exportar dados. Tente novamente.'),
           backgroundColor: AppTheme.error,
         ),
       );

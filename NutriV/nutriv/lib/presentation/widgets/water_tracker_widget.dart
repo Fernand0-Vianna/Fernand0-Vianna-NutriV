@@ -118,38 +118,44 @@ class WaterTrackerWidget extends StatelessWidget {
               ),
               Row(
                 children: [
-                  GestureDetector(
-                    onTap: onRemoveWater,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.surfaceContainerLow,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        Icons.remove,
-                        size: 18,
-                        color: AppTheme.onSurfaceVariant,
+                  Semantics(
+                    label: 'Remover 250ml de água',
+                    child: GestureDetector(
+                      onTap: onRemoveWater,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppTheme.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.remove,
+                          size: 20,
+                          color: AppTheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: onAddWater,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppTheme.secondary, AppTheme.secondary.withValues(alpha: 0.8)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                  Semantics(
+                    label: 'Adicionar 250ml de água',
+                    child: GestureDetector(
+                      onTap: onAddWater,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppTheme.secondary, AppTheme.secondary.withValues(alpha: 0.8)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        size: 18,
-                        color: AppTheme.onSecondary,
+                        child: const Icon(
+                          Icons.add,
+                          size: 20,
+                          color: AppTheme.onSecondary,
+                        ),
                       ),
                     ),
                   ),

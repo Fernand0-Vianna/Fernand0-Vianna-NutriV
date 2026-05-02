@@ -778,10 +778,11 @@ class _ScannerPageState extends State<ScannerPage> {
   }
 
   void _addToMeal(List<FoodItem> foods) {
+    int counter = 0;
     final mealFoods = foods
         .map(
           (f) => MealFood(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            id: '${DateTime.now().millisecondsSinceEpoch}_${counter++}',
             food: f,
             quantity: f.portion,
           ),
@@ -792,7 +793,7 @@ class _ScannerPageState extends State<ScannerPage> {
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: _selectedMealType,
       dateTime: DateTime.now(),
-      mealType: _selectedMealType,
+      mealType: _selectedMealType.toLowerCase(),
       foods: mealFoods,
     );
 
@@ -802,7 +803,7 @@ class _ScannerPageState extends State<ScannerPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Alimentos adicionados com sucesso!',
+          '${foods.length} alimento(s) adicionado(s) em $_selectedMealType!',
           style: GoogleFonts.manrope(),
         ),
         backgroundColor: AppTheme.primary,

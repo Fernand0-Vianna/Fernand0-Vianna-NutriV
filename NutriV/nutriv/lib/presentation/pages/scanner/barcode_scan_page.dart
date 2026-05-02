@@ -5,6 +5,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../bloc/barcode/barcode_scanner_bloc.dart';
 import '../../bloc/barcode/barcode_scanner_event.dart';
 import '../../bloc/barcode/barcode_scanner_state.dart';
+import '../../../domain/entities/food_item.dart';
 
 class BarcodeScanPage extends StatefulWidget {
   const BarcodeScanPage({super.key});
@@ -119,9 +120,141 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
               ),
               if (state is BarcodeScannerScanning || _isProcessing)
                 const Center(child: CircularProgressIndicator()),
+              Positioned(
+                bottom: 100,
+                left: 24,
+                right: 24,
+                child: ElevatedButton.icon(
+                  onPressed: _showManualEntryDialog,
+                  icon: const Icon(Icons.edit),
+                  label: const Text('Inserir manualmente'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                ),
+              ),
             ],
           );
         },
+      ),
+    );
+  }
+
+  void _showManualEntryDialog() {
+    final nameController = TextEditingController();
+    final caloriesController = TextEditingController();
+    final proteinController = TextEditingController();
+    final carbsController = TextEditingController();
+    final fatController = TextEditingController();
+    final portionController = TextEditingController(text: '100');
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Inserir alimento manualmente'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Nome do alimento',
+                  hintText: 'Ex: Arroz cozido',
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: caloriesController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  labelText: 'Calorias (kcal)',
+                  hintText: 'Ex: 130',
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: proteinController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: const InputDecoration(labelText: 'Proteína (g)'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: carbsController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: const InputDecoration(labelText: 'Carbos (g)'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: fatController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: const InputDecoration(labelText: 'Gordura (g)'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: portionController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  labelText: 'Porção (g)',
+                  hintText: 'Ex: 100',
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final name = nameController.text.trim();
+              final calories = double.tryParse(caloriesController.text) ?? 0;
+              final protein = double.tryParse(proteinController.text) ?? 0;
+              final carbs = double.tryParse(carbsController.text) ?? 0;
+              final fat = double.tryParse(fatController.text) ?? 0;
+              final portion = double.tryParse(portionController.text) ?? 100;
+
+              if (name.isEmpty || calories == 0) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Preencha pelo menos o nome e calorias'),
+                  ),
+                );
+                return;
+              }
+
+              final foodItem = FoodItem(
+                id: DateTime.now().millisecondsSinceEpoch.toString(),
+                name: name,
+                calories: calories,
+                protein: protein,
+                carbs: carbs,
+                fat: fat,
+                portion: portion,
+                portionUnit: 'g',
+              );
+
+              Navigator.pop(ctx);
+              Navigator.pop(context, foodItem);
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
       ),
     );
   }
@@ -175,14 +308,32 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Alimento não encontrado'),
-        content: Text('Código $barcode não está na base de dados.'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Código $barcode não está na base de dados.'),
+            const SizedBox(height: 12),
+            const Text(
+              'Você pode inserir os dados nutricionais manualmente.',
+              style: TextStyle(fontSize: 13),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               _isProcessing = false;
             },
-            child: const Text('Tentar novamente'),
+            child: const Text('Fechar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _showManualEntryDialog();
+            },
+            child: const Text('Inserir manualmente'),
           ),
         ],
       ),

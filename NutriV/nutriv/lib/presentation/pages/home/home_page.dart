@@ -53,6 +53,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             return RefreshIndicator(
               onRefresh: () async {
                 context.read<MealBloc>().add(LoadMeals(DateTime.now()));
+                context.read<WaterBloc>().add(LoadWaterIntake(DateTime.now()));
+                await Future.delayed(const Duration(milliseconds: 500));
               },
               color: AppTheme.primary,
               backgroundColor: AppTheme.surfaceContainerLowest,
@@ -199,28 +201,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
         GestureDetector(
           onTap: () => context.go('/profile'),
-          child: Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppTheme.primary, AppTheme.primaryDim],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.primary.withValues(alpha: 0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+          child: Semantics(
+            label: 'Abrir perfil do usuário',
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppTheme.primary, AppTheme.primaryDim],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-              ],
-            ),
-            child: const Icon(
-              Icons.person,
-              color: AppTheme.onPrimary,
-              size: 24,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primary.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.person,
+                color: AppTheme.onPrimary,
+                size: 24,
+              ),
             ),
           ),
         ),
@@ -384,36 +389,39 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     required String label,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: AppTheme.surfaceContainerLowest,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+    return Semantics(
+      label: 'Ir para $label',
+      child: GestureDetector(
+        onTap: onTap,
+        child: Column(
+          children: [
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: AppTheme.surfaceContainerLowest,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(icon, color: AppTheme.primary, size: 26),
             ),
-            child: Icon(icon, color: AppTheme.primary, size: 26),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: GoogleFonts.manrope(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.onSurfaceVariant,
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: GoogleFonts.manrope(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.onSurfaceVariant,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -29,10 +29,10 @@ class AiFoodService {
               'parts': [
                 {
                   'text':
-                      '''Você é umnutricionista expert. Analise esta foto de comida e identifique os alimentos presentes.
+                      '''Você é um nutricionista expert. Analise esta foto de comida e identifique os alimentos presentes.
 
 Retorne uma lista JSON com cada alimento identificado:
-[{"food_name": "nome em português", "portion_size": gramas estimadas (número), "calories": kcal por 100g (número), "protein": proteína em g (número), "carbs": carboidratos em g (número), "fat": gordura em g (número)}
+[{"food_name": "nome em português", "portion_size": gramas estimadas (número), "calories": kcal por 100g (número), "protein": proteína em g (número), "carbs": carboidratos em g (número), "fat": gordura em g (número)}]
 
 Exemplo: [{"food_name": "arroz branco", "portion_size": 150, "calories": 130, "protein": 2.7, "carbs": 28, "fat": 0.3}]
 
@@ -47,7 +47,6 @@ Retorne APENAS o JSON array. Se não conseguir identificar, retorne [].''',
           'generationConfig': {
             'temperature': 0.3,
             'maxOutputTokens': 2048,
-            'responseMimeType': 'text/plain',
           },
         },
       );
@@ -149,6 +148,8 @@ Retorne APENAS o JSON array. Se não conseguir identificar, retorne [].''',
         debugPrint('OpenAI failed: $e');
       }
     }
+    
+    debugPrint('Falling back to local database for: $text');
     return _searchLocalDatabase(text);
   }
 

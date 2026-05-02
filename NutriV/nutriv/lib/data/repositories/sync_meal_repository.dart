@@ -89,7 +89,7 @@ class SyncMealRepository {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
-        debugPrint('Sync: Usuário não autenticado');
+        debugPrint('Sync: Usuário não autenticado, salvando apenas localmente');
         return;
       }
 
@@ -107,7 +107,7 @@ class SyncMealRepository {
             'consumed_at': meal.dateTime.toIso8601String(),
             'date': date,
             'input_method': 'manual',
-          }, onConflict: 'id,user_id')
+          }, onConflict: 'id')
           .select('id')
           .maybeSingle();
 
@@ -121,8 +121,10 @@ class SyncMealRepository {
         // Primeiro, garantir que o alimento existe na tabela foods
         String foodId = await _ensureFoodExists(mealFood.food, userId);
 
-        // Criar o meal_item
+        // Criar o meal_item com ID único
+        final itemId = '${mealData['id']}_${foodId}_${DateTime.now().millisecondsSinceEpoch}';
         await _supabase.from('meal_items').upsert({
+          'id': itemId,
           'meal_id': mealData['id'],
           'food_id': foodId,
           'food_name': mealFood.food.name,
@@ -133,12 +135,13 @@ class SyncMealRepository {
           'fat_g': mealFood.food.fat * (mealFood.quantity / 100),
           'fiber_g': mealFood.food.fiber * (mealFood.quantity / 100),
           'input_method': 'manual',
-        }, onConflict: 'meal_id,food_id');
+        }, onConflict: 'id');
       }
 
       debugPrint('Sync: Refeição ${meal.name} sincronizada com sucesso');
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('Sync: Erro ao sincronizar refeição: $e');
+      debugPrint('Stack trace: $stackTrace');
     }
   }
 
