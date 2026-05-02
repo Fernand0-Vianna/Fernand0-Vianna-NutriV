@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/di/injection.dart';
+import '../../../data/datasources/auth_service.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -47,9 +49,20 @@ class _SplashPageState extends State<SplashPage>
   }
 
   Future<void> _navigateToLogin() async {
-    await Future.delayed(const Duration(milliseconds: 2500));
+    await Future.delayed(const Duration(milliseconds: 1500));
+    
+    if (!mounted) return;
+    
+    final authService = getIt<AuthService>();
+    final isLoggedIn = authService.isSignedIn();
+    final currentUser = authService.getCurrentUser();
+    
     if (mounted) {
-      context.go('/login');
+      if (isLoggedIn && currentUser != null) {
+        context.go('/');
+      } else {
+        context.go('/login');
+      }
     }
   }
 

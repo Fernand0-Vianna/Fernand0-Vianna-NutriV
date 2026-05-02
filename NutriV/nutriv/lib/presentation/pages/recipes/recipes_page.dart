@@ -16,29 +16,48 @@ class _RecipesPageState extends State<RecipesPage> {
   List<Recipe> _recipes = [];
   bool _isLoading = true;
   bool _hasError = false;
+  bool _isLoadingMore = false;
   String _selectedCategory = 'healthy';
+  int _currentOffset = 0;
+  static const int _pageSize = 10;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     _loadRecipes();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      _loadMoreRecipes();
+    }
   }
 
   Future<void> _loadRecipes() async {
     setState(() {
       _isLoading = true;
       _hasError = false;
+      _currentOffset = 0;
     });
 
     try {
       final recipes = await _recipeService.searchRecipes(
         query: _selectedCategory,
         from: 0,
-        to: 10,
+        to: _pageSize,
       );
 
       setState(() {
         _recipes = recipes;
+        _currentOffset = recipes.length;
         _isLoading = false;
       });
     } catch (e) {
@@ -49,127 +68,155 @@ class _RecipesPageState extends State<RecipesPage> {
     }
   }
 
+  Future<void> _loadMoreRecipes() async {
+    if (_isLoadingMore || _currentOffset < _pageSize) return;
+
+    setState(() => _isLoadingMore = true);
+
+    try {
+      final moreRecipes = await _recipeService.searchRecipes(
+        query: _selectedCategory,
+        from: _currentOffset,
+        to: _currentOffset + _pageSize,
+      );
+
+      setState(() {
+        _recipes = [..._recipes, ...moreRecipes];
+        _currentOffset += moreRecipes.length;
+        _isLoadingMore = false;
+      });
+    } catch (e) {
+      setState(() => _isLoadingMore = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 60, 24, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(),
-                  const SizedBox(height: 24),
-                  _buildCategoryChips(),
-                  const SizedBox(height: 24),
-                ],
-              ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 60, 24, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 24),
+                _buildCategoryChips(),
+              ],
             ),
           ),
-          if (_isLoading)
-            const SliverFillRemaining(
-              child: Center(
-                child: CircularProgressIndicator(color: AppTheme.primary),
-              ),
-            )
-          else if (_hasError)
-            SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: AppTheme.error,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Erro ao carregar receitas',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppTheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Verifique sua conexão e tente novamente',
-                      style: GoogleFonts.manrope(
-                        fontSize: 14,
-                        color: AppTheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: _loadRecipes,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primary,
-                        foregroundColor: AppTheme.onPrimary,
-                      ),
-                      child: Text(
-                        'Tentar novamente',
-                        style: GoogleFonts.manrope(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          else if (_recipes.isEmpty)
-            SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.restaurant_menu,
-                      size: 64,
-                      color: AppTheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Nenhuma receita encontrada',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppTheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Tente outra categoria',
-                      style: GoogleFonts.manrope(
-                        fontSize: 14,
-                        color: AppTheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          else
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: _buildRecipeCard(_recipes[index]),
-                  ),
-                  childCount: _recipes.length,
-                ),
-              ),
-            ),
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 100),
+          Expanded(
+            child: _buildContent(),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildContent() {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppTheme.primary),
+      );
+    }
+
+    if (_hasError) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 64,
+              color: AppTheme.error,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Erro ao carregar receitas',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Verifique sua conexão e tente novamente',
+              style: GoogleFonts.manrope(
+                fontSize: 14,
+                color: AppTheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _loadRecipes,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primary,
+                foregroundColor: AppTheme.onPrimary,
+              ),
+              child: Text(
+                'Tentar novamente',
+                style: GoogleFonts.manrope(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_recipes.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.restaurant_menu,
+              size: 64,
+              color: AppTheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Nenhuma receita encontrada',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Tente outra categoria',
+              style: GoogleFonts.manrope(
+                fontSize: 14,
+                color: AppTheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      controller: _scrollController,
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      itemCount: _recipes.length + (_isLoadingMore ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index >= _recipes.length) {
+          return const Padding(
+            padding: EdgeInsets.all(16),
+            child: Center(
+              child: CircularProgressIndicator(color: AppTheme.primary),
+            ),
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: _buildRecipeCard(_recipes[index]),
+        );
+      },
     );
   }
 

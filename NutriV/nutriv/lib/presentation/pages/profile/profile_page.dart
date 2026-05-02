@@ -549,15 +549,29 @@ class _ProfilePageState extends State<ProfilePage> {
                   context: context,
                   builder: (ctx) => AlertDialog(
                     title: const Text('Sair'),
-                    content: const Text('Tem certeza que deseja sair?'),
+                    content: const Text(
+                      'Tem certeza que deseja sair? Você precisará fazer login novamente para acessar seus dados.',
+                    ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('Cancelar'),
+                        child: Text(
+                          'Cancelar',
+                          style: GoogleFonts.manrope(
+                            color: AppTheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        child: const Text('Sair'),
+                        child: Text(
+                          'Sair',
+                          style: GoogleFonts.manrope(
+                            color: AppTheme.error,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ],
                   ),

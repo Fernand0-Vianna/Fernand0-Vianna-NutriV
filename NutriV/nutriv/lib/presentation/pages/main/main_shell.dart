@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/di/injection.dart';
+import '../../../core/services/haptic_service.dart';
 
 class MainShell extends StatelessWidget {
   final Widget child;

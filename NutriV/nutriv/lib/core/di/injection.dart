@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/theme/theme_notifier.dart';
+import '../../core/services/error_tracking_service.dart';
+import '../../core/services/haptic_service.dart';
 import '../../data/datasources/local_data_source.dart';
 import '../../data/datasources/ai_food_service.dart';
 import '../../data/datasources/usda_food_service.dart';
@@ -30,11 +32,11 @@ import '../../presentation/bloc/favorite_dish/favorite_dish_bloc.dart';
 final getIt = GetIt.instance;
 
 Future<void> setupDependencies() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
   final prefs = await SharedPreferences.getInstance();
 
   getIt.registerSingleton<SharedPreferences>(prefs);
+  getIt.registerSingleton<ErrorTrackingService>(ErrorTrackingService());
+  getIt.registerSingleton<HapticService>(HapticService());
   getIt.registerSingleton<Dio>(Dio());
 
   getIt.registerSingleton<LocalDataSource>(
