@@ -44,7 +44,8 @@ class DailySummaryData {
       totalFiberG: (json['total_fiber_g'] as num?)?.toDouble() ?? 0,
       waterConsumedMl: (json['water_consumed_ml'] as num?)?.toDouble() ?? 0,
       caloriesTarget: (json['calories_target'] as num?)?.toDouble() ?? 2000,
-      caloriesRemaining: (json['calories_remaining'] as num?)?.toDouble() ?? 2000,
+      caloriesRemaining:
+          (json['calories_remaining'] as num?)?.toDouble() ?? 2000,
       isGoalMet: json['is_goal_met'] as bool? ?? true,
       mealsCount: json['meals_count'] as int? ?? 0,
       entriesCount: json['entries_count'] as int? ?? 0,
@@ -137,14 +138,13 @@ class DailySummaryRepository {
 
     return _supabase
         .from('daily_summaries')
-        .stream(primaryKey: ['id'])
-        .map((data) {
-          final summary = data.firstWhere(
-            (s) => s['user_id'] == userId && s['summary_date'] == dateStr,
-            orElse: () => <String, dynamic>{},
-          );
-          return summary.isNotEmpty ? DailySummaryData.fromJson(summary) : null;
-        });
+        .stream(primaryKey: ['id']).map((data) {
+      final summary = data.firstWhere(
+        (s) => s['user_id'] == userId && s['summary_date'] == dateStr,
+        orElse: () => <String, dynamic>{},
+      );
+      return summary.isNotEmpty ? DailySummaryData.fromJson(summary) : null;
+    });
   }
 
   /// Stream dos últimos 7 dias
@@ -154,19 +154,18 @@ class DailySummaryRepository {
 
     return _supabase
         .from('daily_summaries')
-        .stream(primaryKey: ['id'])
-        .map((data) {
-          final weekAgo = DateTime.now().subtract(const Duration(days: 7));
-          
-          return data
-              .where((s) {
-                final date = DateTime.parse(s['summary_date'] as String);
-                return s['user_id'] == userId && date.isAfter(weekAgo);
-              })
-              .map((json) => DailySummaryData.fromJson(json))
-              .toList()
-            ..sort((a, b) => a.summaryDate.compareTo(b.summaryDate));
-        });
+        .stream(primaryKey: ['id']).map((data) {
+      final weekAgo = DateTime.now().subtract(const Duration(days: 7));
+
+      return data
+          .where((s) {
+            final date = DateTime.parse(s['summary_date'] as String);
+            return s['user_id'] == userId && date.isAfter(weekAgo);
+          })
+          .map((json) => DailySummaryData.fromJson(json))
+          .toList()
+        ..sort((a, b) => a.summaryDate.compareTo(b.summaryDate));
+    });
   }
 
   /// Estatísticas da semana
@@ -184,10 +183,10 @@ class DailySummaryRepository {
       };
     }
 
-    final totalCalories = summaries.fold<double>(
-      0, (sum, s) => sum + s.totalCalories);
-    final totalWater = summaries.fold<double>(
-      0, (sum, s) => sum + s.waterConsumedMl);
+    final totalCalories =
+        summaries.fold<double>(0, (sum, s) => sum + s.totalCalories);
+    final totalWater =
+        summaries.fold<double>(0, (sum, s) => sum + s.waterConsumedMl);
     final goalDays = summaries.where((s) => s.isGoalMet).length;
 
     return {

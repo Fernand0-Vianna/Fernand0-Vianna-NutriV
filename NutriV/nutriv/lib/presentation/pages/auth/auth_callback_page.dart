@@ -25,27 +25,54 @@ class _AuthCallbackPageState extends State<AuthCallbackPage> {
 
   Future<void> _handleAuthCallback() async {
     try {
+      debugPrint('🔄 AuthCallback: Iniciando processamento...');
+
+      // Aguarda um momento para o Supabase processar o callback
+      await Future.delayed(const Duration(milliseconds: 500));
+
       // Verifica se há sessão ativa após redirect do OAuth
       final session = Supabase.instance.client.auth.currentSession;
-      
-      if (session != null) {
+      final user = Supabase.instance.client.auth.currentUser;
+
+      debugPrint('🔄 AuthCallback: Session = ${session != null}');
+      debugPrint('🔄 AuthCallback: User = ${user?.email}');
+
+      if (session != null && user != null) {
         // Usuário autenticado com sucesso
         final authService = getIt<AuthService>();
-        final user = authService.getCurrentUser();
-        
-        if (user != null && mounted) {
-          context.read<UserBloc>().add(SaveUser(user));
+        final appUser = authService.getCurrentUser();
+
+        if (appUser != null && mounted) {
+          debugPrint('✅ AuthCallback: Usuário autenticado - ${appUser.email}');
+          context.read<UserBloc>().add(SaveUser(appUser));
           context.go('/');
           return;
         }
       }
-      
+
+      // Se não há sessão, tenta recuperar do localStorage (fallback)
+      debugPrint('⚠️ AuthCallback: Sem sessão, tentando recuperar...');
+      await Supabase.instance.client.auth.refreshSession();
+
+      final refreshedSession = Supabase.instance.client.auth.currentSession;
+      if (refreshedSession != null && mounted) {
+        final authService = getIt<AuthService>();
+        final appUser = authService.getCurrentUser();
+        if (appUser != null) {
+          context.read<UserBloc>().add(SaveUser(appUser));
+          context.go('/');
+          return;
+        }
+      }
+
       // Se não há sessão, volta para onboarding
+      debugPrint('❌ AuthCallback: Falha na autenticação');
       if (mounted) {
         context.go('/onboarding');
       }
-    } catch (e) {
-      debugPrint('Erro no callback de auth: $e');
+    } catch (e, stackTrace) {
+      debugPrint('❌ Erro no callback de auth: $e');
+      debugPrint('❌ Stack trace: $stackTrace');
       if (mounted) {
         context.go('/onboarding');
       }

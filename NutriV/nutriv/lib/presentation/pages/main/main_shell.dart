@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../core/di/injection.dart';
-import '../../../core/services/haptic_service.dart';
 
 class MainShell extends StatelessWidget {
   final Widget child;
@@ -37,11 +35,15 @@ class MainShell extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(0, Icons.home_outlined, Icons.home_rounded, 'Início', context),
-                _buildNavItem(1, Icons.menu_book_outlined, Icons.menu_book_rounded, 'Diário', context),
+                _buildNavItem(0, Icons.home_outlined, Icons.home_rounded,
+                    'Início', context),
+                _buildNavItem(1, Icons.menu_book_outlined,
+                    Icons.menu_book_rounded, 'Diário', context),
                 _buildCenterButton(context),
-                _buildNavItem(3, Icons.bar_chart_outlined, Icons.bar_chart_rounded, 'Stats', context),
-                _buildNavItem(4, Icons.person_outline, Icons.person_rounded, 'Perfil', context),
+                _buildNavItem(3, Icons.bar_chart_outlined,
+                    Icons.bar_chart_rounded, 'Stats', context),
+                _buildNavItem(4, Icons.person_outline, Icons.person_rounded,
+                    'Perfil', context),
               ],
             ),
           ),
@@ -50,7 +52,8 @@ class MainShell extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, IconData activeIcon, String label, BuildContext context) {
+  Widget _buildNavItem(int index, IconData icon, IconData activeIcon,
+      String label, BuildContext context) {
     final isSelected = _calculateSelectedIndex(context) == index;
 
     return Semantics(
@@ -63,7 +66,9 @@ class MainShell extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? AppTheme.primaryContainer.withValues(alpha: 0.5) : Colors.transparent,
+            color: isSelected
+                ? AppTheme.primaryContainer.withValues(alpha: 0.5)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
@@ -77,7 +82,8 @@ class MainShell extends StatelessWidget {
                 child: Icon(
                   isSelected ? activeIcon : icon,
                   key: ValueKey(isSelected),
-                  color: isSelected ? AppTheme.primary : AppTheme.onSurfaceVariant,
+                  color:
+                      isSelected ? AppTheme.primary : AppTheme.onSurfaceVariant,
                   size: 24,
                 ),
               ),
@@ -87,7 +93,8 @@ class MainShell extends StatelessWidget {
                 style: GoogleFonts.manrope(
                   fontSize: 11,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: isSelected ? AppTheme.primary : AppTheme.onSurfaceVariant,
+                  color:
+                      isSelected ? AppTheme.primary : AppTheme.onSurfaceVariant,
                 ),
                 child: Text(label),
               ),

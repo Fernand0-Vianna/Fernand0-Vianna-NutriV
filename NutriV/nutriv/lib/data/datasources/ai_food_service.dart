@@ -66,7 +66,7 @@ Retorne APENAS o JSON array. Se não conseguir identificar, retorne [].''',
       throw Exception('Resposta inválida da API');
     } catch (e) {
       debugPrint('Gemini error: $e');
-      
+
       // Fallback: tentar OpenAI se disponível
       if (_openaiApiKey.isNotEmpty) {
         try {
@@ -74,7 +74,8 @@ Retorne APENAS o JSON array. Se não conseguir identificar, retorne [].''',
           final base64Image = base64Encode(bytes);
           final response = await _dio.post(
             'https://api.openai.com/v1/chat/completions',
-            options: Options(headers: {'Authorization': 'Bearer $_openaiApiKey'}),
+            options:
+                Options(headers: {'Authorization': 'Bearer $_openaiApiKey'}),
             data: {
               'model': 'gpt-4o-mini',
               'messages': [
@@ -88,7 +89,9 @@ Retorne APENAS o JSON array. Se não conseguir identificar, retorne [].''',
                     },
                     {
                       'type': 'image_url',
-                      'image_url': {'url': 'data:image/jpeg;base64,$base64Image'},
+                      'image_url': {
+                        'url': 'data:image/jpeg;base64,$base64Image'
+                      },
                     },
                   ],
                 },
@@ -110,7 +113,7 @@ Retorne APENAS o JSON array. Se não conseguir identificar, retorne [].''',
           debugPrint('OpenAI error: $e2');
         }
       }
-      
+
       // Fallback final: banco de dados local
       return _getLocalFoods();
     }
@@ -148,7 +151,7 @@ Retorne APENAS o JSON array. Se não conseguir identificar, retorne [].''',
         debugPrint('OpenAI failed: $e');
       }
     }
-    
+
     debugPrint('Falling back to local database for: $text');
     return _searchLocalDatabase(text);
   }
@@ -156,45 +159,286 @@ Retorne APENAS o JSON array. Se não conseguir identificar, retorne [].''',
   Future<List<FoodItem>> _searchLocalDatabase(String searchText) async {
     final localFoods = _getLocalFoods();
     final query = searchText.toLowerCase();
-    
+
     return localFoods.where((food) {
       return food.name.toLowerCase().contains(query) ||
-          food.name.toLowerCase().split(' ').any((word) => word.startsWith(query.substring(0, query.length > 3 ? 3 : query.length)));
+          food.name.toLowerCase().split(' ').any((word) => word.startsWith(
+              query.substring(0, query.length > 3 ? 3 : query.length)));
     }).toList();
   }
 
   List<FoodItem> _getLocalFoods() {
     return [
-      FoodItem(id: '1', name: 'Arroz branco cozido', calories: 130, protein: 2.7, carbs: 28, fat: 0.3, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '2', name: 'Feijão carioca', calories: 127, protein: 8.7, carbs: 22.8, fat: 0.5, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '3', name: 'Frango peito grelhado', calories: 165, protein: 31, carbs: 0, fat: 3.6, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '4', name: 'Bife bovino grelhado', calories: 271, protein: 25.4, carbs: 0, fat: 18.8, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '5', name: 'Ovo cozido', calories: 155, protein: 12.6, carbs: 1.1, fat: 10.6, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '6', name: 'Salada verde', calories: 20, protein: 1.5, carbs: 3.3, fat: 0.2, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '7', name: 'Batata cozida', calories: 87, protein: 1.9, carbs: 20, fat: 0.1, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '8', name: 'Macarrão cozido', calories: 131, protein: 5, carbs: 25, fat: 1.1, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '9', name: 'Pão francês', calories: 265, protein: 8, carbs: 51, fat: 3.2, portion: 50, portionUnit: 'g'),
-      FoodItem(id: '10', name: 'Leite integral', calories: 61, protein: 3.2, carbs: 4.8, fat: 3.3, portion: 100, portionUnit: 'ml'),
-      FoodItem(id: '11', name: 'Iogurte natural', calories: 61, protein: 3.5, carbs: 4.7, fat: 3.3, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '12', name: 'BANANA', calories: 89, protein: 1.1, carbs: 22.8, fat: 0.3, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '13', name: 'Maçã', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '14', name: 'Laranja', calories: 47, protein: 0.9, carbs: 12, fat: 0.1, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '15', name: 'Abacate', calories: 160, protein: 2, carbs: 8.5, fat: 14.7, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '16', name: 'Batata frita', calories: 312, protein: 3.4, carbs: 41, fat: 15, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '17', name: 'Hambúrguer', calories: 295, protein: 17, carbs: 24, fat: 14, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '18', name: 'Pizza', calories: 266, protein: 11, carbs: 33, fat: 10, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '19', name: 'Lasanha', calories: 132, protein: 5.5, carbs: 14, fat: 5.8, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '20', name: 'Suco de laranja', calories: 45, protein: 0.7, carbs: 10, fat: 0.2, portion: 100, portionUnit: 'ml'),
-      FoodItem(id: '21', name: 'Refrigerante', calories: 38, protein: 0, carbs: 10, fat: 0, portion: 100, portionUnit: 'ml'),
-      FoodItem(id: '22', name: 'Cerveja', calories: 43, protein: 0.5, carbs: 3.6, fat: 0, portion: 100, portionUnit: 'ml'),
-      FoodItem(id: '23', name: 'Vinho tinto', calories: 83, protein: 0.1, carbs: 2.6, fat: 0, portion: 100, portionUnit: 'ml'),
-      FoodItem(id: '24', name: 'Café com açúcar', calories: 35, protein: 0.3, carbs: 8.5, fat: 0.1, portion: 100, portionUnit: 'ml'),
-      FoodItem(id: '25', name: 'Pudim', calories: 115, protein: 3, carbs: 20, fat: 3.5, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '26', name: 'Brócolis', calories: 34, protein: 2.8, carbs: 7, fat: 0.4, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '27', name: 'Cenoura', calories: 41, protein: 0.9, carbs: 10, fat: 0.2, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '28', name: 'Tomate', calories: 18, protein: 0.9, carbs: 3.9, fat: 0.2, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '29', name: 'Cebola', calories: 40, protein: 1.1, carbs: 9.3, fat: 0.1, portion: 100, portionUnit: 'g'),
-      FoodItem(id: '30', name: 'Alho', calories: 149, protein: 6.4, carbs: 33, fat: 0.5, portion: 100, portionUnit: 'g'),
+      FoodItem(
+          id: '1',
+          name: 'Arroz branco cozido',
+          calories: 130,
+          protein: 2.7,
+          carbs: 28,
+          fat: 0.3,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '2',
+          name: 'Feijão carioca',
+          calories: 127,
+          protein: 8.7,
+          carbs: 22.8,
+          fat: 0.5,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '3',
+          name: 'Frango peito grelhado',
+          calories: 165,
+          protein: 31,
+          carbs: 0,
+          fat: 3.6,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '4',
+          name: 'Bife bovino grelhado',
+          calories: 271,
+          protein: 25.4,
+          carbs: 0,
+          fat: 18.8,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '5',
+          name: 'Ovo cozido',
+          calories: 155,
+          protein: 12.6,
+          carbs: 1.1,
+          fat: 10.6,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '6',
+          name: 'Salada verde',
+          calories: 20,
+          protein: 1.5,
+          carbs: 3.3,
+          fat: 0.2,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '7',
+          name: 'Batata cozida',
+          calories: 87,
+          protein: 1.9,
+          carbs: 20,
+          fat: 0.1,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '8',
+          name: 'Macarrão cozido',
+          calories: 131,
+          protein: 5,
+          carbs: 25,
+          fat: 1.1,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '9',
+          name: 'Pão francês',
+          calories: 265,
+          protein: 8,
+          carbs: 51,
+          fat: 3.2,
+          portion: 50,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '10',
+          name: 'Leite integral',
+          calories: 61,
+          protein: 3.2,
+          carbs: 4.8,
+          fat: 3.3,
+          portion: 100,
+          portionUnit: 'ml'),
+      FoodItem(
+          id: '11',
+          name: 'Iogurte natural',
+          calories: 61,
+          protein: 3.5,
+          carbs: 4.7,
+          fat: 3.3,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '12',
+          name: 'BANANA',
+          calories: 89,
+          protein: 1.1,
+          carbs: 22.8,
+          fat: 0.3,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '13',
+          name: 'Maçã',
+          calories: 52,
+          protein: 0.3,
+          carbs: 14,
+          fat: 0.2,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '14',
+          name: 'Laranja',
+          calories: 47,
+          protein: 0.9,
+          carbs: 12,
+          fat: 0.1,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '15',
+          name: 'Abacate',
+          calories: 160,
+          protein: 2,
+          carbs: 8.5,
+          fat: 14.7,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '16',
+          name: 'Batata frita',
+          calories: 312,
+          protein: 3.4,
+          carbs: 41,
+          fat: 15,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '17',
+          name: 'Hambúrguer',
+          calories: 295,
+          protein: 17,
+          carbs: 24,
+          fat: 14,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '18',
+          name: 'Pizza',
+          calories: 266,
+          protein: 11,
+          carbs: 33,
+          fat: 10,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '19',
+          name: 'Lasanha',
+          calories: 132,
+          protein: 5.5,
+          carbs: 14,
+          fat: 5.8,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '20',
+          name: 'Suco de laranja',
+          calories: 45,
+          protein: 0.7,
+          carbs: 10,
+          fat: 0.2,
+          portion: 100,
+          portionUnit: 'ml'),
+      FoodItem(
+          id: '21',
+          name: 'Refrigerante',
+          calories: 38,
+          protein: 0,
+          carbs: 10,
+          fat: 0,
+          portion: 100,
+          portionUnit: 'ml'),
+      FoodItem(
+          id: '22',
+          name: 'Cerveja',
+          calories: 43,
+          protein: 0.5,
+          carbs: 3.6,
+          fat: 0,
+          portion: 100,
+          portionUnit: 'ml'),
+      FoodItem(
+          id: '23',
+          name: 'Vinho tinto',
+          calories: 83,
+          protein: 0.1,
+          carbs: 2.6,
+          fat: 0,
+          portion: 100,
+          portionUnit: 'ml'),
+      FoodItem(
+          id: '24',
+          name: 'Café com açúcar',
+          calories: 35,
+          protein: 0.3,
+          carbs: 8.5,
+          fat: 0.1,
+          portion: 100,
+          portionUnit: 'ml'),
+      FoodItem(
+          id: '25',
+          name: 'Pudim',
+          calories: 115,
+          protein: 3,
+          carbs: 20,
+          fat: 3.5,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '26',
+          name: 'Brócolis',
+          calories: 34,
+          protein: 2.8,
+          carbs: 7,
+          fat: 0.4,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '27',
+          name: 'Cenoura',
+          calories: 41,
+          protein: 0.9,
+          carbs: 10,
+          fat: 0.2,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '28',
+          name: 'Tomate',
+          calories: 18,
+          protein: 0.9,
+          carbs: 3.9,
+          fat: 0.2,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '29',
+          name: 'Cebola',
+          calories: 40,
+          protein: 1.1,
+          carbs: 9.3,
+          fat: 0.1,
+          portion: 100,
+          portionUnit: 'g'),
+      FoodItem(
+          id: '30',
+          name: 'Alho',
+          calories: 149,
+          protein: 6.4,
+          carbs: 33,
+          fat: 0.5,
+          portion: 100,
+          portionUnit: 'g'),
     ];
   }
 

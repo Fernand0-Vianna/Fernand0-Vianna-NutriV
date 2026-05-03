@@ -135,7 +135,8 @@ class _PineappleLogoV2Painter extends CustomPainter {
 
         leafPath.moveTo(start.dx, start.dy);
         leafPath.quadraticBezierTo(mid.dx, mid.dy, end.dx, end.dy);
-        leafPath.quadraticBezierTo(mid.dx, mid.dy - width * 0.05, start.dx, start.dy);
+        leafPath.quadraticBezierTo(
+            mid.dx, mid.dy - width * 0.05, start.dx, start.dy);
 
         canvas.drawPath(leafPath, paint);
       }
@@ -158,8 +159,7 @@ class _PineappleLogoV2Painter extends CustomPainter {
       height: radius * 2.2,
     );
 
-    final gradientPaint = Paint()
-      ..shader = gradient.createShader(rect);
+    final gradientPaint = Paint()..shader = gradient.createShader(rect);
 
     canvas.drawOval(rect, gradientPaint);
   }
@@ -233,7 +233,9 @@ class _PineappleLogoV2Painter extends CustomPainter {
       canvas.drawCircle(
         Offset(dotX, dotY),
         radius * 0.05,
-        Paint()..color = const Color(0xFFFFD700)..style = PaintingStyle.fill,
+        Paint()
+          ..color = const Color(0xFFFFD700)
+          ..style = PaintingStyle.fill,
       );
     }
 
@@ -294,16 +296,39 @@ class _PineappleLogoV2Painter extends CustomPainter {
   }
 
   static final _trigTable = {
-    0: 1.0, 30: 0.866, 45: 0.707, 60: 0.5, 90: 0.0,
-    120: -0.5, 135: -0.707, 150: -0.866, 180: -1.0,
-    210: -0.866, 225: -0.707, 240: -0.5, 270: 0.0,
-    300: 0.5, 315: 0.707, 330: 0.866, 360: 1.0,
-    30 + 360: 0.5, 45 + 360: 0.707,
-    60 + 360: 0.866, 90 + 360: 1.0, 120 + 360: 0.866,
-    135 + 360: 0.707, 150 + 360: 0.5, 180 + 360: 0.0,
-    210 + 360: -0.5, 225 + 360: -0.707, 240 + 360: -0.866,
-    270 + 360: -1.0, 300 + 360: -0.866, 315 + 360: -0.707,
-    330 + 360: -0.5, 360 + 360: 0.0,
+    0: 1.0,
+    30: 0.866,
+    45: 0.707,
+    60: 0.5,
+    90: 0.0,
+    120: -0.5,
+    135: -0.707,
+    150: -0.866,
+    180: -1.0,
+    210: -0.866,
+    225: -0.707,
+    240: -0.5,
+    270: 0.0,
+    300: 0.5,
+    315: 0.707,
+    330: 0.866,
+    360: 1.0,
+    30 + 360: 0.5,
+    45 + 360: 0.707,
+    60 + 360: 0.866,
+    90 + 360: 1.0,
+    120 + 360: 0.866,
+    135 + 360: 0.707,
+    150 + 360: 0.5,
+    180 + 360: 0.0,
+    210 + 360: -0.5,
+    225 + 360: -0.707,
+    240 + 360: -0.866,
+    270 + 360: -1.0,
+    300 + 360: -0.866,
+    315 + 360: -0.707,
+    330 + 360: -0.5,
+    360 + 360: 0.0,
   };
 
   @override
@@ -531,7 +556,9 @@ class _PineappleSimpleV2Painter extends CustomPainter {
       final scaleCount = row == 0 || row == 4 ? 4 : 6;
 
       for (int i = 0; i < scaleCount; i++) {
-        final x = center.dx - width * (0.7 - row * 0.1) + i * width * (0.28 - row * 0.02);
+        final x = center.dx -
+            width * (0.7 - row * 0.1) +
+            i * width * (0.28 - row * 0.02);
         final isEven = i % 2 == 0;
 
         canvas.drawCircle(

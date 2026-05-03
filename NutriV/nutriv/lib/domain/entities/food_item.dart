@@ -65,18 +65,18 @@ class FoodItem extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
-    name,
-    calories,
-    protein,
-    carbs,
-    fat,
-    fiber,
-    sugar,
-    sodium,
-    portion,
-    portionUnit,
-    imageUrl,
-    barcode,
-  ];
+        id,
+        name,
+        calories,
+        protein,
+        carbs,
+        fat,
+        fiber,
+        sugar,
+        sodium,
+        portion,
+        portionUnit,
+        imageUrl,
+        barcode,
+      ];
 }

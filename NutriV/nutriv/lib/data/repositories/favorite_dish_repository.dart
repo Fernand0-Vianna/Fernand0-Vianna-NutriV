@@ -40,22 +40,17 @@ class FavoriteDishRepository {
     data['created_at'] = now.toIso8601String();
     data['updated_at'] = now.toIso8601String();
 
-    final response = await _supabase
-        .from('favorite_dishes')
-        .insert(data)
-        .select()
-        .single();
+    final response =
+        await _supabase.from('favorite_dishes').insert(data).select().single();
 
     return FavoriteDishModel.fromJson(response);
   }
 
   Future<void> updateFavoriteDish(String id, FavoriteDishModel dish) async {
-    final data = dish.toJson()..['updated_at'] = DateTime.now().toIso8601String();
+    final data = dish.toJson()
+      ..['updated_at'] = DateTime.now().toIso8601String();
 
-    await _supabase
-        .from('favorite_dishes')
-        .update(data)
-        .eq('id', id);
+    await _supabase.from('favorite_dishes').update(data).eq('id', id);
   }
 
   Future<void> deleteFavoriteDish(String id) async {
@@ -103,10 +98,8 @@ class FavoriteDishRepository {
     final userId = _userId;
     if (userId == null) return Stream.value([]);
 
-    return _supabase
-        .from('favorite_dishes')
-        .stream(primaryKey: ['id'])
-        .map((data) => data
+    return _supabase.from('favorite_dishes').stream(primaryKey: ['id']).map(
+        (data) => data
             .where((d) => d['user_id'] == userId)
             .map((json) => FavoriteDishModel.fromJson(json))
             .toList());

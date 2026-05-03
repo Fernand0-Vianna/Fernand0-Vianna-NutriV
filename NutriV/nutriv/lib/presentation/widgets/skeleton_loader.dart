@@ -87,7 +87,9 @@ class SkeletonCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? const Color(0xFF1A2E22) : AppTheme.surfaceContainerLowest,
+        color: isDarkMode
+            ? const Color(0xFF1A2E22)
+            : AppTheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -146,7 +148,9 @@ class SkeletonListItem extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDarkMode ? const Color(0xFF1A2E22) : AppTheme.surfaceContainerLowest,
+        color: isDarkMode
+            ? const Color(0xFF1A2E22)
+            : AppTheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -185,7 +189,9 @@ class SkeletonFoodCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDarkMode ? const Color(0xFF1A2E22) : AppTheme.surfaceContainerLowest,
+        color: isDarkMode
+            ? const Color(0xFF1A2E22)
+            : AppTheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -194,7 +200,9 @@ class SkeletonFoodCard extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: isDarkMode ? const Color(0xFF2D4535) : AppTheme.surfaceContainerLow,
+              color: isDarkMode
+                  ? const Color(0xFF2D4535)
+                  : AppTheme.surfaceContainerLow,
               borderRadius: BorderRadius.circular(16),
             ),
           ),
@@ -207,11 +215,23 @@ class SkeletonFoodCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    SkeletonLoader(height: 24, width: 50, borderRadius: 12, isDarkMode: isDarkMode),
+                    SkeletonLoader(
+                        height: 24,
+                        width: 50,
+                        borderRadius: 12,
+                        isDarkMode: isDarkMode),
                     const SizedBox(width: 8),
-                    SkeletonLoader(height: 24, width: 50, borderRadius: 12, isDarkMode: isDarkMode),
+                    SkeletonLoader(
+                        height: 24,
+                        width: 50,
+                        borderRadius: 12,
+                        isDarkMode: isDarkMode),
                     const SizedBox(width: 8),
-                    SkeletonLoader(height: 24, width: 50, borderRadius: 12, isDarkMode: isDarkMode),
+                    SkeletonLoader(
+                        height: 24,
+                        width: 50,
+                        borderRadius: 12,
+                        isDarkMode: isDarkMode),
                   ],
                 ),
               ],
@@ -234,7 +254,9 @@ class SkeletonMealCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDarkMode ? const Color(0xFF1A2E22) : AppTheme.surfaceContainerLowest,
+        color: isDarkMode
+            ? const Color(0xFF1A2E22)
+            : AppTheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -253,9 +275,11 @@ class SkeletonMealCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SkeletonLoader(height: 16, width: 100, isDarkMode: isDarkMode),
+                    SkeletonLoader(
+                        height: 16, width: 100, isDarkMode: isDarkMode),
                     const SizedBox(height: 4),
-                    SkeletonLoader(height: 12, width: 60, isDarkMode: isDarkMode),
+                    SkeletonLoader(
+                        height: 12, width: 60, isDarkMode: isDarkMode),
                   ],
                 ),
               ),
@@ -280,7 +304,9 @@ class SkeletonMacroCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDarkMode ? const Color(0xFF1A2E22) : AppTheme.surfaceContainerLowest,
+          color: isDarkMode
+              ? const Color(0xFF1A2E22)
+              : AppTheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(

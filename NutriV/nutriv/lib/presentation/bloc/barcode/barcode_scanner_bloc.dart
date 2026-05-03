@@ -28,7 +28,7 @@ class BarcodeScannerBloc
 
     try {
       var food = await _fetchFromOpenFoodFacts(event.barcode);
-      
+
       // Se macros estiverem zerados, usar Gemini para enriquecer
       if (food != null && (food.calories == 0 || food.protein == 0)) {
         final enrichedFood = await _enrichWithGemini(food.name);
@@ -36,7 +36,7 @@ class BarcodeScannerBloc
           food = enrichedFood;
         }
       }
-      
+
       if (food != null && food.calories > 0) {
         emit(BarcodeScannerSuccess(barcode: event.barcode, food: food));
       } else {
@@ -68,8 +68,10 @@ class BarcodeScannerBloc
             {
               'parts': [
                 {
-                  'text': '''Qual é a informação nutricional de "$foodName" por 100g?
-Retorne apenas JSON: {"name": "nome", "calories": número, "protein": número, "carbs": número, "fat": número}''',                },
+                  'text':
+                      '''Qual é a informação nutricional de "$foodName" por 100g?
+Retorne apenas JSON: {"name": "nome", "calories": número, "protein": número, "carbs": número, "fat": número}''',
+                },
               ],
             },
           ],
@@ -78,7 +80,8 @@ Retorne apenas JSON: {"name": "nome", "calories": número, "protein": número, "
       );
 
       if (response.statusCode == 200) {
-        final text = response.data['candidates'][0]['content']['parts'][0]['text'];
+        final text =
+            response.data['candidates'][0]['content']['parts'][0]['text'];
         final jsonMatch = RegExp(r'\{[^}]+\}').firstMatch(text);
         if (jsonMatch != null) {
           final data = _parseSimpleJson(jsonMatch.group(0)!);
@@ -138,8 +141,7 @@ Retorne apenas JSON: {"name": "nome", "calories": número, "protein": número, "
         if (product == null) return null;
 
         final nutriments = product['nutriments'] ?? {};
-        final name =
-            product['product_name'] ??
+        final name = product['product_name'] ??
             product['brands'] ??
             'Produto desconhecido';
 
@@ -162,11 +164,10 @@ Retorne apenas JSON: {"name": "nome", "calories": número, "protein": número, "
           protein:
               (nutriments['proteins_100g'] ?? nutriments['proteins'] ?? 0.0)
                   .toDouble(),
-          carbs:
-              (nutriments['carbohydrates_100g'] ??
-                      nutriments['carbohydrates'] ??
-                      0.0)
-                  .toDouble(),
+          carbs: (nutriments['carbohydrates_100g'] ??
+                  nutriments['carbohydrates'] ??
+                  0.0)
+              .toDouble(),
           fat: (nutriments['fat_100g'] ?? nutriments['fat'] ?? 0.0).toDouble(),
           portion: defaultPortion,
           portionUnit: portionUnit,

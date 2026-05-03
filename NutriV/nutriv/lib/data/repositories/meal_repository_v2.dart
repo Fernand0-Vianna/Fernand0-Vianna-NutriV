@@ -144,11 +144,8 @@ class MealRepositoryV2 {
 
   /// Busca uma refeição completa (com itens)
   Future<MealData> _getMealById(String mealId) async {
-    final mealResponse = await _supabase
-        .from('meals')
-        .select()
-        .eq('id', mealId)
-        .single();
+    final mealResponse =
+        await _supabase.from('meals').select().eq('id', mealId).single();
 
     final itemsResponse = await _supabase
         .from('meal_items')
@@ -264,13 +261,10 @@ class MealRepositoryV2 {
 
   /// Atualiza notas de AI (quando usuário edita reconhecimento)
   Future<void> markAiAsEdited(String mealId) async {
-    await _supabase
-        .from('meals')
-        .update({
-          'ai_was_edited': true,
-          'updated_at': DateTime.now().toIso8601String(),
-        })
-        .eq('id', mealId);
+    await _supabase.from('meals').update({
+      'ai_was_edited': true,
+      'updated_at': DateTime.now().toIso8601String(),
+    }).eq('id', mealId);
   }
 
   /// Stream de refeições em tempo real

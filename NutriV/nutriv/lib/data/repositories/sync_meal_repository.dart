@@ -54,7 +54,7 @@ class SyncMealRepository {
             .eq('user_id', userId);
       }
     } catch (e) {
-      debugPrint('Erro ao deletar do Supabase: $e');
+      _logDebug('Erro ao deletar do Supabase: $e');
     }
   }
 
@@ -88,7 +88,7 @@ class SyncMealRepository {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
-        debugPrint('Sync: Usuário não autenticado, salvando apenas localmente');
+        _logDebug('Sync: Usuário não autenticado, salvando apenas localmente');
         return;
       }
 
@@ -111,7 +111,7 @@ class SyncMealRepository {
           .maybeSingle();
 
       if (mealData == null) {
-        debugPrint('Sync: Erro ao criar refeição principal');
+        _logDebug('Sync: Erro ao criar refeição principal');
         return;
       }
 
@@ -121,7 +121,8 @@ class SyncMealRepository {
         String foodId = await _ensureFoodExists(mealFood.food, userId);
 
         // Criar o meal_item com ID único
-        final itemId = '${mealData['id']}_${foodId}_${DateTime.now().millisecondsSinceEpoch}';
+        final itemId =
+            '${mealData['id']}_${foodId}_${DateTime.now().millisecondsSinceEpoch}';
         await _supabase.from('meal_items').upsert({
           'id': itemId,
           'meal_id': mealData['id'],
@@ -137,10 +138,10 @@ class SyncMealRepository {
         }, onConflict: 'id');
       }
 
-      debugPrint('Sync: Refeição ${meal.name} sincronizada com sucesso');
+      _logDebug('Sync: Refeição ${meal.name} sincronizada com sucesso');
     } catch (e, stackTrace) {
-      debugPrint('Sync: Erro ao sincronizar refeição: $e');
-      debugPrint('Stack trace: $stackTrace');
+      _logDebug('Sync: Erro ao sincronizar refeição: $e');
+      _logDebug('Stack trace: $stackTrace');
     }
   }
 
@@ -174,7 +175,7 @@ class SyncMealRepository {
 
       return result['id'] as String;
     } catch (e) {
-      debugPrint('Erro ao garantir existência do alimento: $e');
+      _logDebug('Erro ao garantir existência do alimento: $e');
       // Retornar ID temporário em caso de erro
       return food.id;
     }
@@ -266,7 +267,7 @@ class SyncMealRepository {
 }
 
 // Helper para debug
-void debugPrint(String message) {
+void _logDebug(String message) {
   // ignore: avoid_print
   print('[SyncMealRepository] $message');
 }

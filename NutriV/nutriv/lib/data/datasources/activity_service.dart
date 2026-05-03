@@ -21,7 +21,7 @@ class ActivityData {
 
 class ActivityService {
   final SharedPreferences _prefs;
-  
+
   int _todaySteps = 0;
   int _goalSteps = 10000;
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
@@ -66,7 +66,7 @@ class ActivityService {
 
   void startTracking() {
     if (_isTracking) return;
-    
+
     _isTracking = true;
     _sessionSteps = 0;
 
@@ -151,7 +151,8 @@ class ActivityService {
     final weekData = getWeeklyActivity();
     final totalSteps = weekData.fold<int>(0, (sum, data) => sum + data.steps);
     final avgSteps = weekData.isNotEmpty ? totalSteps ~/ weekData.length : 0;
-    final totalCalories = weekData.fold<int>(0, (sum, data) => sum + data.caloriesBurned);
+    final totalCalories =
+        weekData.fold<int>(0, (sum, data) => sum + data.caloriesBurned);
 
     return {
       'totalSteps': totalSteps,

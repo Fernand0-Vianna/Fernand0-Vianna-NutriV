@@ -1,6 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb, debugPrint;
 import '../../domain/entities/user.dart' as app;
 import '../repositories/user_repository.dart';
 
@@ -83,86 +82,35 @@ class AuthService {
     }
   }
 
-  Future<void> _createUserProfileIfNotExists(
-      String userId, String? email) async {
-    try {
-      final existing = await _supabase
-          .from('user_profiles')
-          .select('id')
-          .eq('id', userId)
-          .maybeSingle();
-
-      if (existing == null && email != null) {
-        await _supabase.from('user_profiles').insert({
-          'id': userId,
-          'email': email,
-          'name': email.split('@').first,
-          'created_at': DateTime.now().toIso8601String(),
-        });
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error creating user profile if not exists: $e');
-      }
-    }
-  }
-
   Future<bool> signInWithGoogle() async {
     try {
-      // Web: use OAuth redirect
-      if (kIsWeb) {
-        await _supabase.auth.signInWithOAuth(
-          OAuthProvider.google,
-          redirectTo: 'https://nutrivisionh.netlify.app/auth-callback',
-        );
-        return true;
+      // URL de callback do Supabase (deve corresponder à URL mostrada no dashboard)
+      // Use a URL do site para onde o usuário será redirecionado após autenticação
+      final redirectUrl = kIsWeb
+          ? 'https://nutrivisionh.netlify.app/auth-callback'
+          : 'https://lkfefyucixmcrmpvpcazg.supabase.co/auth/v1/callback';
+
+      if (kDebugMode) {
+        debugPrint('🔐 Iniciando login com Google...');
+        debugPrint('🔐 Redirect URL: $redirectUrl');
+        debugPrint('🔐 kIsWeb: $kIsWeb');
       }
 
-      // Mobile (Android/iOS): use Google Sign In nativo
-      // serverClientId é o Web Client ID do Google Cloud Console (client_type: 3)
-      // necessário para autenticação com Supabase
-      await GoogleSignIn.instance.initialize(
-        serverClientId:
-            '510166294031-ehhl2r349bbd6n9q2pr22scqod2338hr.apps.googleusercontent.com',
+      // Use Supabase's OAuth - works on all platforms
+      await _supabase.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: redirectUrl,
       );
 
-      // Sign out first to force account picker
-      await GoogleSignIn.instance.signOut();
-
-      final googleUser = await GoogleSignIn.instance.signIn();
-      if (googleUser == null) {
-        // User canceled
-        return false;
+      if (kDebugMode) {
+        debugPrint('✅ signInWithOAuth chamado com sucesso');
       }
-
-      final googleAuth = await googleUser.authentication;
-      final idToken = googleAuth.idToken;
-
-      if (idToken == null) {
-        throw 'Google Auth: ID Token is null';
-      }
-
-      // Sign in to Supabase with Google ID Token
-      final response = await _supabase.auth.signInWithIdToken(
-        provider: OAuthProvider.google,
-        idToken: idToken,
-      );
-
-      if (response.user != null) {
-        final user = _createUserFromSupabase(response.user!);
-        await _userRepository.saveUser(user);
-
-        // Criar perfil se não existir
-        await _createUserProfileIfNotExists(response.user!.id, user.email);
-
-        return true;
-      }
-
-      return false;
+      return true;
     } catch (e, stackTrace) {
       if (kDebugMode) {
-        debugPrint('Error signing in with Google: $e');
-        debugPrint('Stack trace: $stackTrace');
+        debugPrint('❌ Error signing in with Google: $e');
+        debugPrint('❌ Stack trace: $stackTrace');
+        debugPrint('❌ Error type: ${e.runtimeType}');
       }
       return false;
     }

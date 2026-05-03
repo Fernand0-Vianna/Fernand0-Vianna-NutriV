@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingTour extends StatefulWidget {
   final VoidCallback onComplete;
-  
+
   const OnboardingTour({super.key, required this.onComplete});
 
   @override
@@ -21,25 +21,29 @@ class _OnboardingTourState extends State<OnboardingTour> {
     TourPage(
       icon: Icons.qr_code_scanner,
       title: 'Escaneie alimentos',
-      description: 'Use a câmera para escanear códigos de barras ou fotografar alimentos e получите informações nutricionais instantaneamente.',
+      description:
+          'Use a câmera para escanear códigos de barras ou fotografar alimentos e получите informações nutricionais instantaneamente.',
       color: AppTheme.primary,
     ),
     TourPage(
       icon: Icons.edit_note,
       title: 'Registrerefeições',
-      description: 'Registre suasrefeiçõesdiáriase acompanhe suas calórias e macronutrientes de forma simples.',
+      description:
+          'Registre suasrefeiçõesdiáriase acompanhe suas calórias e macronutrientes de forma simples.',
       color: AppTheme.secondary,
     ),
     TourPage(
       icon: Icons.bar_chart,
       title: 'Acompanheprogresso',
-      description: 'Visualizegráficos e estatísticas para entender seus hábitos alimentares e atingir suas metas.',
+      description:
+          'Visualizegráficos e estatísticas para entender seus hábitos alimentares e atingir suas metas.',
       color: AppTheme.tertiary,
     ),
     TourPage(
       icon: Icons.restaurant_menu,
       title: 'Descubra Receitas',
-      description: 'Explore receitas saudáveise obtenha sugestões personalizadas baseado no seu perfil.',
+      description:
+          'Explore receitas saudáveise obtenha sugestões personalizadas baseado no seu perfil.',
       color: AppTheme.primary,
     ),
   ];

@@ -12,8 +12,7 @@ class MealModel extends Meal {
   });
 
   factory MealModel.fromJson(Map<String, dynamic> json) {
-    final foodsList =
-        (json['foods'] as List<dynamic>?)
+    final foodsList = (json['foods'] as List<dynamic>?)
             ?.map((f) => MealFoodModel.fromJson(f as Map<String, dynamic>))
             .toList() ??
         [];

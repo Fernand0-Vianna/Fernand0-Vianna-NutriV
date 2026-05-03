@@ -46,6 +46,9 @@ class AppTheme {
   static const Color onError = Color(0xFFFFFFFF);
   static const Color onErrorContainer = Color(0xFF9B1C1C);
 
+  // Success
+  static const Color success = Color(0xFF4CAF50);
+
   // Inversos
   static const Color inverseSurface = Color(0xFF1A1A1A);
   static const Color inverseOnSurface = Color(0xFFF8F9F8);

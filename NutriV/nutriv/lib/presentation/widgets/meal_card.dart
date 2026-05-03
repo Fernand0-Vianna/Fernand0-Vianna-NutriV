@@ -134,26 +134,26 @@ class MealCard extends StatelessWidget {
                       ],
                     ],
                   ),
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: AppTheme.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(12),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildMacroBadge('P', meal.totalProtein, AppTheme.proteinColor),
+                        const SizedBox(width: 16),
+                        _buildMacroBadge('C', meal.totalCarbs, AppTheme.carbsColor),
+                        const SizedBox(width: 16),
+                        _buildMacroBadge('G', meal.totalFat, AppTheme.fatColor),
+                      ],
+                    ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildMacroBadge('P', meal.totalProtein, AppTheme.proteinColor),
-                      const SizedBox(width: 16),
-                      _buildMacroBadge('C', meal.totalCarbs, AppTheme.carbsColor),
-                      const SizedBox(width: 16),
-                      _buildMacroBadge('G', meal.totalFat, AppTheme.fatColor),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

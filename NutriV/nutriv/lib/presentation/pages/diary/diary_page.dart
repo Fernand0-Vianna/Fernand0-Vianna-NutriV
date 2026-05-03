@@ -55,7 +55,8 @@ class _DiaryPageState extends State<DiaryPage> {
                       return const Center(
                         child: Padding(
                           padding: EdgeInsets.all(48),
-                          child: CircularProgressIndicator(color: AppTheme.primary),
+                          child: CircularProgressIndicator(
+                              color: AppTheme.primary),
                         ),
                       );
                     }
@@ -119,75 +120,80 @@ class _DiaryPageState extends State<DiaryPage> {
           final isToday = _isSameDay(date, DateTime.now());
 
           return Semantics(
-            label: '${isSelected ? "Selecionado, " : ""}${isToday ? "Hoje, " : ""}${DateFormat('dd/MM').format(date)}',
+            label:
+                '${isSelected ? "Selecionado, " : ""}${isToday ? "Hoje, " : ""}${DateFormat('dd/MM').format(date)}',
             child: GestureDetector(
               onTap: () {
                 setState(() => _selectedDate = date);
                 context.read<MealBloc>().add(LoadMeals(date));
               },
               child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 60,
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              decoration: BoxDecoration(
-                gradient: isSelected
-                    ? const LinearGradient(
-                        colors: [AppTheme.primary, AppTheme.primaryDim],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      )
-                    : null,
-                color: isSelected ? null : AppTheme.surfaceContainerLowest,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color: AppTheme.primary.withValues(alpha: 0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ]
-                    : null,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    DateFormat('E').format(date).substring(0, 3).toUpperCase(),
-                    style: GoogleFonts.manrope(
-                      color: isSelected
-                          ? AppTheme.onPrimary.withValues(alpha: 0.8)
-                          : AppTheme.onSurfaceVariant,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    date.day.toString(),
-                    style: GoogleFonts.plusJakartaSans(
-                      color: isSelected ? AppTheme.onPrimary : AppTheme.onSurface,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 20,
-                    ),
-                  ),
-                  if (isToday && !isSelected) ...[
-                    const SizedBox(height: 4),
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        color: AppTheme.primary,
-                        shape: BoxShape.circle,
+                duration: const Duration(milliseconds: 200),
+                width: 60,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  gradient: isSelected
+                      ? const LinearGradient(
+                          colors: [AppTheme.primary, AppTheme.primaryDim],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : null,
+                  color: isSelected ? null : AppTheme.surfaceContainerLowest,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: AppTheme.primary.withValues(alpha: 0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      DateFormat('E')
+                          .format(date)
+                          .substring(0, 3)
+                          .toUpperCase(),
+                      style: GoogleFonts.manrope(
+                        color: isSelected
+                            ? AppTheme.onPrimary.withValues(alpha: 0.8)
+                            : AppTheme.onSurfaceVariant,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
+                    const SizedBox(height: 6),
+                    Text(
+                      date.day.toString(),
+                      style: GoogleFonts.plusJakartaSans(
+                        color: isSelected
+                            ? AppTheme.onPrimary
+                            : AppTheme.onSurface,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 20,
+                      ),
+                    ),
+                    if (isToday && !isSelected) ...[
+                      const SizedBox(height: 4),
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: const BoxDecoration(
+                          color: AppTheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
-          ),
-        );
-          ),
+          );
         },
       ),
     );
@@ -195,7 +201,8 @@ class _DiaryPageState extends State<DiaryPage> {
 
   Widget _buildMealsList(MealLoaded state) {
     final mealTypes = ['Café da manhã', 'Almoço', 'Jantar', 'Lanche'];
-    final totalCalories = state.meals.fold<double>(0, (sum, m) => sum + m.totalCalories);
+    final totalCalories =
+        state.meals.fold<double>(0, (sum, m) => sum + m.totalCalories);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,7 +251,8 @@ class _DiaryPageState extends State<DiaryPage> {
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
                   color: AppTheme.onPrimary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
@@ -333,7 +341,8 @@ class _DiaryPageState extends State<DiaryPage> {
                       GestureDetector(
                         onTap: () => _showAddFoodDialog(mealType),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 8),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
                               colors: [AppTheme.primary, AppTheme.primaryDim],
@@ -546,10 +555,12 @@ class _AddFoodSheetState extends State<_AddFoodSheet> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Buscar alimento...',
-                prefixIcon: const Icon(Icons.search, color: AppTheme.onSurfaceVariant),
+                prefixIcon:
+                    const Icon(Icons.search, color: AppTheme.onSurfaceVariant),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear, color: AppTheme.onSurfaceVariant),
+                        icon: const Icon(Icons.clear,
+                            color: AppTheme.onSurfaceVariant),
                         onPressed: () {
                           _searchController.clear();
                           setState(() {});
@@ -588,11 +599,13 @@ class _AddFoodSheetState extends State<_AddFoodSheet> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.search_off, size: 48, color: AppTheme.onSurfaceVariant),
+                        const Icon(Icons.search_off,
+                            size: 48, color: AppTheme.onSurfaceVariant),
                         const SizedBox(height: 16),
                         Text(
                           state.message,
-                          style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+                          style: GoogleFonts.manrope(
+                              color: AppTheme.onSurfaceVariant),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -669,7 +682,8 @@ class _AddFoodSheetState extends State<_AddFoodSheet> {
             borderRadius: BorderRadius.circular(16),
           ),
           child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             title: Text(
               food.name,
               style: GoogleFonts.manrope(
@@ -714,11 +728,11 @@ class _AddFoodSheetState extends State<_AddFoodSheet> {
       quantity: food.portion,
     );
     context.read<MealBloc>().add(AddMealFood(
-      mealType: meal,
-      food: mealFood,
-      quantity: food.portion,
-      date: widget.date,
-    ));
+          mealType: meal,
+          food: mealFood,
+          quantity: food.portion,
+          date: widget.date,
+        ));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${food.name} adicionado ao ${widget.mealType}'),
@@ -731,7 +745,8 @@ class _AddFoodSheetState extends State<_AddFoodSheet> {
   }
 
   void _showPortionDialog(FoodItem food) {
-    final controller = TextEditingController(text: food.portion.toInt().toString());
+    final controller =
+        TextEditingController(text: food.portion.toInt().toString());
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -787,11 +802,11 @@ class _AddFoodSheetState extends State<_AddFoodSheet> {
       quantity: quantity,
     );
     context.read<MealBloc>().add(AddMealFood(
-      mealType: meal,
-      food: mealFood,
-      quantity: quantity,
-      date: widget.date,
-    ));
+          mealType: meal,
+          food: mealFood,
+          quantity: quantity,
+          date: widget.date,
+        ));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${food.name} adicionado ao ${widget.mealType}'),

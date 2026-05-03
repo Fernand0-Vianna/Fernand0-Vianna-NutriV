@@ -361,7 +361,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ),
         const SizedBox(height: 12),
         TextButton(
-          onPressed: _isLoading ? null : () => setState(() => _showEmailLogin = false),
+          onPressed:
+              _isLoading ? null : () => setState(() => _showEmailLogin = false),
           child: Text(
             'Voltar',
             style: GoogleFonts.manrope(
@@ -603,9 +604,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
             Text(
               label,
               style: GoogleFonts.manrope(
-                color: selected
-                    ? AppTheme.onPrimary
-                    : AppTheme.onSurfaceVariant,
+                color:
+                    selected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -740,9 +740,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
             Text(
               label,
               style: GoogleFonts.manrope(
-                color: selected
-                    ? AppTheme.onPrimary
-                    : AppTheme.onSurfaceVariant,
+                color:
+                    selected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
@@ -778,7 +777,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
               )
             : Text(
                 'Começar',
-                style: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.w700),
+                style: GoogleFonts.manrope(
+                    fontSize: 18, fontWeight: FontWeight.w700),
               ),
       ),
     );
@@ -826,35 +826,35 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   : () async {
                       if (emailController.text.isEmpty) return;
                       setDialogState(() => isLoading = true);
+                      final dialogContext = ctx;
 
                       try {
                         final authService = getIt<AuthService>();
                         await authService
                             .resetPassword(emailController.text.trim());
 
-                        if (mounted) {
-                          Navigator.pop(ctx);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Link de recuperação enviado para seu e-mail!',
-                              ),
-                              backgroundColor: AppTheme.success,
+                        if (!mounted) return;
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(dialogContext);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text(
+                              'Link de recuperação enviado para seu e-mail!',
                             ),
-                          );
-                        }
+                            backgroundColor: AppTheme.success,
+                          ),
+                        );
                       } catch (e) {
                         setDialogState(() => isLoading = false);
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Erro ao enviar link: ${e.toString()}',
-                              ),
-                              backgroundColor: AppTheme.error,
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Erro ao enviar link: ${e.toString()}',
                             ),
-                          );
-                        }
+                            backgroundColor: AppTheme.error,
+                          ),
+                        );
                       }
                     },
               child: const Text('Enviar'),
@@ -963,13 +963,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
       }
     } catch (e) {
       if (mounted) {
-        String errorMessage = _isSignUp ? 'Erro ao criar conta' : 'Erro ao fazer login';
+        String errorMessage =
+            _isSignUp ? 'Erro ao criar conta' : 'Erro ao fazer login';
         final errorStr = e.toString().toLowerCase();
         if (errorStr.contains('email') || errorStr.contains('already')) {
           errorMessage = 'E-mail inválido ou já está em uso';
-        } else if (errorStr.contains('password') || errorStr.contains('invalid') || errorStr.contains('credentials')) {
+        } else if (errorStr.contains('password') ||
+            errorStr.contains('invalid') ||
+            errorStr.contains('credentials')) {
           errorMessage = 'E-mail ou senha incorretos';
-        } else if (errorStr.contains('network') || errorStr.contains('socketexception')) {
+        } else if (errorStr.contains('network') ||
+            errorStr.contains('socketexception')) {
           errorMessage = 'Erro de conexão. Verifique sua internet';
         }
 

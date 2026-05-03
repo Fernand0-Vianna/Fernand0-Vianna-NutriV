@@ -10,7 +10,7 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
   final UsdaFoodService _usdaFoodService;
 
   FoodScannerBloc(this._aiFoodService, this._usdaFoodService)
-    : super(FoodScannerInitial()) {
+      : super(FoodScannerInitial()) {
     on<AnalyzeImage>(_onAnalyzeImage);
     on<AnalyzeText>(_onAnalyzeText);
     on<SearchFoodByName>(_onSearchFoodByName);
@@ -28,7 +28,7 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
     emit(FoodScannerLoading());
     try {
       final foods = await _aiFoodService.analyzeFoodImage(event.imageFile);
-      
+
       if (foods.isEmpty) {
         emit(
           const FoodScannerError(
@@ -81,15 +81,15 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
     emit(FoodScannerLoading());
     try {
       var foods = await _usdaFoodService.searchFoodByName(event.query);
-      
+
       if (foods.isEmpty) {
         foods = await _aiFoodService.analyzeFoodFromText(event.query);
       }
-      
+
       if (foods.isEmpty) {
         foods = await _aiFoodService.searchOpenFoodFacts(event.query);
       }
-      
+
       if (foods.isEmpty) {
         emit(
           const FoodScannerError(

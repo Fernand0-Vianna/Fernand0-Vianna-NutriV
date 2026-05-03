@@ -276,10 +276,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       fit: StackFit.expand,
                       children: [
                         CircularProgressIndicator(
-                          value: progress.clamp(0, 1) * _caloriesAnimationController.value,
+                          value: progress.clamp(0, 1) *
+                              _caloriesAnimationController.value,
                           strokeWidth: 10,
-                          backgroundColor: AppTheme.onPrimary.withValues(alpha: 0.15),
-                          valueColor: const AlwaysStoppedAnimation(AppTheme.onPrimary),
+                          backgroundColor:
+                              AppTheme.onPrimary.withValues(alpha: 0.15),
+                          valueColor:
+                              const AlwaysStoppedAnimation(AppTheme.onPrimary),
                           strokeCap: StrokeCap.round,
                         ),
                         Center(
@@ -298,7 +301,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 'kcal',
                                 style: GoogleFonts.manrope(
                                   fontSize: 12,
-                                  color: AppTheme.onPrimary.withValues(alpha: 0.7),
+                                  color:
+                                      AppTheme.onPrimary.withValues(alpha: 0.7),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -591,7 +595,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               onPressed: () => context.go('/diary'),
               style: TextButton.styleFrom(
                 foregroundColor: AppTheme.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
               child: Text(
                 'Ver mais',
@@ -648,7 +653,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             height: 64,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppTheme.primaryContainer, AppTheme.surfaceContainerLow],
+                colors: [
+                  AppTheme.primaryContainer,
+                  AppTheme.surfaceContainerLow
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),

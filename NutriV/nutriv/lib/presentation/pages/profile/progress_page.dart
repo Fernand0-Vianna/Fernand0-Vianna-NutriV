@@ -59,7 +59,7 @@ class _ProgressPageState extends State<ProgressPage> {
     for (final meal in _meals) {
       final totalCalories = meal.foods.fold<double>(
         0,
-        (sum, food) => sum + (food.calories ?? 0),
+        (sum, food) => sum + food.totalCalories,
       );
       mealCalories[meal.mealType] = totalCalories;
     }
@@ -69,48 +69,28 @@ class _ProgressPageState extends State<ProgressPage> {
   double _getTotalCalories() {
     return _meals.fold<double>(
       0,
-      (sum, meal) =>
-          sum +
-          meal.foods.fold<double>(
-            0,
-            (mealSum, food) => mealSum + (food.calories ?? 0),
-          ),
+      (sum, meal) => sum + meal.totalCalories,
     );
   }
 
   double _getTotalProtein() {
     return _meals.fold<double>(
       0,
-      (sum, meal) =>
-          sum +
-          meal.foods.fold<double>(
-            0,
-            (mealSum, food) => mealSum + (food.protein ?? 0),
-          ),
+      (sum, meal) => sum + meal.totalProtein,
     );
   }
 
   double _getTotalCarbs() {
     return _meals.fold<double>(
       0,
-      (sum, meal) =>
-          sum +
-          meal.foods.fold<double>(
-            0,
-            (mealSum, food) => mealSum + (food.carbs ?? 0),
-          ),
+      (sum, meal) => sum + meal.totalCarbs,
     );
   }
 
   double _getTotalFat() {
     return _meals.fold<double>(
       0,
-      (sum, meal) =>
-          sum +
-          meal.foods.fold<double>(
-            0,
-            (mealSum, food) => mealSum + (food.fat ?? 0),
-          ),
+      (sum, meal) => sum + meal.totalFat,
     );
   }
 
@@ -353,9 +333,7 @@ class _ProgressPageState extends State<ProgressPage> {
             width: 32,
             height: 150 * barHeight,
             decoration: BoxDecoration(
-              color: isOver
-                  ? AppTheme.errorContainer
-                  : AppTheme.primary,
+              color: isOver ? AppTheme.errorContainer : AppTheme.primary,
               borderRadius: BorderRadius.circular(16),
             ),
           ),
@@ -381,7 +359,7 @@ class _ProgressPageState extends State<ProgressPage> {
     final jantar = mealCalories['jantar'] ?? 0;
 
     final maxY = [cafe, almoco, lanche, jantar].reduce((a, b) => a > b ? a : b);
-    final chartMaxY = maxY > 0 ? (maxY * 1.2) : 100;
+    final chartMaxY = maxY > 0 ? (maxY * 1.2).toDouble() : 100.0;
 
     return Container(
       padding: const EdgeInsets.all(24),
@@ -561,8 +539,8 @@ class _ProgressPageState extends State<ProgressPage> {
                       label == 'Proteína'
                           ? Icons.restaurant
                           : label == 'Carboidratos'
-                          ? Icons.bakery_dining
-                          : Icons.water_drop,
+                              ? Icons.bakery_dining
+                              : Icons.water_drop,
                       color: color,
                       size: 24,
                     ),
@@ -631,21 +609,25 @@ class _ProgressPageState extends State<ProgressPage> {
 
   Widget _buildInsightCard() {
     final totalCalories = _getTotalCalories();
-    final caloriePercentage = _calorieGoal > 0
-        ? (totalCalories / _calorieGoal * 100).toInt()
-        : 0;
-    
+    final caloriePercentage =
+        _calorieGoal > 0 ? (totalCalories / _calorieGoal * 100).toInt() : 0;
+
     String insightText;
     if (_meals.isEmpty) {
-      insightText = 'Registre sua primeira refeição para ver insights personalizados.';
+      insightText =
+          'Registre sua primeira refeição para ver insights personalizados.';
     } else if (caloriePercentage < 50) {
-      insightText = 'Você consumiu apenas $caloriePercentage% da meta. Continue se alimentando ao longo do dia.';
+      insightText =
+          'Você consumiu apenas $caloriePercentage% da meta. Continue se alimentando ao longo do dia.';
     } else if (caloriePercentage >= 50 && caloriePercentage < 80) {
-      insightText = 'Bom progresso! Você está em $caloriePercentage% da meta calórica.';
+      insightText =
+          'Bom progresso! Você está em $caloriePercentage% da meta calórica.';
     } else if (caloriePercentage >= 80 && caloriePercentage <= 100) {
-      insightText = 'Quase lá! Você atingiu $caloriePercentage% da meta. Cuidado para não exceder.';
+      insightText =
+          'Quase lá! Você atingiu $caloriePercentage% da meta. Cuidado para não exceder.';
     } else {
-      insightText = 'Você excedeu a meta calórica em ${caloriePercentage - 100}%. Tente ajustar as próximas refeições.';
+      insightText =
+          'Você excedeu a meta calórica em ${caloriePercentage - 100}%. Tente ajustar as próximas refeições.';
     }
 
     return Container(

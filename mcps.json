@@ -1,0 +1,43 @@
+{
+  "mcpServers": {
+    "GitKraken": {
+      "args": [
+        "mcp",
+        "--host=windsurf",
+        "--source=gitlens",
+        "--scheme=windsurf"
+      ],
+      "command": "/home/nando/.config/Windsurf/User/globalStorage/eamodio.gitlens/gk"
+    },
+    "io.windsurf/figma-remote-mcp-server": {
+      "registry": "io.windsurf/figma-remote-mcp-server",
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "io.windsurf/netlify": {
+      "args": [
+        "-y",
+        "@netlify/mcp"
+      ],
+      "command": "npx",
+      "env": {
+        "NETLIFY_PERSONAL_ACCESS_TOKEN": "nfp_JW7iTSDtuaevWG575Dpo1qU1nNi5Wudue34b"
+      },
+      "registry": "io.windsurf/netlify"
+    },
+    "io.windsurf/supabase-mcp-server": {
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest"
+      ],
+      "command": "npx",
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "sb_publishable_yo1mCtdBJbPRhxk2VwRmEA_OHRndvK0"
+      },
+      "registry": "io.windsurf/supabase-mcp-server"
+    },
+    "opencode": {
+      "command": "opencode",
+      "args": ["mcp", "--host=opencode", "--source=opencode", "--scheme=opencode"]
+    }
+  }
+}

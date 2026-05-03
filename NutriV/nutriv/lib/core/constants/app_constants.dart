@@ -4,7 +4,8 @@ class ApiConstants {
   static String get geminiApiKey {
     final key = dotenv.env['GEMINI_API_KEY'];
     if (key == null || key.isEmpty) {
-      throw Exception('[NutriV] GEMINI_API_KEY não configurada no arquivo .env');
+      throw Exception(
+          '[NutriV] GEMINI_API_KEY não configurada no arquivo .env');
     }
     return key;
   }
@@ -16,7 +17,8 @@ class ApiConstants {
   static String get openaiApiKey {
     final key = dotenv.env['OPENAI_API_KEY'];
     if (key == null || key.isEmpty) {
-      throw Exception('[NutriV] OPENAI_API_KEY não configurada no arquivo .env');
+      throw Exception(
+          '[NutriV] OPENAI_API_KEY não configurada no arquivo .env');
     }
     return key;
   }

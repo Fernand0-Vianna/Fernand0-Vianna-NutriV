@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -102,7 +101,7 @@ Future<void> setupDependencies() async {
 
   getIt.registerFactory<FoodScannerBloc>(
     () => FoodScannerBloc(
-      getIt<AiFoodService>(), 
+      getIt<AiFoodService>(),
       getIt<UsdaFoodService>(),
     ),
   );
@@ -111,7 +110,9 @@ Future<void> setupDependencies() async {
 
   getIt.registerFactory<BarcodeScannerBloc>(() => BarcodeScannerBloc());
 
-  getIt.registerFactory<WeightBloc>(() => WeightBloc(getIt<WeightRepository>()));
+  getIt
+      .registerFactory<WeightBloc>(() => WeightBloc(getIt<WeightRepository>()));
 
-  getIt.registerFactory<FavoriteDishBloc>(() => FavoriteDishBloc(getIt<FavoriteDishRepository>()));
+  getIt.registerFactory<FavoriteDishBloc>(
+      () => FavoriteDishBloc(getIt<FavoriteDishRepository>()));
 }

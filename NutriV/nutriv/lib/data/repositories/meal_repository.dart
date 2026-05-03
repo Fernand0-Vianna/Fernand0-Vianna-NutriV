@@ -18,9 +18,8 @@ class MealRepository {
       meals.add(meal);
     }
 
-    final mealsJson = meals
-        .map((m) => MealModel.fromEntity(m).toJson())
-        .toList();
+    final mealsJson =
+        meals.map((m) => MealModel.fromEntity(m).toJson()).toList();
     await _prefs.setString('meals', jsonEncode(mealsJson));
   }
 
@@ -54,9 +53,8 @@ class MealRepository {
     final meals = getAllMeals();
     meals.removeWhere((m) => m.id == mealId);
 
-    final mealsJson = meals
-        .map((m) => MealModel.fromEntity(m).toJson())
-        .toList();
+    final mealsJson =
+        meals.map((m) => MealModel.fromEntity(m).toJson()).toList();
     await _prefs.setString('meals', jsonEncode(mealsJson));
   }
 

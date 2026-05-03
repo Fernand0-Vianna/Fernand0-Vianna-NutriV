@@ -78,8 +78,8 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
                     if (barcodes.isNotEmpty &&
                         barcodes.first.rawValue != null) {
                       context.read<BarcodeScannerBloc>().add(
-                        BarcodeDetected(barcodes.first.rawValue!),
-                      );
+                            BarcodeDetected(barcodes.first.rawValue!),
+                          );
                     }
                   }
                 },
@@ -169,7 +169,8 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
               const SizedBox(height: 12),
               TextField(
                 controller: caloriesController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
                   labelText: 'Calorias (kcal)',
                   hintText: 'Ex: 130',
@@ -181,24 +182,30 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
                   Expanded(
                     child: TextField(
                       controller: proteinController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(labelText: 'Proteína (g)'),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      decoration:
+                          const InputDecoration(labelText: 'Proteína (g)'),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       controller: carbsController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(labelText: 'Carbos (g)'),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      decoration:
+                          const InputDecoration(labelText: 'Carbos (g)'),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       controller: fatController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(labelText: 'Gordura (g)'),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      decoration:
+                          const InputDecoration(labelText: 'Gordura (g)'),
                     ),
                   ),
                 ],
@@ -206,7 +213,8 @@ class _BarcodeScanPageState extends State<BarcodeScanPage> {
               const SizedBox(height: 12),
               TextField(
                 controller: portionController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
                   labelText: 'Porção (g)',
                   hintText: 'Ex: 100',

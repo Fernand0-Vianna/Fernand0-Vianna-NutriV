@@ -35,9 +35,8 @@ class LocalDataSource {
       logs.add(dailyLog);
     }
 
-    final logsJson = logs
-        .map((l) => DailyLogModel.fromEntity(l).toJson())
-        .toList();
+    final logsJson =
+        logs.map((l) => DailyLogModel.fromEntity(l).toJson()).toList();
     await _prefs.setString('daily_logs', jsonEncode(logsJson));
   }
 

@@ -50,13 +50,13 @@ class _SplashPageState extends State<SplashPage>
 
   Future<void> _navigateToLogin() async {
     await Future.delayed(const Duration(milliseconds: 1500));
-    
+
     if (!mounted) return;
-    
+
     final authService = getIt<AuthService>();
     final isLoggedIn = authService.isSignedIn();
     final currentUser = authService.getCurrentUser();
-    
+
     if (mounted) {
       if (isLoggedIn && currentUser != null) {
         context.go('/');

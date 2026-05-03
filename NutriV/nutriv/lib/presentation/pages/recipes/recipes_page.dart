@@ -36,7 +36,8 @@ class _RecipesPageState extends State<RecipesPage> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       _loadMoreRecipes();
     }
   }
@@ -310,7 +311,9 @@ class _RecipesPageState extends State<RecipesPage> {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppTheme.primary : AppTheme.surfaceContainerLow,
+                  color: isSelected
+                      ? AppTheme.primary
+                      : AppTheme.surfaceContainerLow,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -396,9 +399,11 @@ class _RecipesPageState extends State<RecipesPage> {
           const SizedBox(height: 12),
           Row(
             children: [
-              _buildNutrientChip('P', '${recipe.protein.toInt()}g', AppTheme.primary),
+              _buildNutrientChip(
+                  'P', '${recipe.protein.toInt()}g', AppTheme.primary),
               const SizedBox(width: 8),
-              _buildNutrientChip('C', '${recipe.carbs.toInt()}g', AppTheme.tertiary),
+              _buildNutrientChip(
+                  'C', '${recipe.carbs.toInt()}g', AppTheme.tertiary),
               const SizedBox(width: 8),
               _buildNutrientChip('F', '${recipe.fat.toInt()}g', AppTheme.error),
               const Spacer(),

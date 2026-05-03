@@ -151,15 +151,12 @@ class WeightRepository {
     final userId = _currentUserId;
     if (userId == null) return Stream.value([]);
 
-    return _supabase
-        .from('weight_logs')
-        .stream(primaryKey: ['id'])
-        .map((data) {
-          return data
-              .where((w) => w['user_id'] == userId)
-              .map((json) => WeightLogData.fromJson(json))
-              .toList()
-            ..sort((a, b) => b.entryDate.compareTo(a.entryDate));
-        });
+    return _supabase.from('weight_logs').stream(primaryKey: ['id']).map((data) {
+      return data
+          .where((w) => w['user_id'] == userId)
+          .map((json) => WeightLogData.fromJson(json))
+          .toList()
+        ..sort((a, b) => b.entryDate.compareTo(a.entryDate));
+    });
   }
 }

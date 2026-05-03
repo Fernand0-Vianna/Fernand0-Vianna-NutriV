@@ -81,7 +81,8 @@ class _LoginPageState extends State<LoginPage> {
             errorStr.contains('rate limit')) {
           errorMessage = 'Muitas tentativas. Aguarde um momento';
         } else if (errorStr.contains('email not confirmed')) {
-          errorMessage = 'E-mail não confirmado. Verifique sua caixa de entrada';
+          errorMessage =
+              'E-mail não confirmado. Verifique sua caixa de entrada';
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -142,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                   ? null
                   : () async {
                       if (emailController.text.isEmpty) return;
-                      
+
                       final emailRegex = RegExp(
                         r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
                       );
@@ -155,36 +156,37 @@ class _LoginPageState extends State<LoginPage> {
                         );
                         return;
                       }
-                      
+
                       setDialogState(() => isLoading = true);
+                      final dialogContext = ctx;
 
                       try {
                         final authService = getIt<AuthService>();
-                        await authService.resetPassword(emailController.text.trim());
+                        await authService
+                            .resetPassword(emailController.text.trim());
 
-                        if (mounted) {
-                          Navigator.pop(ctx);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Link de recuperação enviado para seu e-mail!',
-                              ),
-                              backgroundColor: AppTheme.success,
+                        if (!mounted) return;
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(dialogContext);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text(
+                              'Link de recuperação enviado para seu e-mail!',
                             ),
-                          );
-                        }
+                            backgroundColor: AppTheme.success,
+                          ),
+                        );
                       } catch (e) {
                         setDialogState(() => isLoading = false);
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Erro ao enviar link: Verifique se o e-mail está correto',
-                              ),
-                              backgroundColor: AppTheme.error,
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Erro ao enviar link: Verifique se o e-mail está correto',
                             ),
-                          );
-                        }
+                            backgroundColor: AppTheme.error,
+                          ),
+                        );
                       }
                     },
               child: const Text('Enviar'),
@@ -234,9 +236,11 @@ class _LoginPageState extends State<LoginPage> {
       if (mounted) {
         String errorMessage = 'Erro ao fazer login com Google';
         final errorStr = e.toString().toLowerCase();
-        if (errorStr.contains('network') || errorStr.contains('socketexception')) {
+        if (errorStr.contains('network') ||
+            errorStr.contains('socketexception')) {
           errorMessage = 'Erro de conexão. Verifique sua internet';
-        } else if (errorStr.contains('cancelled') || errorStr.contains('abort')) {
+        } else if (errorStr.contains('cancelled') ||
+            errorStr.contains('abort')) {
           errorMessage = 'Login cancelado';
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

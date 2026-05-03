@@ -48,10 +48,8 @@ class UserProfileRepository {
     final userId = _supabase.auth.currentUser?.id;
     if (userId == null) return;
 
-    await _supabase
-        .from('user_profiles')
-        .update({'last_active_at': DateTime.now().toIso8601String()})
-        .eq('id', userId);
+    await _supabase.from('user_profiles').update(
+        {'last_active_at': DateTime.now().toIso8601String()}).eq('id', userId);
   }
 
   /// Atualiza peso atual
@@ -59,13 +57,10 @@ class UserProfileRepository {
     final userId = _supabase.auth.currentUser?.id;
     if (userId == null) return;
 
-    await _supabase
-        .from('user_profiles')
-        .update({
-          'current_weight_kg': weightKg,
-          'updated_at': DateTime.now().toIso8601String(),
-        })
-        .eq('id', userId);
+    await _supabase.from('user_profiles').update({
+      'current_weight_kg': weightKg,
+      'updated_at': DateTime.now().toIso8601String(),
+    }).eq('id', userId);
   }
 
   /// Atualiza metas de calorias e macros
@@ -89,10 +84,7 @@ class UserProfileRepository {
     if (fat != null) updates['fat_target_g'] = fat;
     if (water != null) updates['water_target_ml'] = water;
 
-    await _supabase
-        .from('user_profiles')
-        .update(updates)
-        .eq('id', userId);
+    await _supabase.from('user_profiles').update(updates).eq('id', userId);
   }
 
   /// Atualiza objetivo (perder, manter, ganhar)
@@ -107,10 +99,7 @@ class UserProfileRepository {
 
     if (targetWeight != null) updates['target_weight_kg'] = targetWeight;
 
-    await _supabase
-        .from('user_profiles')
-        .update(updates)
-        .eq('id', userId);
+    await _supabase.from('user_profiles').update(updates).eq('id', userId);
   }
 
   /// Calcula e atualiza BMR/TDEE
@@ -124,16 +113,18 @@ class UserProfileRepository {
       bmr = 447.593 +
           (9.247 * (profile.currentWeightKg ?? 70)) +
           (3.098 * (profile.heightCm ?? 170)) -
-          (4.330 * (profile.birthDate != null
-              ? DateTime.now().difference(profile.birthDate!).inDays ~/ 365
-              : 25));
+          (4.330 *
+              (profile.birthDate != null
+                  ? DateTime.now().difference(profile.birthDate!).inDays ~/ 365
+                  : 25));
     } else {
       bmr = 88.362 +
           (13.397 * (profile.currentWeightKg ?? 70)) +
           (4.799 * (profile.heightCm ?? 170)) -
-          (5.677 * (profile.birthDate != null
-              ? DateTime.now().difference(profile.birthDate!).inDays ~/ 365
-              : 25));
+          (5.677 *
+              (profile.birthDate != null
+                  ? DateTime.now().difference(profile.birthDate!).inDays ~/ 365
+                  : 25));
     }
 
     // Multiplicador de atividade
@@ -196,6 +187,7 @@ class UserProfileRepository {
         .from('user_profiles')
         .stream(primaryKey: ['id'])
         .eq('id', userId)
-        .map((data) => data.isNotEmpty ? UserProfileModel.fromJson(data.first) : null);
+        .map((data) =>
+            data.isNotEmpty ? UserProfileModel.fromJson(data.first) : null);
   }
 }

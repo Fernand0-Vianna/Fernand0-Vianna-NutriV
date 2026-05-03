@@ -72,8 +72,7 @@ class UsdaFoodService {
     }
 
     return FoodItem(
-      id:
-          food['fdcId']?.toString() ??
+      id: food['fdcId']?.toString() ??
           DateTime.now().millisecondsSinceEpoch.toString(),
       name: food['description'] ?? food['lowercaseDescription'] ?? 'Alimento',
       calories: (getNutrient(1008) as num).toDouble(),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -50,9 +49,9 @@ void main() async {
   }
 
   await setupDependencies();
-  
+
   getIt<ErrorTrackingService>().initialize();
-  
+
   runApp(const NutriVApp());
 }
 
@@ -78,7 +77,8 @@ class NutriVApp extends StatelessWidget {
                 create: (_) => getIt<UserBloc>()..add(LoadUser()),
               ),
               BlocProvider<MealBloc>(
-                create: (_) => getIt<MealBloc>()..add(LoadMeals(DateTime.now())),
+                create: (_) =>
+                    getIt<MealBloc>()..add(LoadMeals(DateTime.now())),
               ),
               BlocProvider<FoodScannerBloc>(
                 create: (_) => getIt<FoodScannerBloc>(),

@@ -102,9 +102,8 @@ class MealBloc extends Bloc<MealEvent, MealState> {
         );
         if (mealIndex >= 0) {
           final meal = currentState.meals[mealIndex];
-          final updatedFoods = meal.foods
-              .where((f) => f.id != event.foodId)
-              .toList();
+          final updatedFoods =
+              meal.foods.where((f) => f.id != event.foodId).toList();
           final updatedMeal = meal.copyWith(foods: updatedFoods);
           await _mealRepository.updateMeal(updatedMeal);
 

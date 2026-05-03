@@ -843,9 +843,9 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-void _showAppSettings(BuildContext context) {
+  void _showAppSettings(BuildContext context) {
     final themeNotifier = getIt<ThemeNotifier>();
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -910,12 +910,14 @@ void _showAppSettings(BuildContext context) {
                   ),
                   trailing: Text(
                     'Português',
-                    style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+                    style:
+                        GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
                   ),
                   onTap: () {},
                 ),
                 ListTile(
-                  leading: const Icon(Icons.info_outline, color: AppTheme.primary),
+                  leading:
+                      const Icon(Icons.info_outline, color: AppTheme.primary),
                   title: Text(
                     'Sobre',
                     style: GoogleFonts.manrope(color: AppTheme.onSurface),
@@ -977,18 +979,24 @@ void _showAppSettings(BuildContext context) {
             ),
             const SizedBox(height: 16),
             ListTile(
-              leading: const Icon(Icons.restaurant_menu, color: AppTheme.primary),
-              title: Text('Diário Alimentar', style: GoogleFonts.manrope(color: AppTheme.onSurface)),
-              subtitle: Text('CSV das refeições', style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant)),
+              leading:
+                  const Icon(Icons.restaurant_menu, color: AppTheme.primary),
+              title: Text('Diário Alimentar',
+                  style: GoogleFonts.manrope(color: AppTheme.onSurface)),
+              subtitle: Text('CSV das refeições',
+                  style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant)),
               onTap: () {
                 Navigator.pop(ctx);
                 _exportDiary();
               },
             ),
             ListTile(
-              leading: const Icon(Icons.monitor_weight, color: AppTheme.primary),
-              title: Text(' Histórico de Peso', style: GoogleFonts.manrope(color: AppTheme.onSurface)),
-              subtitle: Text('CSV do peso', style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant)),
+              leading:
+                  const Icon(Icons.monitor_weight, color: AppTheme.primary),
+              title: Text(' Histórico de Peso',
+                  style: GoogleFonts.manrope(color: AppTheme.onSurface)),
+              subtitle: Text('CSV do peso',
+                  style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant)),
               onTap: () {
                 Navigator.pop(ctx);
                 _exportWeight();
@@ -1005,7 +1013,7 @@ void _showAppSettings(BuildContext context) {
     try {
       final meals = getIt<SyncMealRepository>().getAllMeals();
       getIt<SyncMealRepository>().exportMealsToCsv(meals);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${meals.length} refeições exportadas'),

@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
-import '../data/repositories/user_repository.dart';
 
 class ErrorTrackingService {
-  static final ErrorTrackingService _instance = ErrorTrackingService._internal();
+  static final ErrorTrackingService _instance =
+      ErrorTrackingService._internal();
   factory ErrorTrackingService() => _instance;
   ErrorTrackingService._internal();
 
@@ -12,9 +11,9 @@ class ErrorTrackingService {
 
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
+
     FlutterError.onError = _handleFlutterError;
-    
+
     _isInitialized = true;
     if (kDebugMode) {
       debugPrint('ErrorTrackingService initialized');
@@ -28,13 +27,13 @@ class ErrorTrackingService {
       'stack': details.stack.toString(),
       'library': details.library ?? 'unknown',
     };
-    
+
     _errors.insert(0, error);
-    
+
     if (_errors.length > 50) {
       _errors.removeLast();
     }
-    
+
     if (kDebugMode) {
       debugPrint('Flutter Error: ${details.exception}');
       debugPrint('Stack: ${details.stack}');
@@ -49,13 +48,13 @@ class ErrorTrackingService {
       'exception': error.toString(),
       'stack': stack?.toString() ?? 'No stack trace',
     };
-    
+
     _errors.insert(0, errorData);
-    
+
     if (_errors.length > 50) {
       _errors.removeLast();
     }
-    
+
     if (kDebugMode) {
       debugPrint('Error recorded: $error');
     } else {

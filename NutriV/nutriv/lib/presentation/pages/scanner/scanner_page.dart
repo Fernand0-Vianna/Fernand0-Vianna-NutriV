@@ -409,9 +409,8 @@ class _ScannerPageState extends State<ScannerPage> {
               ? AppTheme.primaryContainer
               : AppTheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(20),
-          border: isSelected
-              ? Border.all(color: AppTheme.primary, width: 2)
-              : null,
+          border:
+              isSelected ? Border.all(color: AppTheme.primary, width: 2) : null,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -431,9 +430,8 @@ class _ScannerPageState extends State<ScannerPage> {
                     : AppTheme.surfaceContainerLow,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected
-                      ? AppTheme.primary
-                      : AppTheme.outlineVariant,
+                  color:
+                      isSelected ? AppTheme.primary : AppTheme.outlineVariant,
                   width: 2,
                 ),
               ),
@@ -519,9 +517,10 @@ class _ScannerPageState extends State<ScannerPage> {
   }
 
   void _showPortionEditor(FoodItem food) {
-    final controller = TextEditingController(text: food.portion.toInt().toString());
+    final controller =
+        TextEditingController(text: food.portion.toInt().toString());
     String selectedUnit = 'g';
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -575,11 +574,13 @@ class _ScannerPageState extends State<ScannerPage> {
                       Expanded(
                         child: TextField(
                           controller: controller,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                           style: GoogleFonts.manrope(fontSize: 18),
                           decoration: InputDecoration(
                             labelText: 'Quantidade',
-                            labelStyle: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+                            labelStyle: GoogleFonts.manrope(
+                                color: AppTheme.onSurfaceVariant),
                             filled: true,
                             fillColor: AppTheme.surfaceContainerLow,
                             border: OutlineInputBorder(
@@ -596,22 +597,31 @@ class _ScannerPageState extends State<ScannerPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: ToggleButtons(
-                          isSelected: [selectedUnit == 'g', selectedUnit == 'kg']
-                              .map((e) => e)
-                              .toList(),
+                          isSelected: [
+                            selectedUnit == 'g',
+                            selectedUnit == 'kg'
+                          ].map((e) => e).toList(),
                           onPressed: (index) {
-                            setState(() => selectedUnit = index == 0 ? 'g' : 'kg');
+                            setState(
+                                () => selectedUnit = index == 0 ? 'g' : 'kg');
                           },
                           borderRadius: BorderRadius.circular(12),
-                          constraints: const BoxConstraints(minWidth: 50, minHeight: 46),
+                          constraints:
+                              const BoxConstraints(minWidth: 50, minHeight: 46),
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              child: Text('g', style: GoogleFonts.manrope(fontWeight: FontWeight.w600)),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: Text('g',
+                                  style: GoogleFonts.manrope(
+                                      fontWeight: FontWeight.w600)),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              child: Text('kg', style: GoogleFonts.manrope(fontWeight: FontWeight.w600)),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: Text('kg',
+                                  style: GoogleFonts.manrope(
+                                      fontWeight: FontWeight.w600)),
                             ),
                           ],
                         ),
@@ -623,14 +633,19 @@ class _ScannerPageState extends State<ScannerPage> {
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: () {
-                        final value = double.tryParse(controller.text) ?? food.portion;
-                        double finalPortion = selectedUnit == 'kg' ? value * 1000 : value;
+                        final value =
+                            double.tryParse(controller.text) ?? food.portion;
+                        double finalPortion =
+                            selectedUnit == 'kg' ? value * 1000 : value;
                         context.read<FoodScannerBloc>().add(
-                          UpdateFoodPortion(food: food, newPortion: finalPortion),
-                        );
+                              UpdateFoodPortion(
+                                  food: food, newPortion: finalPortion),
+                            );
                         Navigator.pop(dialogContext);
                       },
-                      child: Text('Salvar', style: GoogleFonts.manrope(fontWeight: FontWeight.w700)),
+                      child: Text('Salvar',
+                          style:
+                              GoogleFonts.manrope(fontWeight: FontWeight.w700)),
                     ),
                   ),
                 ],
@@ -750,8 +765,8 @@ class _ScannerPageState extends State<ScannerPage> {
                   Navigator.pop(dialogContext);
                   if (controller.text.isNotEmpty) {
                     context.read<FoodScannerBloc>().add(
-                      AnalyzeText(controller.text),
-                    );
+                          AnalyzeText(controller.text),
+                        );
                   }
                 },
                 style: ElevatedButton.styleFrom(

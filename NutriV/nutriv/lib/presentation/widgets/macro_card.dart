@@ -57,9 +57,9 @@ class MacroCard extends StatelessWidget {
             Text(
               '${(percentage * 100).toInt()}%',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
             ),
           ],
         ),

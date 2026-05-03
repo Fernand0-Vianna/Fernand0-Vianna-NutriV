@@ -65,11 +65,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try {
       final authService = getIt<AuthService>();
-      
+
       if (kDebugMode) {
         debugPrint('Iniciando registro com: ${_emailController.text.trim()}');
       }
-      
+
       final userResult = await authService.signUpWithEmail(
         _emailController.text.trim(),
         _passwordController.text,
@@ -119,20 +119,22 @@ class _RegisterPageState extends State<RegisterPage> {
         context.read<UserBloc>().add(SaveUser(user));
         context.go('/');
       } else if (mounted) {
-        setState(() => _errorMessage = 'Erro ao criar conta. E-mail já pode estar em uso.');
+        setState(() => _errorMessage =
+            'Erro ao criar conta. E-mail já pode estar em uso.');
       }
     } catch (e) {
       if (mounted) {
         String errorMessage = 'Erro ao criar conta';
-        
+
         if (e.toString().contains('email')) {
           errorMessage = 'E-mail inválido ou já está em uso';
         } else if (e.toString().contains('password')) {
           errorMessage = 'Senha muito fraca (mínimo 6 caracteres)';
-        } else if (e.toString().contains('network') || e.toString().contains('SocketException')) {
+        } else if (e.toString().contains('network') ||
+            e.toString().contains('SocketException')) {
           errorMessage = 'Erro de conexão. Verifique sua internet';
         }
-        
+
         setState(() => _errorMessage = errorMessage);
         if (kDebugMode) {
           debugPrint('Registration error: $e');
@@ -206,7 +208,8 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ],
           ),
-          child: const Icon(Icons.person_add, size: 32, color: AppTheme.primary),
+          child:
+              const Icon(Icons.person_add, size: 32, color: AppTheme.primary),
         ),
         const SizedBox(height: 16),
         Text(
@@ -357,12 +360,15 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               suffixIcon: IconButton(
                 icon: Icon(
-                  _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                  _obscureConfirmPassword
+                      ? Icons.visibility_off
+                      : Icons.visibility,
                   color: AppTheme.onSurfaceVariant,
                   size: 20,
                 ),
                 onPressed: () {
-                  setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
+                  setState(
+                      () => _obscureConfirmPassword = !_obscureConfirmPassword);
                 },
               ),
             ),
@@ -418,7 +424,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       borderSide: BorderSide.none,
                     ),
                   ),
-                  validator: (v) => Validators.validatePositiveNumber(v, 'Peso'),
+                  validator: (v) =>
+                      Validators.validatePositiveNumber(v, 'Peso'),
                 ),
               ),
               const SizedBox(width: 12),
@@ -436,7 +443,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       borderSide: BorderSide.none,
                     ),
                   ),
-                  validator: (v) => Validators.validatePositiveNumber(v, 'Altura'),
+                  validator: (v) =>
+                      Validators.validatePositiveNumber(v, 'Altura'),
                 ),
               ),
             ],
@@ -490,9 +498,13 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildGenderOption('Masculino', Icons.male, _isMale, () => setState(() => _isMale = true))),
+              Expanded(
+                  child: _buildGenderOption('Masculino', Icons.male, _isMale,
+                      () => setState(() => _isMale = true))),
               const SizedBox(width: 12),
-              Expanded(child: _buildGenderOption('Feminino', Icons.female, !_isMale, () => setState(() => _isMale = false))),
+              Expanded(
+                  child: _buildGenderOption('Feminino', Icons.female, !_isMale,
+                      () => setState(() => _isMale = false))),
             ],
           ),
         ],
@@ -500,7 +512,8 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _buildGenderOption(String label, IconData icon, bool selected, VoidCallback onTap) {
+  Widget _buildGenderOption(
+      String label, IconData icon, bool selected, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -512,13 +525,18 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         child: Column(
           children: [
-            Icon(icon, color: selected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant, size: 24),
+            Icon(icon,
+                color:
+                    selected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
+                size: 24),
             const SizedBox(height: 4),
-            Text(label, style: GoogleFonts.manrope(
-              color: selected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
-            )),
+            Text(label,
+                style: GoogleFonts.manrope(
+                  color:
+                      selected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                )),
           ],
         ),
       ),
@@ -562,13 +580,16 @@ class _RegisterPageState extends State<RegisterPage> {
                 value: _activityLevel,
                 isExpanded: true,
                 icon: const Icon(Icons.keyboard_arrow_down),
-                items: List.generate(5, (i) => DropdownMenuItem(
-                  value: i,
-                  child: Text(
-                    NutritionUtils.getActivityLevel(i),
-                    style: GoogleFonts.manrope(color: AppTheme.onSurface),
-                  ),
-                )),
+                items: List.generate(
+                    5,
+                    (i) => DropdownMenuItem(
+                          value: i,
+                          child: Text(
+                            NutritionUtils.getActivityLevel(i),
+                            style:
+                                GoogleFonts.manrope(color: AppTheme.onSurface),
+                          ),
+                        )),
                 onChanged: (v) {
                   if (v != null) setState(() => _activityLevel = v);
                 },
@@ -608,11 +629,15 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildGoalOption('Perder', 'lose', Icons.trending_down)),
+              Expanded(
+                  child:
+                      _buildGoalOption('Perder', 'lose', Icons.trending_down)),
               const SizedBox(width: 8),
-              Expanded(child: _buildGoalOption('Manter', 'maintain', Icons.remove)),
+              Expanded(
+                  child: _buildGoalOption('Manter', 'maintain', Icons.remove)),
               const SizedBox(width: 8),
-              Expanded(child: _buildGoalOption('Ganhar', 'gain', Icons.trending_up)),
+              Expanded(
+                  child: _buildGoalOption('Ganhar', 'gain', Icons.trending_up)),
             ],
           ),
         ],
@@ -633,13 +658,18 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         child: Column(
           children: [
-            Icon(icon, color: selected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant, size: 20),
+            Icon(icon,
+                color:
+                    selected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
+                size: 20),
             const SizedBox(height: 4),
-            Text(label, style: GoogleFonts.manrope(
-              color: selected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
-            )),
+            Text(label,
+                style: GoogleFonts.manrope(
+                  color:
+                      selected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                )),
           ],
         ),
       ),

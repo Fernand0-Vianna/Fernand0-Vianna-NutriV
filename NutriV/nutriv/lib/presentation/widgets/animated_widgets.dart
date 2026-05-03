@@ -80,14 +80,14 @@ class _AnimatedButtonState extends State<AnimatedButton>
             ? OutlinedButton(
                 onPressed: widget.isDisabled ? () {} : null,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor:
-                      widget.foregroundColor ?? AppTheme.primary,
+                  foregroundColor: widget.foregroundColor ?? AppTheme.primary,
                   side: BorderSide(
                     color: widget.foregroundColor ?? AppTheme.primary,
                   ),
                   padding: widget.padding,
                   shape: RoundedRectangleBorder(
-                    borderRadius: widget.borderRadius ?? BorderRadius.circular(9999),
+                    borderRadius:
+                        widget.borderRadius ?? BorderRadius.circular(9999),
                   ),
                 ),
                 child: widget.child,
@@ -95,13 +95,12 @@ class _AnimatedButtonState extends State<AnimatedButton>
             : ElevatedButton(
                 onPressed: widget.isDisabled ? () {} : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      widget.backgroundColor ?? AppTheme.primary,
-                  foregroundColor:
-                      widget.foregroundColor ?? AppTheme.onPrimary,
+                  backgroundColor: widget.backgroundColor ?? AppTheme.primary,
+                  foregroundColor: widget.foregroundColor ?? AppTheme.onPrimary,
                   padding: widget.padding,
                   shape: RoundedRectangleBorder(
-                    borderRadius: widget.borderRadius ?? BorderRadius.circular(9999),
+                    borderRadius:
+                        widget.borderRadius ?? BorderRadius.circular(9999),
                   ),
                 ),
                 child: widget.child,
@@ -186,7 +185,8 @@ class _PressableCardState extends State<PressableCard>
             borderRadius: widget.borderRadius ?? BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04 + (_elevationAnimation.value * 0.02)),
+                color: Colors.black.withValues(
+                    alpha: 0.04 + (_elevationAnimation.value * 0.02)),
                 blurRadius: 10 + _elevationAnimation.value,
                 offset: Offset(0, 4 + _elevationAnimation.value),
               ),
@@ -480,7 +480,8 @@ class ChipButton extends StatelessWidget {
               Icon(
                 icon,
                 size: 18,
-                color: isSelected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
+                color:
+                    isSelected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
               ),
               const SizedBox(width: 8),
             ],
@@ -528,9 +529,7 @@ class ToggleChipButton extends StatelessWidget {
           color: isSelected ? AppTheme.primary : AppTheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? AppTheme.primary
-                : AppTheme.outlineVariant,
+            color: isSelected ? AppTheme.primary : AppTheme.outlineVariant,
             width: 2,
           ),
         ),
@@ -541,7 +540,8 @@ class ToggleChipButton extends StatelessWidget {
               Icon(
                 icon,
                 size: 18,
-                color: isSelected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
+                color:
+                    isSelected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
               ),
               const SizedBox(width: 6),
             ],

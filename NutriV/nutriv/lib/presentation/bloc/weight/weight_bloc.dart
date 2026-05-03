@@ -20,7 +20,8 @@ class WeightBloc extends Bloc<WeightEvent, WeightState> {
   ) async {
     emit(WeightLoading());
     try {
-      final history = await _repository.getWeightHistory(days: event.days ?? 30);
+      final history =
+          await _repository.getWeightHistory(days: event.days ?? 30);
       final progress = await _repository.getProgress();
       emit(WeightLoaded(
         history: history,

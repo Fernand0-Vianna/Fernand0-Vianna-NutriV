@@ -77,21 +77,21 @@ class User extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
-    name,
-    email,
-    photoUrl,
-    weight,
-    height,
-    age,
-    isMale,
-    activityLevel,
-    goal,
-    calorieGoal,
-    proteinGoal,
-    carbsGoal,
-    fatGoal,
-    waterGoal,
-    createdAt,
-  ];
+        id,
+        name,
+        email,
+        photoUrl,
+        weight,
+        height,
+        age,
+        isMale,
+        activityLevel,
+        goal,
+        calorieGoal,
+        proteinGoal,
+        carbsGoal,
+        fatGoal,
+        waterGoal,
+        createdAt,
+      ];
 }

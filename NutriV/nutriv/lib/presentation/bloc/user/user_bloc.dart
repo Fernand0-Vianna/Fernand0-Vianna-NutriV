@@ -41,16 +41,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   Future<void> _onUpdateUser(UpdateUser event, Emitter<UserState> emit) async {
-    final currentState = state;
     emit(UserLoading());
     try {
       await _userRepository.saveUser(event.user);
       emit(UserLoaded(event.user));
     } catch (e) {
       debugPrint('UserBloc UpdateUser error: $e');
-      if (currentState is UserState) {
-        emit(currentState);
-      }
       emit(UserError('Erro ao atualizar dados do usuário'));
     }
   }

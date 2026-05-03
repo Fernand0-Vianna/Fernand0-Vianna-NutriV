@@ -67,17 +67,17 @@ class DailyLog extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
-    date,
-    totalCalories,
-    totalProtein,
-    totalCarbs,
-    totalFat,
-    waterIntake,
-    calorieGoal,
-    proteinGoal,
-    carbsGoal,
-    fatGoal,
-    waterGoal,
-  ];
+        id,
+        date,
+        totalCalories,
+        totalProtein,
+        totalCarbs,
+        totalFat,
+        waterIntake,
+        calorieGoal,
+        proteinGoal,
+        carbsGoal,
+        fatGoal,
+        waterGoal,
+      ];
 }
