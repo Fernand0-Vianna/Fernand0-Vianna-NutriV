@@ -1,55 +1,28 @@
 <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="lensGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#E68D40"/>
-      <stop offset="100%" style="stop-color:#D67A30"/>
-    </linearGradient>
-    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#2E5A3F"/>
-      <stop offset="100%" style="stop-color:#43825C"/>
-    </linearGradient>
+    <style>
+      .lineart-green { fill: none; stroke: #2ECC71; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
   </defs>
-  
-  <!-- Folhas do abacaxi -->
-  <g transform="translate(60, 15)">
-    <!-- Folha central -->
-    <path d="M0,0 Q-8,-12 -6,-22 Q-2,-28 0,-30 Q2,-28 6,-22 Q8,-12 0,0" 
-          fill="url(#leafGradient)"/>
-    <!-- Folha esquerda -->
-    <path d="M-2,2 Q-15,-5 -20,-12 Q-18,-18 -12,-20 Q-6,-15 -2,2" 
-          fill="url(#leafGradient)"/>
-    <!-- Folha direita -->
-    <path d="M2,2 Q15,-5 20,-12 Q18,-18 12,-20 Q6,-15 2,2" 
-          fill="url(#leafGradient)"/>
-    <!-- Folha esquerda externa -->
-    <path d="M-4,4 Q-20,0 -26,-6 Q-22,-12 -14,-12 Q-8,-6 -4,4" 
-          fill="#2E5A3F"/>
-    <!-- Folha direita externa -->
-    <path d="M4,4 Q20,0 26,-6 Q22,-12 14,-12 Q8,-6 4,4" 
-          fill="#2E5A3F"/>
+
+  <!-- Corpo do Abacaxi (Oval minimalista) -->
+  <ellipse cx="60" cy="65" rx="35" ry="40" class="lineart-green"/>
+
+  <!-- Câmera no centro (Linhas limpas) -->
+  <g transform="translate(60, 65)">
+    <!-- Corpo da Câmera -->
+    <rect x="-15" y="-12" width="30" height="20" rx="4" class="lineart-green"/>
+    <!-- Lente Central -->
+    <circle cx="0" cy="0" r="8" class="lineart-green" stroke-width="3"/>
+    <!-- Botão de disparo -->
+    <line x1="-10" y1="-12" x2="-5" y2="-12" class="lineart-green" stroke-width="3"/>
   </g>
-  
-  <!-- Círculo principal (corpo do abacaxi) -->
-  <circle cx="60" cy="65" r="38" fill="#43825C"/>
-  
-  <!-- Anéis de abacaxi estilizados -->
-  <g stroke="#3A7552" stroke-width="1.5" fill="none" opacity="0.6">
-    <ellipse cx="60" cy="65" rx="30" ry="8" transform="rotate(-45 60 65)"/>
-    <ellipse cx="60" cy="65" rx="30" ry="8" transform="rotate(45 60 65)"/>
-    <ellipse cx="60" cy="65" rx="30" ry="8"/>
-    <ellipse cx="60" cy="65" rx="30" ry="8" transform="rotate(90 60 65)"/>
+
+  <!-- Coroa do Abacaxi (Linhas simplificadas) -->
+  <g transform="translate(60, 25)">
+    <path d="M0,0 L-10,-15 L0,-5 L10,-15 L0,0" class="lineart-green"/>
+    <path d="M0,0 L0,-25 L5,0" class="lineart-green"/>
+    <path d="M0,0 L-5,-20 L-5,0" class="lineart-green"/>
   </g>
-  
-  <!-- Círculo central estilo lente/câmera -->
-  <circle cx="60" cy="65" r="20" fill="url(#lensGradient)"/>
-  
-  <!-- Anel interno da lente -->
-  <circle cx="60" cy="65" r="14" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.4"/>
-  
-  <!-- Círculo interno (pupila da lente) -->
-  <circle cx="60" cy="65" r="8" fill="#FFFFFF" opacity="0.3"/>
-  <circle cx="60" cy="65" r="4" fill="#FFFFFF"/>
-  
-  <!-- Reflexo de lente -->
-  <ellipse cx="66" cy="59" rx="3" ry="2" fill="#FFFFFF" opacity="0.6"/>
+</svg>
 </svg>

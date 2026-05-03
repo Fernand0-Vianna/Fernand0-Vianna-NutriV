@@ -39,7 +39,8 @@ class Recipe {
       totalTime: recipe['totalTime'] ?? 0,
       yield_: recipe['yield'] ?? 0,
       ingredients: List<String>.from(recipe['ingredientLines'] ?? []),
-      protein: (recipe['totalNutrients']?['PROCNT']?['quantity'] ?? 0).toDouble(),
+      protein:
+          (recipe['totalNutrients']?['PROCNT']?['quantity'] ?? 0).toDouble(),
       carbs: (recipe['totalNutrients']?['CHOCDF']?['quantity'] ?? 0).toDouble(),
       fat: (recipe['totalNutrients']?['FAT']?['quantity'] ?? 0).toDouble(),
       fiber: (recipe['totalNutrients']?['FIBTG']?['quantity'] ?? 0).toDouble(),
@@ -74,9 +75,9 @@ class RecipeService {
         'type': 'public',
         'app_id': _appId,
         'app_key': _appKey,
-        'q': ?query,
-        'diet': ?diet,
-        'cuisineType': ?cuisine,
+        if (query != null) 'q': query,
+        if (diet != null) 'diet': diet,
+        if (cuisine != null) 'cuisineType': cuisine,
         if (calories != null) 'calories': '$calories',
         'from': from.toString(),
         'to': to.toString(),
@@ -115,7 +116,10 @@ class RecipeService {
     );
   }
 
-  Future<List<Recipe>> getHighProteinRecipes({int from = 0, int to = 10}) async {
+  Future<List<Recipe>> getHighProteinRecipes({
+    int from = 0,
+    int to = 10,
+  }) async {
     return searchRecipes(
       query: 'high protein',
       diet: 'high-protein',

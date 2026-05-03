@@ -31,7 +31,7 @@ class AuthService {
     }
   }
 
-Future<app.User?> signUpWithEmail(String email, String password) async {
+  Future<app.User?> signUpWithEmail(String email, String password) async {
     try {
       if (kDebugMode) {
         debugPrint('Attempting to sign up with email: $email');
@@ -45,10 +45,10 @@ Future<app.User?> signUpWithEmail(String email, String password) async {
       if (response.user != null) {
         final user = _createUserFromSupabase(response.user!);
         await _userRepository.saveUser(user);
-        
+
         // Criar perfil no Supabase
         await _createUserProfile(response.user!.id, email);
-        
+
         return user;
       }
 
@@ -83,14 +83,15 @@ Future<app.User?> signUpWithEmail(String email, String password) async {
     }
   }
 
-  Future<void> _createUserProfileIfNotExists(String userId, String? email) async {
+  Future<void> _createUserProfileIfNotExists(
+      String userId, String? email) async {
     try {
       final existing = await _supabase
           .from('user_profiles')
           .select('id')
           .eq('id', userId)
           .maybeSingle();
-      
+
       if (existing == null && email != null) {
         await _supabase.from('user_profiles').insert({
           'id': userId,
@@ -120,16 +121,15 @@ Future<app.User?> signUpWithEmail(String email, String password) async {
       // Mobile (Android/iOS): use Google Sign In nativo
       // serverClientId é o Web Client ID do Google Cloud Console (client_type: 3)
       // necessário para autenticação com Supabase
-      final googleSignIn = GoogleSignIn(
-        scopes: ['email', 'openid', 'profile'],
+      await GoogleSignIn.instance.initialize(
         serverClientId:
             '510166294031-ehhl2r349bbd6n9q2pr22scqod2338hr.apps.googleusercontent.com',
       );
 
       // Sign out first to force account picker
-      await googleSignIn.signOut();
+      await GoogleSignIn.instance.signOut();
 
-      final googleUser = await googleSignIn.signIn();
+      final googleUser = await GoogleSignIn.instance.signIn();
       if (googleUser == null) {
         // User canceled
         return false;
@@ -151,10 +151,10 @@ Future<app.User?> signUpWithEmail(String email, String password) async {
       if (response.user != null) {
         final user = _createUserFromSupabase(response.user!);
         await _userRepository.saveUser(user);
-        
+
         // Criar perfil se não existir
         await _createUserProfileIfNotExists(response.user!.id, user.email);
-        
+
         return true;
       }
 
@@ -206,8 +206,7 @@ Future<app.User?> signUpWithEmail(String email, String password) async {
   app.User _createUserFromSupabase(User supabaseUser) {
     return app.User(
       id: supabaseUser.id,
-      name:
-          supabaseUser.userMetadata?['name'] ??
+      name: supabaseUser.userMetadata?['name'] ??
           supabaseUser.email?.split('@').first ??
           'Usuário',
       email: supabaseUser.email,

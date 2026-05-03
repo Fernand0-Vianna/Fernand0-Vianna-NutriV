@@ -63,9 +63,8 @@ class SyncMealRepository {
   }
 
   Future<void> _saveLocal(List<Meal> meals) async {
-    final mealsJson = meals
-        .map((m) => MealModel.fromEntity(m).toJson())
-        .toList();
+    final mealsJson =
+        meals.map((m) => MealModel.fromEntity(m).toJson()).toList();
     await _prefs.setString(_localMealsKey, jsonEncode(mealsJson));
   }
 
@@ -242,21 +241,6 @@ class SyncMealRepository {
     }
 
     return mealList;
-  }
-
-  String _getMealName(String mealType) {
-    switch (mealType.toLowerCase()) {
-      case 'breakfast':
-        return 'Café da Manhã';
-      case 'lunch':
-        return 'Almoço';
-      case 'dinner':
-        return 'Jantar';
-      case 'snack':
-        return 'Lanche';
-      default:
-        return 'Refeição';
-    }
   }
 
   String exportMealsToCsv(List<Meal> meals) {
