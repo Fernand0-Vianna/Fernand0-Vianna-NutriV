@@ -97,19 +97,12 @@ class AuthService {
         debugPrint('🔐 kIsWeb: $kIsWeb');
       }
 
-      // Para mobile, usamos o fluxo com authCallbackUrl para capturar o callback
-      if (!kIsWeb) {
-        await _supabase.auth.signInWithOAuth(
-          OAuthProvider.google,
-          redirectTo: redirectUrl,
-          authScreenLaunchMode: LaunchMode.externalApplication,
-        );
-      } else {
-        await _supabase.auth.signInWithOAuth(
-          OAuthProvider.google,
-          redirectTo: redirectUrl,
-        );
-      }
+      // Para mobile, usamos o fluxo nativo que retorna via deep link
+      await _supabase.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: redirectUrl,
+        authScreenLaunchMode: LaunchMode.platformDefault,
+      );
 
       if (kDebugMode) {
         debugPrint('✅ signInWithOAuth chamado com sucesso');
