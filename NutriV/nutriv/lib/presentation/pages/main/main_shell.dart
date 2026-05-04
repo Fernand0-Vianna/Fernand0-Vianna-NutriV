@@ -23,7 +23,7 @@ class MainShell extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
+              color: Colors.black.withValues(alpha:  0.08),
               blurRadius: 24,
               offset: const Offset(0, -8),
             ),
@@ -67,7 +67,7 @@ class MainShell extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
             color: isSelected
-                ? AppTheme.primaryContainer.withValues(alpha: 0.5)
+                ? AppTheme.primaryContainer.withValues(alpha:  0.5)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(16),
           ),
@@ -123,7 +123,7 @@ class MainShell extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primary.withValues(alpha: 0.35),
+                color: AppTheme.primary.withValues(alpha:  0.35),
                 blurRadius: 16,
                 offset: const Offset(0, 6),
               ),

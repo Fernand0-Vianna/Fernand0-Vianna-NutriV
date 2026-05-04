@@ -217,7 +217,7 @@ class _ProgressPageState extends State<ProgressPage> {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha:  0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -368,7 +368,7 @@ class _ProgressPageState extends State<ProgressPage> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha:  0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -515,7 +515,7 @@ class _ProgressPageState extends State<ProgressPage> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha:  0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -532,7 +532,7 @@ class _ProgressPageState extends State<ProgressPage> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.15),
+                      color: color.withValues(alpha:  0.15),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
@@ -578,7 +578,7 @@ class _ProgressPageState extends State<ProgressPage> {
                   decoration: BoxDecoration(
                     color: isPositive
                         ? AppTheme.primaryContainer
-                        : AppTheme.errorContainer.withValues(alpha: 0.2),
+                        : AppTheme.errorContainer.withValues(alpha:  0.2),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
@@ -597,7 +597,7 @@ class _ProgressPageState extends State<ProgressPage> {
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
               value: progress.clamp(0, 1),
-              backgroundColor: color.withValues(alpha: 0.15),
+              backgroundColor: color.withValues(alpha:  0.15),
               valueColor: AlwaysStoppedAnimation(color),
               minHeight: 6,
             ),
@@ -641,7 +641,7 @@ class _ProgressPageState extends State<ProgressPage> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withValues(alpha: 0.3),
+            color: AppTheme.primary.withValues(alpha:  0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),

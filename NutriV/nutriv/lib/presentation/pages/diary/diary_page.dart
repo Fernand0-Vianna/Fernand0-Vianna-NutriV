@@ -144,7 +144,7 @@ class _DiaryPageState extends State<DiaryPage> {
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: AppTheme.primary.withValues(alpha: 0.3),
+                            color: AppTheme.primary.withValues(alpha:  0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -161,7 +161,7 @@ class _DiaryPageState extends State<DiaryPage> {
                           .toUpperCase(),
                       style: GoogleFonts.manrope(
                         color: isSelected
-                            ? AppTheme.onPrimary.withValues(alpha: 0.8)
+                            ? AppTheme.onPrimary.withValues(alpha:  0.8)
                             : AppTheme.onSurfaceVariant,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -219,7 +219,7 @@ class _DiaryPageState extends State<DiaryPage> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primary.withValues(alpha: 0.25),
+                color: AppTheme.primary.withValues(alpha:  0.25),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -235,7 +235,7 @@ class _DiaryPageState extends State<DiaryPage> {
                     'Total do dia',
                     style: GoogleFonts.manrope(
                       fontSize: 14,
-                      color: AppTheme.onPrimary.withValues(alpha: 0.8),
+                      color: AppTheme.onPrimary.withValues(alpha:  0.8),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -254,7 +254,7 @@ class _DiaryPageState extends State<DiaryPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppTheme.onPrimary.withValues(alpha: 0.15),
+                  color: AppTheme.onPrimary.withValues(alpha:  0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -281,7 +281,7 @@ class _DiaryPageState extends State<DiaryPage> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
+                  color: Colors.black.withValues(alpha:  0.04),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -300,7 +300,7 @@ class _DiaryPageState extends State<DiaryPage> {
                           gradient: LinearGradient(
                             colors: [
                               AppTheme.primaryContainer,
-                              AppTheme.primaryContainer.withValues(alpha: 0.6),
+                              AppTheme.primaryContainer.withValues(alpha:  0.6),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,

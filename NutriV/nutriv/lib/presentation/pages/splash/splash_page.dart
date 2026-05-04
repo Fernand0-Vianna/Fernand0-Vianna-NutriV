@@ -130,7 +130,7 @@ class _SplashPageState extends State<SplashPage>
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.25),
+            color: Colors.black.withValues(alpha:  0.25),
             blurRadius: 40,
             offset: const Offset(0, 20),
           ),
@@ -181,7 +181,7 @@ class _SplashPageState extends State<SplashPage>
       'Sua IA Nutricional',
       style: GoogleFonts.manrope(
         fontSize: 16,
-        color: Colors.white.withValues(alpha: 0.8),
+        color: Colors.white.withValues(alpha:  0.8),
         fontWeight: FontWeight.w500,
       ),
     );
@@ -196,9 +196,9 @@ class _SplashPageState extends State<SplashPage>
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(
-                Colors.white.withValues(alpha: 0.8),
+                Colors.white.withValues(alpha:  0.8),
               ),
-              backgroundColor: Colors.white.withValues(alpha: 0.2),
+              backgroundColor: Colors.white.withValues(alpha:  0.2),
               minHeight: 4,
             ),
           ),
@@ -208,7 +208,7 @@ class _SplashPageState extends State<SplashPage>
           'Carregando...',
           style: GoogleFonts.manrope(
             fontSize: 14,
-            color: Colors.white.withValues(alpha: 0.6),
+            color: Colors.white.withValues(alpha:  0.6),
             fontWeight: FontWeight.w400,
           ),
         ),

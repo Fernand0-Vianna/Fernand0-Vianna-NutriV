@@ -215,7 +215,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primary.withValues(alpha: 0.3),
+                    color: AppTheme.primary.withValues(alpha:  0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -258,7 +258,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primary.withValues(alpha: 0.25),
+                color: AppTheme.primary.withValues(alpha:  0.25),
                 blurRadius: 24,
                 offset: const Offset(0, 12),
               ),
@@ -280,7 +280,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               _caloriesAnimationController.value,
                           strokeWidth: 10,
                           backgroundColor:
-                              AppTheme.onPrimary.withValues(alpha: 0.15),
+                              AppTheme.onPrimary.withValues(alpha:  0.15),
                           valueColor:
                               const AlwaysStoppedAnimation(AppTheme.onPrimary),
                           strokeCap: StrokeCap.round,
@@ -302,7 +302,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 style: GoogleFonts.manrope(
                                   fontSize: 12,
                                   color:
-                                      AppTheme.onPrimary.withValues(alpha: 0.7),
+                                      AppTheme.onPrimary.withValues(alpha:  0.7),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -323,7 +323,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       'Meta Diária',
                       style: GoogleFonts.manrope(
                         fontSize: 14,
-                        color: AppTheme.onPrimary.withValues(alpha: 0.8),
+                        color: AppTheme.onPrimary.withValues(alpha:  0.8),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -343,7 +343,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.onPrimary.withValues(alpha: 0.15),
+                        color: AppTheme.onPrimary.withValues(alpha:  0.15),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -407,7 +407,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: Colors.black.withValues(alpha:  0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -511,7 +511,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha:  0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -548,7 +548,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: progress.clamp(0, 1),
-              backgroundColor: color.withValues(alpha: 0.15),
+              backgroundColor: color.withValues(alpha:  0.15),
               valueColor: AlwaysStoppedAnimation(color),
               minHeight: 5,
             ),
@@ -644,7 +644,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppTheme.outline.withValues(alpha: 0.5)),
+        border: Border.all(color: AppTheme.outline.withValues(alpha:  0.5)),
       ),
       child: Column(
         children: [

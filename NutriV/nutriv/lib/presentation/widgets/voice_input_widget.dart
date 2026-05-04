@@ -139,7 +139,7 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget> {
               height: 120,
               decoration: BoxDecoration(
                 color: _isListening
-                    ? AppTheme.error.withValues(alpha: 0.1)
+                    ? AppTheme.error.withValues(alpha:  0.1)
                     : AppTheme.primaryContainer,
                 shape: BoxShape.circle,
                 border: Border.all(

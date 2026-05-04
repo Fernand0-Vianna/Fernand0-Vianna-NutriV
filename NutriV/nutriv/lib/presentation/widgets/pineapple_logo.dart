@@ -55,7 +55,7 @@ class _PineappleLogoV2Painter extends CustomPainter {
 
   void _drawShadow(Canvas canvas, Offset center, double radius) {
     final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.15)
+      ..color = Colors.black.withValues(alpha:  0.15)
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, 8);
 
     canvas.drawOval(
@@ -171,7 +171,7 @@ class _PineappleLogoV2Painter extends CustomPainter {
       ..strokeWidth = 1.5;
 
     final highlightPaint = Paint()
-      ..color = const Color(0xFFFFEB3B).withValues(alpha: 0.4)
+      ..color = const Color(0xFFFFEB3B).withValues(alpha:  0.4)
       ..style = PaintingStyle.fill;
 
     for (double row = 0; row < 6; row++) {
@@ -221,7 +221,7 @@ class _PineappleLogoV2Painter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final highlightPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.4)
+      ..color = Colors.white.withValues(alpha:  0.4)
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(center, radius, outerRingPaint);
@@ -264,7 +264,7 @@ class _PineappleLogoV2Painter extends CustomPainter {
     );
 
     final reflectionPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.2)
+      ..color = Colors.white.withValues(alpha:  0.2)
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(
@@ -280,7 +280,7 @@ class _PineappleLogoV2Painter extends CustomPainter {
       canvas.drawCircle(
         Offset(innerDotX, innerDotY),
         radius * 0.03,
-        Paint()..color = Colors.white.withValues(alpha: 0.15),
+        Paint()..color = Colors.white.withValues(alpha:  0.15),
       );
     }
   }
@@ -387,7 +387,7 @@ class PineappleLogoSimpleV2 extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
+            color: Colors.black.withValues(alpha:  0.4),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -430,7 +430,7 @@ class PineappleLogoSimpleV2 extends StatelessWidget {
                 width: size * 0.12,
                 height: size * 0.12,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.35),
+                  color: Colors.white.withValues(alpha:  0.35),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -442,7 +442,7 @@ class PineappleLogoSimpleV2 extends StatelessWidget {
                 width: size * 0.08,
                 height: size * 0.08,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha:  0.2),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -505,7 +505,7 @@ class _PineappleSimpleV2Painter extends CustomPainter {
 
   void _drawFruitSimple(Canvas canvas, Offset center, double width) {
     final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.15)
+      ..color = Colors.black.withValues(alpha:  0.15)
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, 6);
 
     canvas.drawOval(
@@ -548,7 +548,7 @@ class _PineappleSimpleV2Painter extends CustomPainter {
       ..strokeWidth = 1.5;
 
     final highlightPaint = Paint()
-      ..color = const Color(0xFFFFEB3B).withValues(alpha: 0.4)
+      ..color = const Color(0xFFFFEB3B).withValues(alpha:  0.4)
       ..style = PaintingStyle.fill;
 
     for (double row = 0; row < 5; row++) {

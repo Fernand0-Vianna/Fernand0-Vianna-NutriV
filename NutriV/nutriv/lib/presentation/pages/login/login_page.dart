@@ -205,28 +205,45 @@ class _LoginPageState extends State<LoginPage> {
       final success = await authService.signInWithGoogle();
 
       if (success && mounted) {
-        final user = authService.getCurrentUser();
-        if (user != null) {
-          if (kDebugMode) {
-            debugPrint('Google login - User: ${user.name}, ${user.email}');
+        if (kIsWeb) {
+          // No web, o callback acontece na mesma página
+          final user = authService.getCurrentUser();
+          if (user != null) {
+            if (kDebugMode) {
+              debugPrint('Google login - User: ${user.name}, ${user.email}');
+            }
+            context.read<UserBloc>().add(SaveUser(user));
+            context.go('/');
+          } else {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Usuário não encontrado após login Google'),
+                  backgroundColor: AppTheme.error,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
           }
-          context.read<UserBloc>().add(SaveUser(user));
-          context.go('/');
         } else {
+          // No mobile, o usuário é redirecionado para o navegador
+          // O callback vai ser tratado pelo AuthCallbackPage via deep link
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Usuário não encontrado após login Google'),
-                backgroundColor: AppTheme.error,
+                content: Text('Redirecionando para o navegador...'),
+                backgroundColor: AppTheme.primary,
                 behavior: SnackBarBehavior.floating,
+                duration: Duration(seconds: 2),
               ),
             );
           }
+          // Não redireciona - espera o callback do deep link
         }
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Falha ao fazer login com Google'),
+            content: Text('Falha ao iniciar login com Google'),
             backgroundColor: AppTheme.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -563,30 +580,34 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildGoogleButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: OutlinedButton.icon(
-        onPressed: _signInWithGoogle,
-        style: OutlinedButton.styleFrom(
-          backgroundColor: AppTheme.surfaceContainerLow,
-          foregroundColor: AppTheme.onSurface,
-          side: BorderSide(color: AppTheme.outline, width: 1),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: OutlinedButton.icon(
+            onPressed: _signInWithGoogle,
+            style: OutlinedButton.styleFrom(
+              backgroundColor: AppTheme.surfaceContainerLow,
+              foregroundColor: AppTheme.onSurface,
+              side: BorderSide(color: AppTheme.outline, width: 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(28),
+              ),
+              elevation: 0,
+            ),
+            icon: Icon(Icons.g_mobiledata, size: 24, color: AppTheme.secondary),
+            label: Text(
+              'Continuar com Google',
+              style: GoogleFonts.manrope(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.onSurface,
+              ),
+            ),
           ),
-          elevation: 0,
         ),
-        icon: Icon(Icons.g_mobiledata, size: 24, color: AppTheme.secondary),
-        label: Text(
-          'Continuar com Google',
-          style: GoogleFonts.manrope(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: AppTheme.onSurface,
-          ),
-        ),
-      ),
+      ],
     );
   }
 

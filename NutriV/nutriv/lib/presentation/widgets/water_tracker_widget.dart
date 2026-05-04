@@ -28,7 +28,7 @@ class WaterTrackerWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha:  0.04),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -48,7 +48,7 @@ class WaterTrackerWidget extends StatelessWidget {
                       gradient: LinearGradient(
                         colors: [
                           AppTheme.secondaryContainer,
-                          AppTheme.secondaryContainer.withValues(alpha: 0.6),
+                          AppTheme.secondaryContainer.withValues(alpha:  0.6),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -100,7 +100,7 @@ class WaterTrackerWidget extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               backgroundColor:
-                  AppTheme.secondaryContainer.withValues(alpha: 0.5),
+                  AppTheme.secondaryContainer.withValues(alpha:  0.5),
               valueColor: AlwaysStoppedAnimation<Color>(AppTheme.secondary),
               minHeight: 10,
             ),
@@ -148,7 +148,7 @@ class WaterTrackerWidget extends StatelessWidget {
                           gradient: LinearGradient(
                             colors: [
                               AppTheme.secondary,
-                              AppTheme.secondary.withValues(alpha: 0.8)
+                              AppTheme.secondary.withValues(alpha:  0.8)
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,

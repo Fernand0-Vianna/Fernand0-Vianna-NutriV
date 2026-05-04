@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -42,7 +43,11 @@ void main() async {
     final supabaseUrl = dotenv.env['SUPABASE_URL'];
     final supabaseKey = dotenv.env['SUPABASE_ANON_KEY'];
     if (supabaseUrl != null && supabaseKey != null) {
-      await Supabase.initialize(url: supabaseUrl, anonKey: supabaseKey);
+      await Supabase.initialize(
+        url: supabaseUrl,
+        anonKey: supabaseKey,
+        debug: kDebugMode,
+      );
     }
   } catch (e) {
     debugPrint('Warning: Could not initialize Supabase: $e');

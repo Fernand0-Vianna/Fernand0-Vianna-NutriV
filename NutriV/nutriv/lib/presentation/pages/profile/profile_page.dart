@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryContainer.withValues(alpha: 0.3),
+                  color: AppTheme.primaryContainer.withValues(alpha:  0.3),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -137,7 +137,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.primaryContainer.withValues(alpha: 0.3),
+              color: AppTheme.primaryContainer.withValues(alpha:  0.3),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -187,7 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha:  0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -251,7 +251,7 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha:  0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -361,7 +361,7 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha:  0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -486,7 +486,7 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha:  0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -522,13 +522,13 @@ class _ProfilePageState extends State<ProfilePage> {
           const SizedBox(height: 8),
           Container(
             width: double.infinity,
-            color: AppTheme.errorContainer.withValues(alpha: 0.1),
+            color: AppTheme.errorContainer.withValues(alpha:  0.1),
             child: ListTile(
               leading: Container(
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppTheme.errorContainer.withValues(alpha: 0.2),
+                  color: AppTheme.errorContainer.withValues(alpha:  0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -815,7 +815,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Icon(
                       Icons.favorite_border,
                       size: 64,
-                      color: AppTheme.onSurfaceVariant.withValues(alpha: 0.5),
+                      color: AppTheme.onSurfaceVariant.withValues(alpha:  0.5),
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -1011,9 +1011,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _exportDiary() async {
     try {
-      final meals = getIt<SyncMealRepository>().getAllMeals();
-      getIt<SyncMealRepository>().exportMealsToCsv(meals);
+      final meals = await getIt<SyncMealRepository>().getAllMeals();
+      final csv = getIt<SyncMealRepository>().exportMealsToCsv(meals);
+      debugPrint('CSV gerado: ${csv.substring(0, csv.length > 100 ? 100 : csv.length)}...');
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${meals.length} refeições exportadas'),
@@ -1021,6 +1023,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Erro ao exportar dados. Tente novamente.'),

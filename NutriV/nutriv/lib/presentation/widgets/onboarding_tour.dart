@@ -115,7 +115,7 @@ class _OnboardingTourState extends State<OnboardingTour> {
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: page.color.withValues(alpha: 0.15),
+              color: page.color.withValues(alpha:  0.15),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -162,7 +162,7 @@ class _OnboardingTourState extends State<OnboardingTour> {
           decoration: BoxDecoration(
             color: _currentPage == index
                 ? AppTheme.primary
-                : AppTheme.primary.withValues(alpha: 0.3),
+                : AppTheme.primary.withValues(alpha:  0.3),
             borderRadius: BorderRadius.circular(4),
           ),
         ),

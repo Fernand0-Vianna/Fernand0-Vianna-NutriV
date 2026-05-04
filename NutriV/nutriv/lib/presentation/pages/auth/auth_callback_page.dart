@@ -65,16 +65,16 @@ class _AuthCallbackPageState extends State<AuthCallbackPage> {
         }
       }
 
-      // Se não há sessão, volta para onboarding
+      // Se não há sessão, volta para login
       debugPrint('❌ AuthCallback: Falha na autenticação');
       if (mounted) {
-        context.go('/onboarding');
+        context.go('/login');
       }
     } catch (e, stackTrace) {
       debugPrint('❌ Erro no callback de auth: $e');
       debugPrint('❌ Stack trace: $stackTrace');
       if (mounted) {
-        context.go('/onboarding');
+        context.go('/login');
       }
     }
   }

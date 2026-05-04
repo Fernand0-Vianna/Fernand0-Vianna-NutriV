@@ -25,7 +25,7 @@ class MealCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha:  0.04),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -52,7 +52,7 @@ class MealCard extends StatelessWidget {
                           gradient: LinearGradient(
                             colors: [
                               AppTheme.primaryContainer,
-                              AppTheme.primaryContainer.withValues(alpha: 0.6),
+                              AppTheme.primaryContainer.withValues(alpha:  0.6),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -125,7 +125,7 @@ class MealCard extends StatelessWidget {
                             icon: Icon(
                               Icons.delete_outline,
                               size: 20,
-                              color: AppTheme.error.withValues(alpha: 0.7),
+                              color: AppTheme.error.withValues(alpha:  0.7),
                             ),
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),

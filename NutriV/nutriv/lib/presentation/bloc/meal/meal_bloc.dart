@@ -23,8 +23,12 @@ class MealBloc extends Bloc<MealEvent, MealState> {
     emit(MealLoading());
     _currentDate = event.date;
     try {
-      final meals = _mealRepository.getMealsByDate(event.date);
-      emit(MealLoaded(date: event.date, meals: meals));
+      final meals = await _mealRepository.getAllMeals();
+      final mealsForDate = meals.where((m) =>
+          m.dateTime.year == event.date.year &&
+          m.dateTime.month == event.date.month &&
+          m.dateTime.day == event.date.day).toList();
+      emit(MealLoaded(date: event.date, meals: mealsForDate));
     } catch (e) {
       debugPrint('MealBloc LoadMeals error: $e');
       emit(MealError('Erro ao carregar refeições'));
@@ -34,8 +38,12 @@ class MealBloc extends Bloc<MealEvent, MealState> {
   Future<void> _onAddMeal(AddMeal event, Emitter<MealState> emit) async {
     try {
       await _mealRepository.saveMeal(event.meal);
-      final meals = _mealRepository.getMealsByDate(_currentDate);
-      emit(MealLoaded(date: _currentDate, meals: meals));
+      final meals = await _mealRepository.getAllMeals();
+      final mealsForDate = meals.where((m) =>
+          m.dateTime.year == _currentDate.year &&
+          m.dateTime.month == _currentDate.month &&
+          m.dateTime.day == _currentDate.day).toList();
+      emit(MealLoaded(date: _currentDate, meals: mealsForDate));
     } catch (e) {
       debugPrint('MealBloc AddMeal error: $e');
       emit(MealError('Erro ao adicionar refeição'));
@@ -45,8 +53,12 @@ class MealBloc extends Bloc<MealEvent, MealState> {
   Future<void> _onUpdateMeal(UpdateMeal event, Emitter<MealState> emit) async {
     try {
       await _mealRepository.updateMeal(event.meal);
-      final meals = _mealRepository.getMealsByDate(_currentDate);
-      emit(MealLoaded(date: _currentDate, meals: meals));
+      final meals = await _mealRepository.getAllMeals();
+      final mealsForDate = meals.where((m) =>
+          m.dateTime.year == _currentDate.year &&
+          m.dateTime.month == _currentDate.month &&
+          m.dateTime.day == _currentDate.day).toList();
+      emit(MealLoaded(date: _currentDate, meals: mealsForDate));
     } catch (e) {
       debugPrint('MealBloc UpdateMeal error: $e');
       emit(MealError('Erro ao atualizar refeição'));
@@ -56,8 +68,12 @@ class MealBloc extends Bloc<MealEvent, MealState> {
   Future<void> _onDeleteMeal(DeleteMeal event, Emitter<MealState> emit) async {
     try {
       await _mealRepository.deleteMeal(event.mealId);
-      final meals = _mealRepository.getMealsByDate(_currentDate);
-      emit(MealLoaded(date: _currentDate, meals: meals));
+      final meals = await _mealRepository.getAllMeals();
+      final mealsForDate = meals.where((m) =>
+          m.dateTime.year == _currentDate.year &&
+          m.dateTime.month == _currentDate.month &&
+          m.dateTime.day == _currentDate.day).toList();
+      emit(MealLoaded(date: _currentDate, meals: mealsForDate));
     } catch (e) {
       debugPrint('MealBloc DeleteMeal error: $e');
       emit(MealError('Erro ao excluir refeição'));
@@ -80,8 +96,12 @@ class MealBloc extends Bloc<MealEvent, MealState> {
           final updatedMeal = meal.copyWith(foods: updatedFoods);
           await _mealRepository.updateMeal(updatedMeal);
 
-          final meals = _mealRepository.getMealsByDate(_currentDate);
-          emit(MealLoaded(date: _currentDate, meals: meals));
+          final meals = await _mealRepository.getAllMeals();
+          final mealsForDate = meals.where((m) =>
+              m.dateTime.year == _currentDate.year &&
+              m.dateTime.month == _currentDate.month &&
+              m.dateTime.day == _currentDate.day).toList();
+          emit(MealLoaded(date: _currentDate, meals: mealsForDate));
         }
       } catch (e) {
         debugPrint('MealBloc AddFoodToMeal error: $e');
@@ -107,8 +127,12 @@ class MealBloc extends Bloc<MealEvent, MealState> {
           final updatedMeal = meal.copyWith(foods: updatedFoods);
           await _mealRepository.updateMeal(updatedMeal);
 
-          final meals = _mealRepository.getMealsByDate(_currentDate);
-          emit(MealLoaded(date: _currentDate, meals: meals));
+          final meals = await _mealRepository.getAllMeals();
+          final mealsForDate = meals.where((m) =>
+              m.dateTime.year == _currentDate.year &&
+              m.dateTime.month == _currentDate.month &&
+              m.dateTime.day == _currentDate.day).toList();
+          emit(MealLoaded(date: _currentDate, meals: mealsForDate));
         }
       } catch (e) {
         debugPrint('MealBloc RemoveFoodFromMeal error: $e');
@@ -122,29 +146,27 @@ class MealBloc extends Bloc<MealEvent, MealState> {
     Emitter<MealState> emit,
   ) async {
     try {
-      final existingMeals = _mealRepository.getMealsByDate(event.date);
       final mealTypeKey = event.mealType;
 
-      Meal meal;
-      try {
-        meal = existingMeals.firstWhere((m) => m.mealType == mealTypeKey);
-      } catch (_) {
-        meal = Meal(
-          id: '${event.date.toIso8601String()}_$mealTypeKey',
-          name: _getMealName(mealTypeKey),
-          mealType: mealTypeKey,
-          dateTime: event.date,
-          foods: [],
-        );
-      }
+      // Sempre criar nova refeição independente (permite múltiplos pratos do mesmo tipo)
+      final uniqueId =
+          '${event.date.toIso8601String()}_${mealTypeKey}_${DateTime.now().millisecondsSinceEpoch}';
+      final meal = Meal(
+        id: uniqueId,
+        name: _getMealName(mealTypeKey),
+        mealType: mealTypeKey,
+        dateTime: event.date,
+        foods: [event.food], // Primeiro alimento
+      );
 
-      final updatedFoods = [...meal.foods, event.food];
-      final updatedMeal = meal.copyWith(foods: updatedFoods);
+      await _mealRepository.saveMeal(meal);
 
-      await _mealRepository.saveMeal(updatedMeal);
-
-      final meals = _mealRepository.getMealsByDate(event.date);
-      emit(MealLoaded(date: event.date, meals: meals));
+      final meals = await _mealRepository.getAllMeals();
+      final mealsForDate = meals.where((m) =>
+          m.dateTime.year == event.date.year &&
+          m.dateTime.month == event.date.month &&
+          m.dateTime.day == event.date.day).toList();
+      emit(MealLoaded(date: event.date, meals: mealsForDate));
     } catch (e) {
       debugPrint('MealBloc AddMealFood error: $e');
       emit(MealError('Erro ao adicionar alimento à refeição'));

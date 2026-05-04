@@ -13,17 +13,97 @@ class SyncMealRepository {
 
   SyncMealRepository(this._prefs, this._supabase);
 
-  List<Meal> getAllMeals() {
+  Future<List<Meal>> getAllMeals() async {
     final mealsData = _prefs.getString(_localMealsKey);
     if (mealsData != null) {
       final List<dynamic> decoded = jsonDecode(mealsData);
+      final meals = decoded.map((m) => MealModel.fromJson(m)).toList();
+      if (meals.isNotEmpty) return meals;
+    }
+    // Se local vazio, faz pull do Supabase e aguarda
+    await _pullFromSupabase();
+    // Tenta novamente após o pull
+    final afterPullData = _prefs.getString(_localMealsKey);
+    if (afterPullData != null) {
+      final List<dynamic> decoded = jsonDecode(afterPullData);
       return decoded.map((m) => MealModel.fromJson(m)).toList();
     }
     return [];
   }
 
-  List<Meal> getMealsByDate(DateTime date) {
-    final meals = getAllMeals();
+  // Versão síncrona para compatibilidade (usada pelo BLoC)
+  List<Meal> getAllMealsSync() {
+    final mealsData = _prefs.getString(_localMealsKey);
+    if (mealsData != null) {
+      final List<dynamic> decoded = jsonDecode(mealsData);
+      return decoded.map((m) => MealModel.fromJson(m)).toList();
+    }
+    // Se local vazio, agenda pull para próxima vez
+    _pullFromSupabase();
+    return [];
+  }
+
+  Future<void> init() async {
+    await processPendingSync();
+    await _pullFromSupabase();
+  }
+
+  Future<void> _pullFromSupabase() async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) return;
+
+      _logDebug('Pull: Buscando refeições do Supabase...');
+      final meals = await _supabase
+          .from('meals')
+          .select('*, meal_items(*, foods(*))')
+          .eq('user_id', userId)
+          .order('consumed_at', ascending: false);
+
+      final mealList = <Meal>[];
+      for (final mealData in meals) {
+        final items = mealData['meal_items'] as List<dynamic>? ?? [];
+        final foods = <MealFood>[];
+
+        for (final item in items) {
+          final foodData = item['foods'] as Map<String, dynamic>? ?? {};
+          foods.add(MealFood(
+            id: item['id'] as String,
+            food: FoodItem(
+              id: foodData['id'] ?? '',
+              name: foodData['name'] ?? '',
+              calories: (foodData['calories'] as num?)?.toDouble() ?? 0,
+              protein: (foodData['protein'] as num?)?.toDouble() ?? 0,
+              carbs: (foodData['carbs'] as num?)?.toDouble() ?? 0,
+              fat: (foodData['fat'] as num?)?.toDouble() ?? 0,
+              fiber: (foodData['fiber'] as num?)?.toDouble() ?? 0,
+              portion: (foodData['serving_size'] as num?)?.toDouble() ?? 100,
+            ),
+            quantity: (item['quantity_g'] as num?)?.toDouble() ?? 0,
+          ));
+        }
+
+        if (foods.isNotEmpty) {
+          mealList.add(Meal(
+            id: mealData['id'] as String,
+            name: mealData['name'] as String,
+            dateTime: DateTime.parse(mealData['consumed_at'] as String),
+            mealType: mealData['meal_type'] as String,
+            foods: foods,
+          ));
+        }
+      }
+
+      // Salva localmente
+      await _saveLocal(mealList);
+      _logDebug('Pull: ${mealList.length} refeições baixadas do Supabase');
+    } catch (e) {
+      _logDebug('Pull: Erro ao baixar do Supabase: $e');
+    }
+  }
+
+  Future<List<Meal>> getMealsByDate(DateTime date) async {
+    final meals = await getAllMeals();
     return meals
         .where(
           (m) =>
@@ -35,7 +115,7 @@ class SyncMealRepository {
   }
 
   Future<void> deleteMeal(String mealId) async {
-    final meals = getAllMeals();
+    final meals = await getAllMeals();
     meals.removeWhere((m) => m.id == mealId);
     await _saveLocal(meals);
 
@@ -70,7 +150,7 @@ class SyncMealRepository {
 
   Future<void> saveMeal(Meal meal) async {
     // 1. Salvar localmente
-    final meals = getAllMeals();
+    final meals = await getAllMeals();
     final index = meals.indexWhere((m) => m.id == meal.id);
 
     if (index >= 0) {
@@ -84,65 +164,100 @@ class SyncMealRepository {
     await _syncMealToSupabase(meal);
   }
 
-  Future<void> _syncMealToSupabase(Meal meal) async {
-    try {
-      final userId = _supabase.auth.currentUser?.id;
-      if (userId == null) {
-        _logDebug('Sync: Usuário não autenticado, salvando apenas localmente');
-        return;
-      }
+  Future<void> _syncMealToSupabase(Meal meal, {int retryCount = 3}) async {
+    for (int attempt = 0; attempt < retryCount; attempt++) {
+      try {
+        final userId = _supabase.auth.currentUser?.id;
+        if (userId == null) {
+          _logDebug('Sync: Usuário não autenticado, salvando apenas localmente');
+          return;
+        }
 
-      final date =
-          '${meal.dateTime.year}-${meal.dateTime.month.toString().padLeft(2, '0')}-${meal.dateTime.day.toString().padLeft(2, '0')}';
+        final date =
+            '${meal.dateTime.year}-${meal.dateTime.month.toString().padLeft(2, '0')}-${meal.dateTime.day.toString().padLeft(2, '0')}';
 
-      // 1. Criar/atualizar a refeição principal
-      final mealData = await _supabase
-          .from('meals')
-          .upsert({
-            'id': meal.id,
-            'user_id': userId,
-            'name': meal.name,
-            'meal_type': meal.mealType.toLowerCase(),
-            'consumed_at': meal.dateTime.toIso8601String(),
-            'date': date,
+        // 1. Criar/atualizar a refeição principal
+        final mealData = await _supabase
+            .from('meals')
+            .upsert({
+              'id': meal.id,
+              'user_id': userId,
+              'name': meal.name,
+              'meal_type': meal.mealType.toLowerCase(),
+              'consumed_at': meal.dateTime.toIso8601String(),
+              'date': date,
+              'input_method': 'manual',
+            }, onConflict: 'id')
+            .select('id')
+            .maybeSingle();
+
+        if (mealData == null) {
+          _logDebug('Sync: Erro ao criar refeição principal');
+          return;
+        }
+
+        // 2. Deletar itens antigos e inserir novos
+        await _supabase
+            .from('meal_items')
+            .delete()
+            .eq('meal_id', mealData['id']);
+
+        for (final mealFood in meal.foods) {
+          String foodId = await _ensureFoodExists(mealFood.food, userId);
+          await _supabase.from('meal_items').insert({
+            'id': '${mealData['id']}_${foodId}_${DateTime.now().millisecondsSinceEpoch}',
+            'meal_id': mealData['id'],
+            'food_id': foodId,
+            'food_name': mealFood.food.name,
+            'quantity_g': mealFood.quantity,
+            'calories': mealFood.food.calories * (mealFood.quantity / 100),
+            'protein_g': mealFood.food.protein * (mealFood.quantity / 100),
+            'carbs_g': mealFood.food.carbs * (mealFood.quantity / 100),
+            'fat_g': mealFood.food.fat * (mealFood.quantity / 100),
+            'fiber_g': mealFood.food.fiber * (mealFood.quantity / 100),
             'input_method': 'manual',
-          }, onConflict: 'id')
-          .select('id')
-          .maybeSingle();
+          });
+        }
 
-      if (mealData == null) {
-        _logDebug('Sync: Erro ao criar refeição principal');
-        return;
+        _logDebug('Sync: Refeição ${meal.name} sincronizada com sucesso');
+        return; // Sucesso, sai do retry
+      } catch (e) {
+        _logDebug('Sync: Tentativa ${attempt + 1} falhou: $e');
+        if (attempt == retryCount - 1) {
+          _logDebug('Sync: Todas as tentativas falharam. Erro final: $e');
+          // Salva na fila de pendências para retry futuro
+          await _saveToPendingQueue(meal);
+        }
+        await Future.delayed(Duration(milliseconds: 500 * (attempt + 1)));
       }
-
-      // 2. Para cada alimento na refeição, criar meal_items
-      for (final mealFood in meal.foods) {
-        // Primeiro, garantir que o alimento existe na tabela foods
-        String foodId = await _ensureFoodExists(mealFood.food, userId);
-
-        // Criar o meal_item com ID único
-        final itemId =
-            '${mealData['id']}_${foodId}_${DateTime.now().millisecondsSinceEpoch}';
-        await _supabase.from('meal_items').upsert({
-          'id': itemId,
-          'meal_id': mealData['id'],
-          'food_id': foodId,
-          'food_name': mealFood.food.name,
-          'quantity_g': mealFood.quantity,
-          'calories': mealFood.food.calories * (mealFood.quantity / 100),
-          'protein_g': mealFood.food.protein * (mealFood.quantity / 100),
-          'carbs_g': mealFood.food.carbs * (mealFood.quantity / 100),
-          'fat_g': mealFood.food.fat * (mealFood.quantity / 100),
-          'fiber_g': mealFood.food.fiber * (mealFood.quantity / 100),
-          'input_method': 'manual',
-        }, onConflict: 'id');
-      }
-
-      _logDebug('Sync: Refeição ${meal.name} sincronizada com sucesso');
-    } catch (e, stackTrace) {
-      _logDebug('Sync: Erro ao sincronizar refeição: $e');
-      _logDebug('Stack trace: $stackTrace');
     }
+  }
+
+  Future<void> _saveToPendingQueue(Meal meal) async {
+    final pending = _prefs.getStringList('pending_sync') ?? [];
+    pending.add(jsonEncode(MealModel.fromEntity(meal).toJson()));
+    await _prefs.setStringList('pending_sync', pending);
+    _logDebug('Sync: Refeição salva na fila de pendências');
+  }
+
+  Future<void> processPendingSync() async {
+    final pending = _prefs.getStringList('pending_sync') ?? [];
+    if (pending.isEmpty) return;
+
+    _logDebug('Sync: Processando ${pending.length} itens pendentes');
+    final remaining = <String>[];
+
+    for (final item in pending) {
+      try {
+        final meal = MealModel.fromJson(jsonDecode(item));
+        await _syncMealToSupabase(meal, retryCount: 1);
+        // Se chegou aqui, sync funcionou, remove da fila
+      } catch (e) {
+        remaining.add(item);
+      }
+    }
+
+    await _prefs.setStringList('pending_sync', remaining);
   }
 
   Future<String> _ensureFoodExists(FoodItem food, String userId) async {

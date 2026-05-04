@@ -115,4 +115,7 @@ Future<void> setupDependencies() async {
 
   getIt.registerFactory<FavoriteDishBloc>(
       () => FavoriteDishBloc(getIt<FavoriteDishRepository>()));
+
+  // Inicializar SyncMealRepository (pull-from-supabase + pending sync)
+  await getIt<SyncMealRepository>().init();
 }

@@ -119,7 +119,7 @@ class EmptyState extends StatelessWidget {
       width: 120,
       height: 120,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withValues(alpha:  0.1),
         shape: BoxShape.circle,
       ),
       child: Icon(icon, size: size, color: color),
@@ -314,7 +314,7 @@ class EmptyStateCard extends StatelessWidget {
       width: 64,
       height: 64,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withValues(alpha:  0.1),
         shape: BoxShape.circle,
       ),
       child: Icon(icon, size: 32, color: color),
@@ -468,7 +468,7 @@ class LoadingOverlay extends StatelessWidget {
         if (isLoading)
           Positioned.fill(
             child: Container(
-              color: Colors.black.withValues(alpha: 0.3),
+              color: Colors.black.withValues(alpha:  0.3),
               child: Center(
                 child: Container(
                   padding: const EdgeInsets.all(24),

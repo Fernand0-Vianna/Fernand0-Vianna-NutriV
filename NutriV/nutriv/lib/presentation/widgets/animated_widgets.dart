@@ -185,8 +185,7 @@ class _PressableCardState extends State<PressableCard>
             borderRadius: widget.borderRadius ?? BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(
-                    alpha: 0.04 + (_elevationAnimation.value * 0.02)),
+                color: Colors.black.withValues(alpha: 0.04 + (_elevationAnimation.value * 0.02)),
                 blurRadius: 10 + _elevationAnimation.value,
                 offset: Offset(0, 4 + _elevationAnimation.value),
               ),
@@ -407,7 +406,7 @@ class QuickActionButton extends StatelessWidget {
               boxShadow: showShadow
                   ? [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
+                        color: Colors.black.withValues(alpha:  0.04),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -466,7 +465,7 @@ class ChipButton extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: isSelected
-                  ? (selectedColor ?? AppTheme.primary).withValues(alpha: 0.2)
+                  ? (selectedColor ?? AppTheme.primary).withValues(alpha:  0.2)
                   : Colors.transparent,
               blurRadius: 8,
               offset: const Offset(0, 4),

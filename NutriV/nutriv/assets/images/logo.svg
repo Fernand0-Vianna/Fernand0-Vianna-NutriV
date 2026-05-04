@@ -1,28 +1,15 @@
 <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <style>
-      .lineart-green { fill: none; stroke: #2ECC71; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-    </style>
-  </defs>
-
-  <!-- Corpo do Abacaxi (Oval minimalista) -->
-  <ellipse cx="60" cy="65" rx="35" ry="40" class="lineart-green"/>
-
-  <!-- Câmera no centro (Linhas limpas) -->
-  <g transform="translate(60, 65)">
-    <!-- Corpo da Câmera -->
-    <rect x="-15" y="-12" width="30" height="20" rx="4" class="lineart-green"/>
-    <!-- Lente Central -->
-    <circle cx="0" cy="0" r="8" class="lineart-green" stroke-width="3"/>
-    <!-- Botão de disparo -->
-    <line x1="-10" y1="-12" x2="-5" y2="-12" class="lineart-green" stroke-width="3"/>
+  <g fill="none" stroke="#2ECC71" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="60" cy="65" rx="35" ry="40"/>
+    <g transform="translate(60, 65)">
+      <rect x="-15" y="-12" width="30" height="20" rx="4"/>
+      <circle cx="0" cy="0" r="8"/>
+      <line x1="-10" y1="-12" x2="-5" y2="-12"/>
+    </g>
+    <g transform="translate(60, 25)">
+      <path d="M0,0 L-10,-15 L0,-5 L10,-15 L0,0"/>
+      <path d="M0,0 L0,-25 L5,0"/>
+      <path d="M0,0 L-5,-20 L-5,0"/>
+    </g>
   </g>
-
-  <!-- Coroa do Abacaxi (Linhas simplificadas) -->
-  <g transform="translate(60, 25)">
-    <path d="M0,0 L-10,-15 L0,-5 L10,-15 L0,0" class="lineart-green"/>
-    <path d="M0,0 L0,-25 L5,0" class="lineart-green"/>
-    <path d="M0,0 L-5,-20 L-5,0" class="lineart-green"/>
-  </g>
-</svg>
 </svg>

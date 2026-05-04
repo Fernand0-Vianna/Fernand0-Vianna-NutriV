@@ -98,7 +98,7 @@ class _ScannerPageState extends State<ScannerPage> {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: AppTheme.errorContainer.withValues(alpha: 0.2),
+                color: AppTheme.errorContainer.withValues(alpha:  0.2),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -242,7 +242,7 @@ class _ScannerPageState extends State<ScannerPage> {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
+              color: Colors.black.withValues(alpha:  0.04),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -413,7 +413,7 @@ class _ScannerPageState extends State<ScannerPage> {
               isSelected ? Border.all(color: AppTheme.primary, width: 2) : null,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
+              color: Colors.black.withValues(alpha:  0.04),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -479,7 +479,7 @@ class _ScannerPageState extends State<ScannerPage> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryContainer.withValues(alpha: 0.5),
+                  color: AppTheme.primaryContainer.withValues(alpha:  0.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -502,7 +502,7 @@ class _ScannerPageState extends State<ScannerPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
+        color: color.withValues(alpha:  0.15),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(

@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb, debugPrint;
+import 'package:url_launcher/url_launcher.dart';
 import '../../domain/entities/user.dart' as app;
 import '../repositories/user_repository.dart';
 
@@ -84,11 +85,11 @@ class AuthService {
 
   Future<bool> signInWithGoogle() async {
     try {
-      // URL de callback do Supabase (deve corresponder à URL mostrada no dashboard)
-      // Use a URL do site para onde o usuário será redirecionado após autenticação
+      // Para web: usar callback local
+      // Para mobile: usar fluxo OAuth nativo do Supabase
       final redirectUrl = kIsWeb
           ? 'https://nutrivisionh.netlify.app/auth-callback'
-          : 'https://lkfefyucixmcrmpvpcazg.supabase.co/auth/v1/callback';
+          : 'nutrivision-app://callback';
 
       if (kDebugMode) {
         debugPrint('🔐 Iniciando login com Google...');
@@ -96,11 +97,19 @@ class AuthService {
         debugPrint('🔐 kIsWeb: $kIsWeb');
       }
 
-      // Use Supabase's OAuth - works on all platforms
-      await _supabase.auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: redirectUrl,
-      );
+      // Para mobile, usamos o fluxo com authCallbackUrl para capturar o callback
+      if (!kIsWeb) {
+        await _supabase.auth.signInWithOAuth(
+          OAuthProvider.google,
+          redirectTo: redirectUrl,
+          authScreenLaunchMode: LaunchMode.externalApplication,
+        );
+      } else {
+        await _supabase.auth.signInWithOAuth(
+          OAuthProvider.google,
+          redirectTo: redirectUrl,
+        );
+      }
 
       if (kDebugMode) {
         debugPrint('✅ signInWithOAuth chamado com sucesso');
@@ -113,6 +122,47 @@ class AuthService {
         debugPrint('❌ Error type: ${e.runtimeType}');
       }
       return false;
+    }
+  }
+
+  /// Verifica se há sessão ativa (usado após OAuth callback)
+  Future<app.User?> checkAuthSession() async {
+    try {
+      // Aguarda o Supabase processar o callback
+      await Future.delayed(const Duration(milliseconds: 800));
+
+      final session = _supabase.auth.currentSession;
+      final user = _supabase.auth.currentUser;
+
+      if (kDebugMode) {
+        debugPrint('🔍 Verificando sessão...');
+        debugPrint('🔍 Session: ${session != null}');
+        debugPrint('🔍 User: ${user?.email}');
+      }
+
+      if (session != null && user != null) {
+        final appUser = _createUserFromSupabase(user);
+        await _userRepository.saveUser(appUser);
+        return appUser;
+      }
+
+      // Tenta refresh como fallback
+      await _supabase.auth.refreshSession();
+      final refreshedSession = _supabase.auth.currentSession;
+      final refreshedUser = _supabase.auth.currentUser;
+
+      if (refreshedSession != null && refreshedUser != null) {
+        final appUser = _createUserFromSupabase(refreshedUser);
+        await _userRepository.saveUser(appUser);
+        return appUser;
+      }
+
+      return null;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Erro ao verificar sessão: $e');
+      }
+      return null;
     }
   }
 
