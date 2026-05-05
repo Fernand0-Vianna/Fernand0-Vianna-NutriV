@@ -88,6 +88,64 @@ class NutritionUtils {
         return tdee;
     }
   }
+
+  /// Parse de peso que aceita vírgula ou ponto como separador decimal
+  static double parseWeight(String value) {
+    if (value.isEmpty) return 70; // Valor padrão
+    final cleaned = value.replaceAll(',', '.').trim();
+    return double.tryParse(cleaned) ?? 70;
+  }
+
+  /// Parse de altura que aceita vírgula ou ponto como separador decimal
+  static double parseHeight(String value) {
+    if (value.isEmpty) return 170; // Valor padrão
+    final cleaned = value.replaceAll(',', '.').trim();
+    return double.tryParse(cleaned) ?? 170;
+  }
+}
+
+class WaterUtils {
+  /// Calcula a meta diária de água em ml baseada no peso do usuário
+  /// Fórmula: 35ml por kg de peso corporal (ajustável por atividade)
+  static double calculateWaterGoal({
+    required double weightKg,
+    int activityLevel = 2,
+    String climate = 'temperate',
+  }) {
+    // Base: 35ml por kg
+    double baseWater = weightKg * 35;
+
+    // Ajuste por nível de atividade
+    final activityMultipliers = [1.0, 1.1, 1.2, 1.3, 1.4];
+    baseWater *= activityMultipliers[activityLevel.clamp(0, 4)];
+
+    // Ajuste por clima
+    switch (climate) {
+      case 'hot':
+        baseWater *= 1.2; // +20% em clima quente
+        break;
+      case 'cold':
+        baseWater *= 0.9; // -10% em clima frio
+        break;
+      default:
+        break;
+    }
+
+    // Arredonda para múltiplo de 100 e limita entre 1500ml e 5000ml
+    return baseWater.clamp(1500, 5000).roundToDouble();
+  }
+
+  /// Converte ml para litros com formatação
+  static String formatLiters(double ml) {
+    return '${(ml / 1000).toStringAsFixed(1)}L';
+  }
+
+  /// Converte litros (string) para ml
+  static double parseLiters(String liters) {
+    final cleaned = liters.replaceAll(',', '.').replaceAll('L', '').trim();
+    final litersValue = double.tryParse(cleaned) ?? 0;
+    return litersValue * 1000;
+  }
 }
 
 class Validators {

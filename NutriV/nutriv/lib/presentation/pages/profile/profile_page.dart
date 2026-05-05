@@ -315,7 +315,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const Color(0xFFE91E63),
           ),
           const SizedBox(height: 16),
-          _buildGoalRow('Água', state.user.waterGoal, 'ml', Colors.blue),
+          _buildGoalRow('Água', state.user.waterGoal / 1000, 'L', Colors.blue),
         ],
       ),
     );

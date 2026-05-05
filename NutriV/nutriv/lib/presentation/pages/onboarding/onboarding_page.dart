@@ -8,7 +8,6 @@ import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_event.dart';
 import '../../../domain/entities/user.dart';
 import '../../../core/utils/helpers.dart';
-import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/di/injection.dart';
 import '../../../data/datasources/auth_service.dart';
@@ -119,7 +118,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             borderRadius: BorderRadius.circular(32),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primary.withValues(alpha:  0.15),
+                color: AppTheme.primary.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -176,7 +175,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -231,7 +230,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -404,7 +403,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -441,7 +440,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
                 borderSide: BorderSide(
-                  color: AppTheme.primary.withValues(alpha:  0.4),
+                  color: AppTheme.primary.withValues(alpha: 0.4),
                   width: 2,
                 ),
               ),
@@ -534,7 +533,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -623,7 +622,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -680,7 +679,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -909,8 +908,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
       }
 
       if (userResult != null && mounted) {
-        final weight = double.tryParse(_weightController.text) ?? 70;
-        final height = double.tryParse(_heightController.text) ?? 170;
+        final weight = NutritionUtils.parseWeight(_weightController.text);
+        final height = NutritionUtils.parseHeight(_heightController.text);
         final age = int.tryParse(_ageController.text) ?? 25;
 
         final bmr = NutritionUtils.calculateBMR(
@@ -926,6 +925,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
         final proteinGoal = _goal == 'lose' ? weight * 2.0 : weight * 1.6;
         final carbsGoal = goalCalories * 0.4 / 4;
         final fatGoal = goalCalories * 0.3 / 9;
+
+        // Calcula meta de água baseada no peso do usuário
+        final waterGoal = WaterUtils.calculateWaterGoal(
+          weightKg: weight,
+          activityLevel: _activityLevel,
+        );
 
         final user = User(
           id: userResult.id,
@@ -943,7 +948,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           proteinGoal: proteinGoal,
           carbsGoal: carbsGoal,
           fatGoal: fatGoal,
-          waterGoal: AppConstants.defaultWaterGoal,
+          waterGoal: waterGoal,
           createdAt: DateTime.now(),
         );
 
@@ -1017,8 +1022,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     setState(() => _isLoading = true);
 
     try {
-      final weight = double.parse(_weightController.text);
-      final height = double.parse(_heightController.text);
+      final weight = NutritionUtils.parseWeight(_weightController.text);
+      final height = NutritionUtils.parseHeight(_heightController.text);
       final age = int.parse(_ageController.text);
 
       final bmr = NutritionUtils.calculateBMR(
@@ -1035,6 +1040,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
       final carbsGoal = goalCalories * 0.4 / 4;
       final fatGoal = goalCalories * 0.3 / 9;
 
+      // Calcula meta de água baseada no peso do usuário
+      final waterGoal = WaterUtils.calculateWaterGoal(
+        weightKg: weight,
+        activityLevel: _activityLevel,
+      );
+
       final user = User(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: _nameController.text,
@@ -1048,7 +1059,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         proteinGoal: proteinGoal,
         carbsGoal: carbsGoal,
         fatGoal: fatGoal,
-        waterGoal: AppConstants.defaultWaterGoal,
+        waterGoal: waterGoal,
         createdAt: DateTime.now(),
       );
 

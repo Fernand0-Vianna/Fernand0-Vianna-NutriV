@@ -28,6 +28,7 @@ import 'presentation/pages/scanner/scanner_page.dart';
 import 'presentation/pages/profile/profile_page.dart';
 import 'presentation/pages/profile/progress_page.dart';
 import 'presentation/pages/recipes/recipes_page.dart';
+import 'presentation/pages/chat/chat_page.dart';
 import 'presentation/pages/main/main_shell.dart';
 
 void main() async {
@@ -148,6 +149,10 @@ final _router = GoRouter(
         GoRoute(
           path: '/recipes',
           builder: (context, state) => const RecipesPage(),
+        ),
+        GoRoute(
+          path: '/chat',
+          builder: (context, state) => const ChatPage(),
         ),
       ],
     ),

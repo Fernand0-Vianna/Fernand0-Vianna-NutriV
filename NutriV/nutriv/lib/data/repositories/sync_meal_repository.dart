@@ -18,7 +18,7 @@ class SyncMealRepository {
     if (mealsData != null) {
       final List<dynamic> decoded = jsonDecode(mealsData);
       final meals = decoded.map((m) => MealModel.fromJson(m)).toList();
-      if (meals.isNotEmpty) return meals;
+      return meals;
     }
     // Se local vazio, faz pull do Supabase e aguarda
     await _pullFromSupabase();
@@ -66,32 +66,32 @@ class SyncMealRepository {
         final foods = <MealFood>[];
 
         for (final item in items) {
-          final foodData = item['foods'] as Map<String, dynamic>? ?? {};
-          foods.add(MealFood(
-            id: item['id'] as String,
-            food: FoodItem(
-              id: foodData['id'] ?? '',
-              name: foodData['name'] ?? '',
-              calories: (foodData['calories'] as num?)?.toDouble() ?? 0,
-              protein: (foodData['protein'] as num?)?.toDouble() ?? 0,
-              carbs: (foodData['carbs'] as num?)?.toDouble() ?? 0,
-              fat: (foodData['fat'] as num?)?.toDouble() ?? 0,
-              fiber: (foodData['fiber'] as num?)?.toDouble() ?? 0,
-              portion: (foodData['serving_size'] as num?)?.toDouble() ?? 100,
-            ),
-            quantity: (item['quantity_g'] as num?)?.toDouble() ?? 0,
-          ));
+          final foodData = item['foods'] as Map<String, dynamic>?;
+          if (foodData != null && foodData.isNotEmpty) {
+            foods.add(MealFood(
+              id: item['id'] as String,
+              food: FoodItem(
+                id: foodData['id']?.toString() ?? '',
+                name: foodData['name']?.toString() ?? '',
+                calories: (foodData['calories'] as num?)?.toDouble() ?? 0,
+                protein: (foodData['protein'] as num?)?.toDouble() ?? 0,
+                carbs: (foodData['carbs'] as num?)?.toDouble() ?? 0,
+                fat: (foodData['fat'] as num?)?.toDouble() ?? 0,
+                fiber: (foodData['fiber'] as num?)?.toDouble() ?? 0,
+                portion: (foodData['serving_size'] as num?)?.toDouble() ?? 100,
+              ),
+              quantity: (item['quantity_g'] as num?)?.toDouble() ?? 100,
+            ));
+          }
         }
 
-        if (foods.isNotEmpty) {
-          mealList.add(Meal(
-            id: mealData['id'] as String,
-            name: mealData['name'] as String,
-            dateTime: DateTime.parse(mealData['consumed_at'] as String),
-            mealType: mealData['meal_type'] as String,
-            foods: foods,
-          ));
-        }
+        mealList.add(Meal(
+          id: mealData['id'] as String,
+          name: mealData['name'] as String,
+          dateTime: DateTime.parse(mealData['consumed_at'] as String),
+          mealType: mealData['meal_type'] as String,
+          foods: foods,
+        ));
       }
 
       // Salva localmente

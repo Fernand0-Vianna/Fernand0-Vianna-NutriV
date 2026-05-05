@@ -75,7 +75,7 @@ class WaterTrackerWidget extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    currentIntake.toInt().toString(),
+                    '${(currentIntake / 1000).toStringAsFixed(1)}L',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
@@ -83,7 +83,7 @@ class WaterTrackerWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    ' / ${goal.toInt()}ml',
+                    ' / ${(goal / 1000).toStringAsFixed(1)}L',
                     style: GoogleFonts.manrope(
                       fontSize: 14,
                       color: AppTheme.onSurfaceVariant,
@@ -110,7 +110,7 @@ class WaterTrackerWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${remaining.toInt()} ml restantes',
+                '${(remaining / 1000).toStringAsFixed(1)}L restantes',
                 style: GoogleFonts.manrope(
                   color: AppTheme.secondary,
                   fontWeight: FontWeight.w600,
