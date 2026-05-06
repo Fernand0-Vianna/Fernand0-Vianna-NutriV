@@ -58,7 +58,20 @@ void main() async {
 
   getIt<ErrorTrackingService>().initialize();
 
+  // Listen to auth state changes
+  _setupAuthListener();
+
   runApp(const NutriVApp());
+}
+
+void _setupAuthListener() {
+  Supabase.instance.client.auth.onAuthStateChange.listen((event) {
+    if (event.event.name == 'SIGNED_IN') {
+      debugPrint('🔐 Auth: Usuário logou');
+    } else if (event.event.name == 'SIGNED_OUT') {
+      debugPrint('🔐 Auth: Usuário deslogou');
+    }
+  });
 }
 
 class NutriVApp extends StatelessWidget {

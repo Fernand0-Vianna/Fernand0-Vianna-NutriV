@@ -1,6 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb, debugPrint;
-import 'package:url_launcher/url_launcher.dart';
 import '../../domain/entities/user.dart' as app;
 import '../repositories/user_repository.dart';
 
@@ -195,6 +194,7 @@ class AuthService {
   }
 
   app.User _createUserFromSupabase(User supabaseUser) {
+    // Buscar perfil do usuário no Supabase se existir
     return app.User(
       id: supabaseUser.id,
       name: supabaseUser.userMetadata?['name'] ??
@@ -215,5 +215,32 @@ class AuthService {
       waterGoal: 2000,
       createdAt: DateTime.now(),
     );
+  }
+
+  Future<void> createProfileIfNotExists(User supabaseUser) async {
+    try {
+      // Verificar se perfil já existe
+      final existing = await _supabase
+          .from('user_profiles')
+          .select('id')
+          .eq('id', supabaseUser.id)
+          .maybeSingle();
+
+      if (existing == null) {
+        await _supabase.from('user_profiles').insert({
+          'id': supabaseUser.id,
+          'email': supabaseUser.email,
+          'name': supabaseUser.userMetadata?['name'] ??
+              supabaseUser.email?.split('@').first ??
+              'Usuário',
+          'avatar_url': supabaseUser.userMetadata?['avatar_url'],
+          'created_at': DateTime.now().toIso8601String(),
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error creating profile: $e');
+      }
+    }
   }
 }

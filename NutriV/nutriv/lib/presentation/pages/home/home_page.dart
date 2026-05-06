@@ -375,6 +375,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           onTap: () => context.go('/scanner'),
         ),
         _buildQuickActionButton(
+          icon: Icons.smart_toy_outlined,
+          label: 'Chat IA',
+          onTap: () => context.go('/chat'),
+        ),
+        _buildQuickActionButton(
           icon: Icons.bar_chart_rounded,
           label: 'Stats',
           onTap: () => context.go('/progress'),

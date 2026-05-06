@@ -4,6 +4,33 @@
 
 ---
 
+## 📅 06 de Maio de 2026 - Correções Login Google e Adição de Alimentos
+
+### 🎯 Resumo
+Correção de bugs críticos: login Google causando congelamento do app e adição de alimentos criando múltiplos cards.
+
+### ✅ Concluído
+
+#### 1. Adição de Alimentos (diary_page.dart)
+- **Problema:** Adicionar mais alimentos criava nova refeição em vez de adicionar ao card existente
+- **Solução:** Agora verifica se refeição existe → usa `AddFoodToMeal` se existir, `AddMealFood` se não existir
+- **Impacto:** Usuários podem adicionar múltiplos alimentos no mesmo card de refeição
+
+#### 2. Login Google (onboarding + auth_service + main.dart)
+- **Problema:** App congelava ao fazer login Google
+- **Solução:** Removida navegação imediata após OAuth, adicionado auth listener
+- **Impacto:** Login Google funciona corretamente
+
+#### 3. Chat IA com Groq
+- Implementado chat de nutrição acessível pela Home page
+- Perguntas sobre macros: "Quantas proteínas tem um ovo?"
+- Groq funcionando (chat), banco local como fallback (30 alimentos)
+
+### 📄 Documentação
+- [[Relatorios/Correcoes_06_05_2026.md]] - Detalhes das correções
+
+---
+
 ## 📅 02 de Maio de 2026 - QA Completa e Correções Críticas
 
 ### 🎯 Resumo

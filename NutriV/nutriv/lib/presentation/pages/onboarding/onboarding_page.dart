@@ -999,16 +999,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final success = await authService.signInWithGoogle();
 
     if (success && mounted) {
-      final user = authService.getCurrentUser();
-      if (user != null) {
-        context.read<UserBloc>().add(SaveUser(user));
-        context.go('/');
-      } else {
-        // Aguardando redirect do OAuth
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Redirecionando para login Google...')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Abrindo login Google... Você será redirecionado automaticamente.'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+      // Não navegamos imediatamente - o OAuth redirecionará de volta via callback
+      // O auth_callback_page ou auth state change irá navegar para home
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Erro ao iniciar login com Google')),

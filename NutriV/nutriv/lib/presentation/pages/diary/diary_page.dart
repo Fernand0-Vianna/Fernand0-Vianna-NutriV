@@ -721,14 +721,40 @@ class _AddFoodSheetState extends State<_AddFoodSheet> {
   }
 
   void _addFoodToMeal(FoodItem food) {
-    final meal = widget.mealType.toLowerCase();
+    final mealType = widget.mealType.toLowerCase();
     final mealFood = MealFood(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       food: food,
       quantity: food.portion,
     );
+
+    // Verificar se já existe refeição para este tipo no dia
+    final mealState = context.read<MealBloc>().state;
+    if (mealState is MealLoaded) {
+      final existingMeals = mealState.getMealsByType(mealType);
+      
+      if (existingMeals.isNotEmpty) {
+        // Adicionar à refeição existente (primeiro card)
+        context.read<MealBloc>().add(AddFoodToMeal(
+          mealId: existingMeals.first.id,
+          food: mealFood,
+        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${food.name} adicionado ao ${widget.mealType}'),
+            backgroundColor: AppTheme.primary,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+        Navigator.pop(context);
+        return;
+      }
+    }
+
+    // Se não existe refeição, criar nova
     context.read<MealBloc>().add(AddMealFood(
-          mealType: meal,
+          mealType: mealType,
           food: mealFood,
           quantity: food.portion,
           date: widget.date,
@@ -795,14 +821,40 @@ class _AddFoodSheetState extends State<_AddFoodSheet> {
   }
 
   void _addFoodToMealWithQuantity(FoodItem food, double quantity) {
-    final meal = widget.mealType.toLowerCase();
+    final mealType = widget.mealType.toLowerCase();
     final mealFood = MealFood(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       food: food,
       quantity: quantity,
     );
+
+    // Verificar se já existe refeição para este tipo no dia
+    final mealState = context.read<MealBloc>().state;
+    if (mealState is MealLoaded) {
+      final existingMeals = mealState.getMealsByType(mealType);
+      
+      if (existingMeals.isNotEmpty) {
+        // Adicionar à refeição existente (primeiro card)
+        context.read<MealBloc>().add(AddFoodToMeal(
+          mealId: existingMeals.first.id,
+          food: mealFood,
+        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${food.name} adicionado ao ${widget.mealType}'),
+            backgroundColor: AppTheme.primary,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+        Navigator.pop(context);
+        return;
+      }
+    }
+
+    // Se não existe refeição, criar nova
     context.read<MealBloc>().add(AddMealFood(
-          mealType: meal,
+          mealType: mealType,
           food: mealFood,
           quantity: quantity,
           date: widget.date,

@@ -143,12 +143,12 @@ class GroqChatService {
 
   /// Sugestões rápidas de perguntas
   static List<String> getQuickSuggestions() => [
+    'Quantas proteínas tem um ovo?',
     'Quais alimentos são ricos em proteína?',
-    'Como posso reduzir o consumo de açúcar?',
+    'Quanto carboidrato tem no arroz?',
+    'Quantas calorias tem um abacate?',
     'Me sugere um café da manhã saudável',
-    'Quanto de água devo beber por dia?',
     'O que comer antes do treino?',
-    'Como calcular minhas calorias diárias?',
   ];
 
   /// Analisa uma refeição e fornece feedback nutricional
@@ -190,6 +190,116 @@ Forneça:
 - Principais nutrientes (proteína, carboidratos, gorduras)
 ''';    
 
+    return await sendMessage(prompt);
+  }
+
+  /// Explica a composição nutricional de alimentos em linguagem natural
+  Future<String> explainNutrition({
+    required String foodName,
+    required double calories,
+    required double protein,
+    required double carbs,
+    required double fat,
+    double? portion,
+  }) async {
+    final portionText = portion != null ? '${portion.toInt()}g' : '100g';
+    final prompt = '''
+Explique a composição nutricional do alimento "$foodName" (porção: $portionText):
+
+Calorias: ${calories.toInt()} kcal
+Proteína: ${protein.toStringAsFixed(1)}g
+Carboidratos: ${carbs.toStringAsFixed(1)}g
+Gordura: ${fat.toStringAsFixed(1)}g
+
+Forneça:
+1. Breve explicação do que esses valores significam para a saúde
+2. Quais são os pontos positivos e negativos dessa composição
+3. Uma dica de consumo, se aplicável
+4. Emojis apropriados para cada nutrient (🔥calorias, 💪proteína, 🍞carbos, 🥑gordura)
+
+Mantenha em 3-4 frases, seja didático e amigável.
+''';
+    return await sendMessage(prompt);
+  }
+
+  /// Busca informações detalhadas sobre vitaminas e minerais de um alimento
+  Future<String> getNutritionalInfo(String foodName) async {
+    final prompt = '''
+Forneça informações sobre vitaminas e minerais presentes em "$foodName".
+
+Liste:
+- Quais vitaminas (A, B, C, D, E, K, etc.) estão presentes e seus benefícios
+- Quais minerais (ferro, cálcio, potássio, magnnésio, etc.) estão presentes
+- Benefícios gerais para a saúde
+- Quantidade diária recomendada, se aplicável
+
+Seja específico para alimentos brasileiros常见. Use emojis para vitaminais e minerais.
+''';
+    return await sendMessage(prompt);
+  }
+
+  /// Analisa uma lista de alimentos e fornece feedback completo
+  Future<String> analyzeFoodList(List<Map<String, dynamic>> foodList) async {
+    final foodsText = foodList.map((f) =>
+      "- ${f['name']}: ${f['calories']}kcal, P:${f['protein']}g, C:${f['carbs']}g, G:${f['fat']}g"
+    ).join('\n');
+
+    final prompt = '''
+Analise esta lista de alimentos e forneça feedback nutricional completo:
+
+$foodsText
+
+Forneça:
+1. Total de calorias
+2. Distribuição de macros (proteína, carbs, gordura)
+3. Avaliação geral do equilíbrio da refeição
+4. Sugestões de melhoria ou complementação
+5. Pontos positivos da escolha de alimentos
+''';
+    return await sendMessage(prompt);
+  }
+
+  /// Sugere alternativas mais saudáveis para um alimento
+  Future<String> suggestHealthyAlternatives(String foodName) async {
+    final prompt = '''
+Sugira alternativas mais saudáveis para "$foodName".
+
+Para cada alternativa:
+- Nome da alternativa
+- Por que é mais saudável (menos calorias, mais nutrientes, etc.)
+- Comparação rápida de nutrientes
+
+Liste 3-4 alternativas práticas e easily encontrados no Brasil.
+''';
+    return await sendMessage(prompt);
+  }
+
+  /// Analisa o progresso nutricional diário do usuário
+  Future<String> analyzeDailyProgress({
+    required double consumedCalories,
+    required double targetCalories,
+    required double protein,
+    required double targetProtein,
+    required double carbs,
+    required double targetCarbs,
+    required double fat,
+    required double targetFat,
+  }) async {
+    final prompt = '''
+Analise meu progresso nutricional de hoje:
+
+Consumo:
+- Calorias: ${consumedCalories.toInt()} / ${targetCalories.toInt()} kcal
+- Proteína: ${protein.toInt()}g / ${targetProtein.toInt()}g
+- Carboidratos: ${carbs.toInt()}g / ${targetCarbs.toInt()}g
+- Gordura: ${fat.toInt()}g / ${targetFat.toInt()}g
+
+Forneça:
+1. Status geral (no caminho, acima ou abaixo da meta)
+2. O que está indo bem
+3. O que precisa de ajuste
+4. Sugestão para as próximas refeições do dia
+''';
     return await sendMessage(prompt);
   }
 }
