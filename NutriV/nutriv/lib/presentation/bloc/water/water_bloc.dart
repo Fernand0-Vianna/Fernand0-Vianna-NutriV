@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../../data/database/database_helper.dart';
 import 'water_event.dart';
 
 class WaterBloc extends Bloc<WaterEvent, WaterState> {
-  final SharedPreferences _prefs;
+  final DatabaseHelper _db;
 
-  WaterBloc(this._prefs) : super(WaterInitial()) {
+  WaterBloc(this._db) : super(WaterInitial()) {
     on<LoadWaterIntake>(_onLoadWaterIntake);
     on<AddWater>(_onAddWater);
     on<RemoveWater>(_onRemoveWater);
@@ -13,12 +13,18 @@ class WaterBloc extends Bloc<WaterEvent, WaterState> {
     on<ResetWaterIntake>(_onResetWaterIntake);
   }
 
-  void _onLoadWaterIntake(LoadWaterIntake event, Emitter<WaterState> emit) {
+  Future<void> _onLoadWaterIntake(
+    LoadWaterIntake event,
+    Emitter<WaterState> emit,
+  ) async {
     emit(WaterLoading());
     try {
-      final data = _getWaterData(event.date);
-      final goal = _getWaterGoal();
-      emit(WaterLoaded(date: event.date, currentIntake: data, goal: goal));
+      final dateStr = _formatDate(event.date);
+      final data = await _db.getWaterIntakeForDate(dateStr);
+      final goal = await _db.getWaterGoal();
+      emit(
+        WaterLoaded(date: event.date, currentIntake: data, goal: goal),
+      );
     } catch (e) {
       emit(WaterError(e.toString()));
     }
@@ -28,7 +34,14 @@ class WaterBloc extends Bloc<WaterEvent, WaterState> {
     final currentState = state;
     if (currentState is WaterLoaded) {
       final newIntake = currentState.currentIntake + event.amount;
-      await _saveWaterData(currentState.date, newIntake);
+      final dateStr = _formatDate(currentState.date);
+      await _db.addWaterIntake({
+        'id':
+            '${dateStr}_${DateTime.now().millisecondsSinceEpoch}',
+        'date': dateStr,
+        'amount_ml': event.amount,
+        'consumed_at': DateTime.now().toIso8601String(),
+      });
       emit(
         WaterLoaded(
           date: currentState.date,
@@ -45,11 +58,27 @@ class WaterBloc extends Bloc<WaterEvent, WaterState> {
   ) async {
     final currentState = state;
     if (currentState is WaterLoaded) {
-      final newIntake = (currentState.currentIntake - event.amount).clamp(
-        0.0,
-        double.infinity,
-      );
-      await _saveWaterData(currentState.date, newIntake);
+      final newIntake = (currentState.currentIntake - event.amount)
+          .clamp(0.0, double.infinity);
+      final dateStr = _formatDate(currentState.date);
+      final history = await _db.getWaterIntakeHistory(days: 1);
+      if (history.isNotEmpty) {
+        final lastEntry = history.first;
+        if (lastEntry['total'] != null) {
+          final existingTotal =
+              (lastEntry['total'] as num).toDouble();
+          if (existingTotal > 0) {
+            final entryId =
+                '${dateStr}_${DateTime.now().millisecondsSinceEpoch}';
+            await _db.addWaterIntake({
+              'id': entryId,
+              'date': dateStr,
+              'amount_ml': -event.amount,
+              'consumed_at': DateTime.now().toIso8601String(),
+            });
+          }
+        }
+      }
       emit(
         WaterLoaded(
           date: currentState.date,
@@ -64,7 +93,11 @@ class WaterBloc extends Bloc<WaterEvent, WaterState> {
     SetWaterGoal event,
     Emitter<WaterState> emit,
   ) async {
-    await _prefs.setDouble('water_goal', event.goal);
+    final profile = await _db.getUserProfile();
+    if (profile != null) {
+      profile['water_goal'] = event.goal;
+      await _db.saveUserProfile(profile);
+    }
     final currentState = state;
     if (currentState is WaterLoaded) {
       emit(
@@ -83,7 +116,14 @@ class WaterBloc extends Bloc<WaterEvent, WaterState> {
   ) async {
     final currentState = state;
     if (currentState is WaterLoaded) {
-      await _saveWaterData(currentState.date, 0);
+      final dateStr = _formatDate(currentState.date);
+      await _db.addWaterIntake({
+        'id':
+            '${dateStr}_${DateTime.now().millisecondsSinceEpoch}',
+        'date': dateStr,
+        'amount_ml': -currentState.currentIntake,
+        'consumed_at': DateTime.now().toIso8601String(),
+      });
       emit(
         WaterLoaded(
           date: currentState.date,
@@ -94,17 +134,7 @@ class WaterBloc extends Bloc<WaterEvent, WaterState> {
     }
   }
 
-  double _getWaterData(DateTime date) {
-    final key = 'water_${date.year}_${date.month}_${date.day}';
-    return _prefs.getDouble(key) ?? 0.0;
-  }
-
-  Future<void> _saveWaterData(DateTime date, double amount) async {
-    final key = 'water_${date.year}_${date.month}_${date.day}';
-    await _prefs.setDouble(key, amount);
-  }
-
-  double _getWaterGoal() {
-    return _prefs.getDouble('water_goal') ?? 2000.0;
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 }

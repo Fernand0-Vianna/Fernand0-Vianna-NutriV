@@ -57,6 +57,7 @@ SUPABASE_ANON_KEY=your_supabase_anon_key
 # APIs de IA
 GEMINI_API_KEY=your_gemini_key
 OPENAI_API_KEY=your_openai_key
+GROQ_API_KEY=your_groq_key
 
 # USDA
 USDA_API_KEY=your_usda_api_key

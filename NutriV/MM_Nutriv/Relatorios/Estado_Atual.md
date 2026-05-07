@@ -45,7 +45,7 @@
 | Estado | flutter_bloc (BLoC Pattern) |
 | Navegação | go_router |
 | HTTP Client | dio |
-| Armazenamento Local | shared_preferences, sqflite |
+| Armazenamento Local | sqflite (dados), shared_preferences (settings) |
 | Backend | Supabase (PostgreSQL) |
 | Autenticação | Google Sign-In (OAuth) |
 | IA | Google Gemini, OpenAI GPT-4o-mini |
@@ -60,6 +60,7 @@ lib/
 │   ├── theme/         # Tema visual (Material 3)
 │   └── utils/         # Utilitários
 ├── data/
+│   ├── database/      # Sqflite DatabaseHelper + migrações
 │   ├── datasources/   # Serviços externos (AI, USDA, Auth, Local)
 │   ├── models/        # Modelos de dados
 │   └── repositories/  # Repositórios de dados
@@ -82,7 +83,8 @@ lib/
 ### 2. Camada de Dados
 - Modelo Repository com LocalDataSource
 - SyncMealRepository para sincronização com Supabase
-- SharedPreferences para dados locais (água, refeições)
+- **Sqflite como banco local** (offline-first) para meals, water, steps, user, food cache
+- SharedPreferences apenas para app settings (theme, onboarding)
 
 ### 3. Serviços de IA
 - **Primário**: Google Gemini 2.0 Flash

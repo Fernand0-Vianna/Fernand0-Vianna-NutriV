@@ -2,17 +2,32 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../domain/entities/food_item.dart';
+import '../database/database_helper.dart';
 
 class UsdaFoodService {
   final Dio _dio;
+  final DatabaseHelper _db;
   final String _apiKey;
 
-  UsdaFoodService(this._dio) : _apiKey = dotenv.env['USDA_API_KEY'] ?? '';
+  UsdaFoodService(this._dio, this._db)
+    : _apiKey = dotenv.env['USDA_API_KEY'] ?? '';
 
   Future<List<FoodItem>> searchFoodByName(String query) async {
     if (_apiKey.isEmpty) {
       debugPrint('USDA API key not configured');
       return [];
+    }
+
+    final searchKey = query.toLowerCase().trim();
+
+    try {
+      final cached = await _db.getCachedFoods(searchKey);
+      if (cached.isNotEmpty) {
+        debugPrint('USDA cache hit for "$searchKey" (${cached.length} items)');
+        return cached.map(_parseCachedFood).toList();
+      }
+    } catch (e) {
+      debugPrint('Cache read error: $e');
     }
 
     try {
@@ -30,7 +45,9 @@ class UsdaFoodService {
         final foods = response.data['foods'] as List?;
         if (foods == null || foods.isEmpty) return [];
 
-        return foods.map((f) => _parseUsdaFood(f)).toList();
+        final foodItems = foods.map((f) => _parseUsdaFood(f)).toList();
+        await _cacheFoods(foodItems, searchKey);
+        return foodItems;
       }
       return [];
     } catch (e) {
@@ -43,19 +60,104 @@ class UsdaFoodService {
     if (_apiKey.isEmpty) return null;
 
     try {
+      final cached = await _db.getCachedFoodById(fdcId);
+      if (cached != null) {
+        debugPrint('USDA cache hit for food ID $fdcId');
+        return _parseCachedFood(cached);
+      }
+    } catch (e) {
+      debugPrint('Cache read error: $e');
+    }
+
+    try {
       final response = await _dio.get(
         'https://api.nal.usda.gov/fdc/v1/food/$fdcId',
         queryParameters: {'api_key': _apiKey},
       );
 
       if (response.statusCode == 200) {
-        return _parseUsdaFoodDetail(response.data);
+        final food = _parseUsdaFoodDetail(response.data);
+        await _cacheSingleFood(food, fdcId.toLowerCase());
+        return food;
       }
       return null;
     } catch (e) {
       debugPrint('USDA get food error: $e');
       return null;
     }
+  }
+
+  Future<void> _cacheFoods(List<FoodItem> foods, String searchKey) async {
+    try {
+      final cachedEntries = foods.map((food) {
+        return {
+          'id': food.id,
+          'name': food.name,
+          'calories': food.calories,
+          'protein': food.protein,
+          'carbs': food.carbs,
+          'fat': food.fat,
+          'fiber': food.fiber,
+          'sugar': food.sugar,
+          'sodium': food.sodium,
+          'portion': food.portion,
+          'portion_unit': food.portionUnit,
+          'image_url': food.imageUrl,
+          'barcode': food.barcode,
+          'source': 'usda',
+          'search_key': searchKey,
+          'cached_at': DateTime.now().toIso8601String(),
+        };
+      }).toList();
+
+      await _db.cacheFoods(cachedEntries);
+      debugPrint('Cached ${foods.length} foods for "$searchKey"');
+    } catch (e) {
+      debugPrint('Cache write error: $e');
+    }
+  }
+
+  Future<void> _cacheSingleFood(FoodItem food, String searchKey) async {
+    try {
+      await _db.cacheFood({
+        'id': food.id,
+        'name': food.name,
+        'calories': food.calories,
+        'protein': food.protein,
+        'carbs': food.carbs,
+        'fat': food.fat,
+        'fiber': food.fiber,
+        'sugar': food.sugar,
+        'sodium': food.sodium,
+        'portion': food.portion,
+        'portion_unit': food.portionUnit,
+        'image_url': food.imageUrl,
+        'barcode': food.barcode,
+        'source': 'usda',
+        'search_key': searchKey,
+        'cached_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      debugPrint('Cache write error: $e');
+    }
+  }
+
+  FoodItem _parseCachedFood(Map<String, dynamic> food) {
+    return FoodItem(
+      id: food['id'] as String,
+      name: food['name'] as String,
+      calories: (food['calories'] as num).toDouble(),
+      protein: (food['protein'] as num).toDouble(),
+      carbs: (food['carbs'] as num).toDouble(),
+      fat: (food['fat'] as num).toDouble(),
+      fiber: (food['fiber'] as num?)?.toDouble() ?? 0,
+      sugar: (food['sugar'] as num?)?.toDouble() ?? 0,
+      sodium: (food['sodium'] as num?)?.toDouble() ?? 0,
+      portion: (food['portion'] as num).toDouble(),
+      portionUnit: food['portion_unit'] as String? ?? 'g',
+      imageUrl: food['image_url'] as String?,
+      barcode: food['barcode'] as String?,
+    );
   }
 
   FoodItem _parseUsdaFood(Map<String, dynamic> food) {

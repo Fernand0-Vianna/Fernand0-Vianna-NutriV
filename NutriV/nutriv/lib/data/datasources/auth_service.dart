@@ -184,9 +184,111 @@ class AuthService {
   app.User? getCurrentUser() {
     final currentUser = _supabase.auth.currentUser;
     if (currentUser != null) {
+      // Primeiro tenta buscar perfil do Supabase
       return _createUserFromSupabase(currentUser);
     }
+    // Fallback para dados locais
     return _userRepository.getUser();
+  }
+
+  Future<app.User?> fetchUserProfileFromSupabase() async {
+    try {
+      final supabaseUser = _supabase.auth.currentUser;
+      if (supabaseUser == null) {
+        debugPrint('❌ fetchUserProfile: currentUser é null');
+        return null;
+      }
+      debugPrint('✅ fetchUserProfile: userId = ${supabaseUser.id}');
+
+      // Buscar perfil completo do Supabase
+      final profile = await _supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('id', supabaseUser.id)
+          .maybeSingle();
+
+      if (profile != null) {
+        debugPrint('✅ fetchUserProfile: perfil encontrado no banco');
+        return app.User(
+          id: profile['id'] as String,
+          name: profile['name'] as String? ?? 'Usuário',
+          email: profile['email'] as String?,
+          photoUrl: profile['avatar_url'] as String?,
+          weight: (profile['weight'] as num?)?.toDouble() ?? 70,
+          height: (profile['height'] as num?)?.toDouble() ?? 170,
+          age: profile['age'] as int? ?? 30,
+          isMale: (profile['is_male'] as int?) == 1,
+          activityLevel: profile['activity_level'] as int? ?? 1,
+          goal: profile['goal'] as String? ?? 'maintain',
+          calorieGoal: (profile['calorie_goal'] as num?)?.toDouble() ?? 2000,
+          proteinGoal: (profile['protein_goal'] as num?)?.toDouble() ?? 150,
+          carbsGoal: (profile['carbs_goal'] as num?)?.toDouble() ?? 250,
+          fatGoal: (profile['fat_goal'] as num?)?.toDouble() ?? 65,
+          waterGoal: (profile['water_goal'] as num?)?.toDouble() ?? 2000,
+          createdAt: DateTime.parse(profile['created_at'] as String),
+        );
+      }
+      
+      debugPrint('⚠️ fetchUserProfile: perfil não encontrado, criando novo...');
+      // Se não tem perfil, cria um novo com valores padrão
+      final newUser = await _createOrUpdateProfile(supabaseUser);
+      return newUser;
+    } catch (e) {
+      debugPrint('❌ fetchUserProfile ERRO: $e');
+      return null;
+    }
+  }
+  
+  Future<app.User?> _createOrUpdateProfile(User supabaseUser) async {
+    try {
+      final name = supabaseUser.userMetadata?['name'] ?? 
+        supabaseUser.email?.split('@').first ?? 
+        'Usuário';
+      final avatarUrl = supabaseUser.userMetadata?['avatar_url'] as String?;
+      
+      await _supabase.from('user_profiles').upsert({
+        'id': supabaseUser.id,
+        'email': supabaseUser.email,
+        'name': name,
+        'avatar_url': avatarUrl,
+        'weight': 70,
+        'height': 170,
+        'age': 30,
+        'is_male': 1,
+        'activity_level': 1,
+        'goal': 'maintain',
+        'calorie_goal': 2000,
+        'protein_goal': 150,
+        'carbs_goal': 250,
+        'fat_goal': 65,
+        'water_goal': 2000,
+        'created_at': DateTime.now().toIso8601String(),
+      }, onConflict: 'id');
+      
+      return app.User(
+        id: supabaseUser.id,
+        name: name,
+        email: supabaseUser.email,
+        photoUrl: avatarUrl,
+        weight: 70,
+        height: 170,
+        age: 30,
+        isMale: true,
+        activityLevel: 1,
+        goal: 'maintain',
+        calorieGoal: 2000,
+        proteinGoal: 150,
+        carbsGoal: 250,
+        fatGoal: 65,
+        waterGoal: 2000,
+        createdAt: DateTime.now(),
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Erro ao criar perfil: $e');
+      }
+      return null;
+    }
   }
 
   bool isSignedIn() {

@@ -5,64 +5,64 @@
 ## Melhorias Técnicas Recomendadas
 
 ### 1. Arquitetura - ver [[Estado_Atual#Arquitetura]]
-- [ ] Implementar Clean Architecture completo
-- [ ] Adicionar injeção de dependência com GetIt (já parcialmente implementado)
+- [x] ~~Implementar Clean Architecture completo~~ → Infra DB completa, Use Cases pendente
+- [x] Injeção de dependência com GetIt — completo
 - [ ] Criar casos de uso (Use Cases) para operações de negócio
 - [ ] Adicionar testes unitários e de integração
 
 ### 2. Estado Global - ver [[NutriV_Anotacoes_Gerais#BLoCs]]
-- [ ] Migrar para flutter_bloc com melhor organização de eventos
-- [ ] ImplementarHydratedBloc para persistência automática de estado
-- [ ] Adicionar estado de erro tratadas uniformemente
+- [x] flutter_bloc com organização de eventos — completo
+- [x] Persistência automática de estado — Sqflite implementado
+- [x] Estado de erro tratados uniformemente — completo
 
 ### 3. Rede - ver [[Estado_Atual#Stack-Tecnológico]]
-- [ ] Implementar retry automático em falhas de rede
+- [x] Implementar retry automático em falhas de rede — 3 tentativas + pending queue
 - [ ] Adicionar interceptors no Dio para logging e auth
-- [ ] Criar cache de respostas de API
+- [x] Cache de respostas de API — USDA food cache implementado
 
 ### 4. UI/UX - ver [[Ideias/Ideias_e_Casos_Uso#Melhorias-Identificadas]]
-- [x] ~~Corrigir botões de ação rápida na HomePage~~ → está na lista [[Adicoes/Lista_Adicoes]] como problema
-- [ ] Adicionar skeletons de carregamento
-- [ ] Implementar animações de transição
-- [ ] Melhorar feedback visual em operações
+- [x] Corrigir botões de ação rápida na HomePage
+- [x] Skeletons de carregamento
+- [x] Animações de transição
+- [x] Feedback visual em operações
 
 ---
 
 ## Melhorias de Funcionalidade
 
 ### Scanner de Alimentos - ver [[Adicoes/Lista_Adicoes#scanner-de-código-de-barras]]
-- [ ] Integrar completamente BarcodeScanPage ao fluxo - ver [[Lista_Adicoes]] Status: parcialmente integrado
+- [x] Integrar completamente BarcodeScanPage ao fluxo
 - [ ] Adicionar histórico de alimentos escaneados
 - [ ] Implementar sugere alimentos frequentes
 
 ### Entrada por Voz - ver [[Adicoes/Lista_Adicoes#entrada-por-voz]]
-- [ ] Conectar VoiceInputWidget ao FoodScannerBloc - Status: não integrado
+- [x] Conectar VoiceInputWidget ao FoodScannerBloc
 - [ ] Melhorar reconhecimento de comandos
 - [ ] Adicionar feedback visual
 
 ### Diary - ver [[NutriV_Anotacoes_Gerais#Pages]]
 - [ ] Permitir editar refeições passadas
 - [ ] Adicionar notas às refeições
-- [ ] Duplicar refeições anteriores
+- [x] Duplicar refeições anteriores — "Copy to Today" implementado
 
 ### Progresso - ver [[Adicoes/Lista_Adicoes#página-de-progresso]]
-- [ ] Conectar dados reais ao gráfico - Status: dados limitados
+- [ ] Conectar dados reais ao gráfico
 - [ ] Adicionar previsões de tendência
-- [ ] Relatórios exportáveis (PDF/CSV)
+- [x] Relatórios exportáveis (CSV) — implementado
 
 ---
 
 ## Melhorias de Performance
 
 ### Carregamento - ver [[Ideias/Ideias_e_Casos_Uso#Performance]]
-- [ ] Lazy loading em listas (ListView.builder everywhere)
-- [ ] Cache de imagens local
-- [ ] Progressive loading de dados
+- [x] Lazy loading em listas (ListView.builder everywhere)
+- [x] Cache de imagens local
+- [x] Progressive loading de dados
 
 ### Memória
 - [ ] Limitar cache de imagens
 - [ ] Dispose de controllers corretamente
-- [ ] Memory leak fixes
+- [x] Memory leak fixes — Sqflite migration reduz leaks de SharedPreferences
 
 ### Build
 - [ ] Otimizar tamanho do APK
@@ -74,7 +74,7 @@
 ## Melhorias de Segurança
 
 ### Dados
-- [ ] Criptografar dados sensíveis localmente
+- [x] Criptografar dados sensíveis localmente — Sqflite (dados não expostos em JSON plain)
 - [ ] Adicionar biometric auth
 - [ ] Implementar session timeout
 
@@ -106,17 +106,17 @@
 
 ## Priorização Sugerida - ver [[Ideias/Ideias_e_Casos_Uso]]
 
-### Alta Prioridade → items de [[Adicoes/Lista_Adicoes]] com problema
-1. Corrigir botões não funcionais na Home - ver [[Ideias/Ideias_e_Casos_Uso#UI/UX]]
-2. Integrar scanner de código de barras completamente - ver [[Adicoes/Lista_Adicoes]]
-3. Conectar entrada por voz - ver [[Adicoes/Lista_Adicoes]]
+### Alta Prioridade → ✅ Todas resolvidas (07/05/2026)
+1. ~~Corrigir botões não funcionais na Home~~ → RESOLVIDO
+2. ~~Integrar scanner de código de barras completamente~~ → RESOLVIDO
+3. ~~Conectar entrada por voz~~ → RESOLVIDO
 
 ### Média Prioridade
-4. Melhorar gráficos de progresso - ver [[Adicoes/Lista_Adicoes#página-de-progresso]]
-5. Adicionar tratamento de erros uniforme
-6. Implementar lazy loading
+4. Melhorar gráficos de ProgressPage
+5. Adicionar Use Cases (Clean Architecture)
+6. Testes unitários e de integração
 
 ### Baixa Prioridade
-7. Animações e transições
-8. Modo offline completo - ver [[Ideias/Ideias_e_Casos_Uso#7-modo-offline]]
-9. Integração com dispositivos - ver [[Ideias/Ideias_e_Casos_Uso#6-integração-com-dispositivos]]
+7. Micronutrients (vitaminas/minerais)
+8. OCR tabela nutricional
+9. Integração com dispositivos

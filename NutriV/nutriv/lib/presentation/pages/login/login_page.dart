@@ -206,24 +206,49 @@ class _LoginPageState extends State<LoginPage> {
 
       if (success && mounted) {
         if (kIsWeb) {
-          // No web, o callback acontece na mesma página
-          final user = authService.getCurrentUser();
-          if (user != null) {
+          // No web, espera o callback ser processado pelo Supabase
+          // Aguarda um momento para o Supabase processar o OAuth
+          await Future.delayed(const Duration(milliseconds: 1000));
+
+          // Tenta buscar o perfil completo do Supabase
+          try {
+            final profile = await authService.fetchUserProfileFromSupabase();
+            if (profile != null && mounted) {
+              if (kDebugMode) {
+                debugPrint(
+                    'Google login (web) - Perfil encontrado: ${profile.name}, ${profile.email}');
+              }
+              context.read<UserBloc>().add(SaveUser(profile));
+              context.go('/');
+              return;
+            }
+          } catch (e) {
             if (kDebugMode) {
-              debugPrint('Google login - User: ${user.name}, ${user.email}');
+              debugPrint('Google login (web) - Erro ao buscar perfil: $e');
+            }
+          }
+
+          // Fallback: tenta getCurrentUser
+          final user = authService.getCurrentUser();
+          if (user != null && mounted) {
+            if (kDebugMode) {
+              debugPrint(
+                  'Google login (web) - User via getCurrentUser: ${user.name}, ${user.email}');
             }
             context.read<UserBloc>().add(SaveUser(user));
             context.go('/');
-          } else {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Usuário não encontrado após login Google'),
-                  backgroundColor: AppTheme.error,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            }
+            return;
+          }
+
+          // Se ainda não encontrou, mostra erro
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Usuário não encontrado após login Google'),
+                backgroundColor: AppTheme.error,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
           }
         } else {
           // No mobile, o usuário é redirecionado para o navegador

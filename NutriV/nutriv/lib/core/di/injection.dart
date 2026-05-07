@@ -6,13 +6,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/theme/theme_notifier.dart';
 import '../../core/services/error_tracking_service.dart';
 import '../../core/services/haptic_service.dart';
+import '../../data/database/database_helper.dart';
+import '../../data/database/sp_migration.dart';
 import '../../data/datasources/local_data_source.dart';
 import '../../data/datasources/ai_food_service.dart';
 import '../../data/datasources/usda_food_service.dart';
 import '../../data/datasources/auth_service.dart';
+import '../../data/datasources/pedometer_service.dart';
+import '../../data/datasources/activity_service.dart';
 import '../../data/repositories/user_repository.dart';
 import '../../data/repositories/user_profile_repository.dart';
-import '../../data/repositories/meal_repository.dart';
 import '../../data/repositories/meal_repository_v2.dart';
 import '../../data/repositories/daily_log_repository.dart';
 import '../../data/repositories/sync_meal_repository.dart';
@@ -38,8 +41,15 @@ Future<void> setupDependencies() async {
   getIt.registerSingleton<HapticService>(HapticService());
   getIt.registerSingleton<Dio>(Dio());
 
+  final dbHelper = DatabaseHelper.instance;
+  getIt.registerSingleton<DatabaseHelper>(dbHelper);
+
+  await SharedPreferencesMigration.runMigration();
+
+  await dbHelper.clearOldCache(daysOld: 30);
+
   getIt.registerSingleton<LocalDataSource>(
-    LocalDataSource(getIt<SharedPreferences>()),
+    LocalDataSource(getIt<SharedPreferences>(), dbHelper),
   );
 
   getIt.registerSingleton<ThemeNotifier>(
@@ -47,7 +57,9 @@ Future<void> setupDependencies() async {
   );
 
   getIt.registerSingleton<AiFoodService>(AiFoodService(getIt<Dio>()));
-  getIt.registerSingleton<UsdaFoodService>(UsdaFoodService(getIt<Dio>()));
+  getIt.registerSingleton<UsdaFoodService>(
+    UsdaFoodService(getIt<Dio>(), dbHelper),
+  );
 
   getIt.registerSingleton<UserRepository>(
     UserRepository(getIt<LocalDataSource>()),
@@ -57,7 +69,6 @@ Future<void> setupDependencies() async {
     AuthService(Supabase.instance.client, getIt<UserRepository>()),
   );
 
-  // Novos repositories v2
   getIt.registerSingleton<UserProfileRepository>(
     UserProfileRepository(Supabase.instance.client),
   );
@@ -82,18 +93,19 @@ Future<void> setupDependencies() async {
     FavoriteDishRepository(Supabase.instance.client),
   );
 
-  // Repositories antigos (mantidos para compatibilidade)
   getIt.registerSingleton<SyncMealRepository>(
-    SyncMealRepository(getIt<SharedPreferences>(), Supabase.instance.client),
-  );
-
-  getIt.registerSingleton<MealRepository>(
-    MealRepository(getIt<SharedPreferences>()),
+    SyncMealRepository(dbHelper, Supabase.instance.client),
   );
 
   getIt.registerSingleton<DailyLogRepository>(
     DailyLogRepository(getIt<LocalDataSource>()),
   );
+
+  getIt.registerSingleton<PedometerService>(PedometerService(dbHelper));
+  await getIt<PedometerService>().initialize();
+
+  getIt.registerSingleton<ActivityService>(ActivityService(dbHelper));
+  await getIt<ActivityService>().initialize();
 
   getIt.registerFactory<UserBloc>(() => UserBloc(getIt<UserRepository>()));
 
@@ -106,7 +118,7 @@ Future<void> setupDependencies() async {
     ),
   );
 
-  getIt.registerFactory<WaterBloc>(() => WaterBloc(getIt<SharedPreferences>()));
+  getIt.registerFactory<WaterBloc>(() => WaterBloc(dbHelper));
 
   getIt.registerFactory<BarcodeScannerBloc>(() => BarcodeScannerBloc());
 
@@ -116,6 +128,5 @@ Future<void> setupDependencies() async {
   getIt.registerFactory<FavoriteDishBloc>(
       () => FavoriteDishBloc(getIt<FavoriteDishRepository>()));
 
-  // Inicializar SyncMealRepository (pull-from-supabase + pending sync)
   await getIt<SyncMealRepository>().init();
 }

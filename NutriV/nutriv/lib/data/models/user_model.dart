@@ -4,6 +4,8 @@ class UserModel extends User {
   const UserModel({
     required super.id,
     required super.name,
+    super.email,
+    super.photoUrl,
     required super.weight,
     required super.height,
     required super.age,
@@ -22,6 +24,8 @@ class UserModel extends User {
     return UserModel(
       id: json['id'] as String,
       name: json['name'] as String,
+      email: json['email'] as String?,
+      photoUrl: json['photoUrl'] as String?,
       weight: (json['weight'] as num).toDouble(),
       height: (json['height'] as num).toDouble(),
       age: json['age'] as int,
@@ -41,6 +45,8 @@ class UserModel extends User {
     return {
       'id': id,
       'name': name,
+      'email': email,
+      'photoUrl': photoUrl,
       'weight': weight,
       'height': height,
       'age': age,

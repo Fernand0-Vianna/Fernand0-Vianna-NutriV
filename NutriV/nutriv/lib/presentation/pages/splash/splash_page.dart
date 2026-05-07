@@ -3,9 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/di/injection.dart';
 import '../../../data/datasources/auth_service.dart';
+import '../../bloc/user/user_bloc.dart';
+import '../../bloc/user/user_event.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -55,11 +58,33 @@ class _SplashPageState extends State<SplashPage>
 
     final authService = getIt<AuthService>();
     final isLoggedIn = authService.isSignedIn();
-    final currentUser = authService.getCurrentUser();
 
     if (mounted) {
-      if (isLoggedIn && currentUser != null) {
-        context.go('/');
+      if (isLoggedIn) {
+        // Usuário está logado, tenta carregar perfil completo do Supabase
+        try {
+          final profile = await authService.fetchUserProfileFromSupabase();
+          if (profile != null && mounted) {
+            context.read<UserBloc>().add(SaveUser(profile));
+            context.go('/');
+            return;
+          }
+        } catch (e) {
+          debugPrint('⚠️ Splash: Erro ao buscar perfil do Supabase: $e');
+        }
+
+        // Fallback: tenta getCurrentUser
+        final currentUser = authService.getCurrentUser();
+        if (currentUser != null && mounted) {
+          context.read<UserBloc>().add(SaveUser(currentUser));
+          context.go('/');
+          return;
+        }
+
+        // Se ainda não tem usuário, vai para login
+        if (mounted) {
+          context.go('/login');
+        }
       } else {
         context.go('/login');
       }
@@ -130,7 +155,7 @@ class _SplashPageState extends State<SplashPage>
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.25),
+            color: Colors.black.withValues(alpha: 0.25),
             blurRadius: 40,
             offset: const Offset(0, 20),
           ),
@@ -181,7 +206,7 @@ class _SplashPageState extends State<SplashPage>
       'Sua IA Nutricional',
       style: GoogleFonts.manrope(
         fontSize: 16,
-        color: Colors.white.withValues(alpha:  0.8),
+        color: Colors.white.withValues(alpha: 0.8),
         fontWeight: FontWeight.w500,
       ),
     );
@@ -196,9 +221,9 @@ class _SplashPageState extends State<SplashPage>
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(
-                Colors.white.withValues(alpha:  0.8),
+                Colors.white.withValues(alpha: 0.8),
               ),
-              backgroundColor: Colors.white.withValues(alpha:  0.2),
+              backgroundColor: Colors.white.withValues(alpha: 0.2),
               minHeight: 4,
             ),
           ),
@@ -208,7 +233,7 @@ class _SplashPageState extends State<SplashPage>
           'Carregando...',
           style: GoogleFonts.manrope(
             fontSize: 14,
-            color: Colors.white.withValues(alpha:  0.6),
+            color: Colors.white.withValues(alpha: 0.6),
             fontWeight: FontWeight.w400,
           ),
         ),

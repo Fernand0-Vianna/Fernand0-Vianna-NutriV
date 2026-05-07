@@ -75,6 +75,7 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Widget _buildHeader() {
+    final isToday = _isSameDay(_selectedDate, DateTime.now());
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -86,21 +87,63 @@ class _DiaryPageState extends State<DiaryPage> {
             color: AppTheme.onSurface,
           ),
         ),
-        GestureDetector(
-          onTap: _selectDate,
-          child: Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppTheme.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(16),
+        Row(
+          children: [
+            if (!isToday)
+              GestureDetector(
+                onTap: _copyMealsToToday,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  margin: const EdgeInsets.only(right: 12),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [AppTheme.primary, AppTheme.primaryDim],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.content_copy,
+                        color: AppTheme.onPrimary,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Copiar p/ hoje',
+                        style: GoogleFonts.manrope(
+                          color: AppTheme.onPrimary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            GestureDetector(
+              onTap: _selectDate,
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppTheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.calendar_today_outlined,
+                  color: AppTheme.onSurface,
+                  size: 22,
+                ),
+              ),
             ),
-            child: const Icon(
-              Icons.calendar_today_outlined,
-              color: AppTheme.onSurface,
-              size: 22,
-            ),
-          ),
+          ],
         ),
       ],
     );
@@ -451,6 +494,102 @@ class _DiaryPageState extends State<DiaryPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) => _AddFoodSheet(mealType: mealType, date: _selectedDate),
+    );
+  }
+
+  Future<void> _copyMealsToToday() async {
+    final bloc = context.read<MealBloc>();
+    final currentState = bloc.state;
+    if (currentState is! MealLoaded || currentState.meals.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Nenhuma refeição para copiar nesta data',
+            style: GoogleFonts.manrope(),
+          ),
+          backgroundColor: AppTheme.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppTheme.surfaceContainerLowest,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Copiar refeições para hoje?',
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w700,
+            color: AppTheme.onSurface,
+          ),
+        ),
+        content: Text(
+          '${currentState.meals.length} refeição(ões) de ${DateFormat('dd/MM').format(_selectedDate)} serão copiadas para hoje.',
+          style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              'Cancelar',
+              style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+            ),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(
+              'Copiar',
+              style: GoogleFonts.manrope(),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    int copiedCount = 0;
+    for (final meal in currentState.meals) {
+      final copiedFoods = meal.foods.map((mealFood) {
+        return MealFood(
+          id: '${DateTime.now().millisecondsSinceEpoch}_${copiedCount}',
+          food: mealFood.food,
+          quantity: mealFood.quantity,
+        );
+      }).toList();
+
+      final copiedMeal = Meal(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        name: meal.name,
+        dateTime: DateTime.now(),
+        mealType: meal.mealType,
+        foods: copiedFoods,
+        notes: meal.notes,
+      );
+
+      bloc.add(AddMeal(copiedMeal));
+      copiedCount++;
+    }
+
+    setState(() => _selectedDate = DateTime.now());
+    bloc.add(LoadMeals(DateTime.now()));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '$copiedCount refeição(ões) copiada(s) para hoje!',
+          style: GoogleFonts.manrope(),
+        ),
+        backgroundColor: AppTheme.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
     );
   }
 }

@@ -1,21 +1,21 @@
 # Pendências para Amanhã - NutriV
 
-## Data: 25/04/2026
+## Data: 25/04/2026 (Atualizado: 07/05/2026)
 
 ---
 
 ## 🔴 Priority 1 - CRÍTICO
 
 ### 1. Offline Mode
-- [ ] Implementar sync offline com Sqflite
-- [ ] Cache de alimentos USDA local
-- [ ] Sync automático com Supabase quando online
-- [ ] Tratar conflitos de dados
+- [x] Implementar sync offline com Sqflite
+- [x] Cache de alimentos USDA local
+- [x] Sync automático com Supabase quando online
+- [x] Tratar conflitos de dados
 
 ### 2. Login/Auth Corrigir
 - [x] Criar usuário na tabela do Supabase no registro
 - [x] Testar login Google OAuth
-- [x] Validar fluxo completoAuth → App
+- [x] Validar fluxo completo Auth → App
 
 ---
 
@@ -30,7 +30,7 @@
 - [x] Exportar progresso (weight, macros)
 
 ### 5. Copy Meals
-- [ ] Completar funcionalidade "Copy to Today"
+- [x] Completar funcionalidade "Copy to Today"
 
 ---
 
@@ -50,9 +50,9 @@
 
 - Análise FitCal: `Analise_FitCal_VS_NutriV.md`
 - Falhas conhecidas: `Falhas_Apk.md`
-- Relatório: `Relatorios/Implementacoes_24_04_2026.md`
+- Relatório sessão: `Relatorios/Sessao_07_05_2026.md`
 
 ---
 
-*Atualizado: 24/04/2026*
-*Todas as tarefas da sessão concluídas!*
+*Atualizado: 07/05/2026*  
+*Todas as prioridades 1 e 2 concluídas!*

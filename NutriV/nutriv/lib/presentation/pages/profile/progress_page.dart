@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 import '../../../core/theme/app_theme.dart';
 import '../../bloc/meal/meal_bloc.dart';
@@ -10,6 +14,8 @@ import '../../bloc/meal/meal_state.dart';
 import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_state.dart';
 import '../../../domain/entities/meal.dart';
+import '../../../data/repositories/sync_meal_repository.dart';
+import '../../../core/di/injection.dart';
 
 class ProgressPage extends StatefulWidget {
   const ProgressPage({super.key});
@@ -126,33 +132,70 @@ class _ProgressPageState extends State<ProgressPage> {
                               color: AppTheme.onSurface,
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryContainer,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.calendar_today,
-                                  size: 16,
-                                  color: AppTheme.primary,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'Hoje',
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppTheme.primary,
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: _exportProgressCsv,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 10,
+                                  ),
+                                  margin: const EdgeInsets.only(right: 10),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.primaryContainer,
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.download,
+                                        size: 16,
+                                        color: AppTheme.primary,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        'Exportar',
+                                        style: GoogleFonts.manrope(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppTheme.primary,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryContainer,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.calendar_today,
+                                      size: 16,
+                                      color: AppTheme.primary,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Hoje',
+                                      style: GoogleFonts.manrope(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppTheme.primary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -686,5 +729,79 @@ class _ProgressPageState extends State<ProgressPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _exportProgressCsv() async {
+    if (_meals.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Nenhum dado para exportar',
+            style: GoogleFonts.manrope(),
+          ),
+          backgroundColor: AppTheme.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Gerando relatório...',
+          style: GoogleFonts.manrope(),
+        ),
+        backgroundColor: AppTheme.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+
+    try {
+      final repo = getIt<SyncMealRepository>();
+      final csv = repo.exportMealsToCsv(_meals);
+
+      final header =
+          'Relatório NutriV - ${DateFormat('dd/MM/yyyy').format(DateTime.now())}\n\n'
+          'Resumo do Dia\n'
+          'Calorias Totais,${_getTotalCalories().toInt()} kcal\n'
+          'Proteína Total,${_getTotalProtein().toInt()}g\n'
+          'Carboidratos Total,${_getTotalCarbs().toInt()}g\n'
+          'Gordura Total,${_getTotalFat().toInt()}g\n'
+          'Meta Calórica,${_calorieGoal.toInt()} kcal\n\n'
+          'Detalhamento por Refeição\n';
+
+      final fullCsv = header + csv;
+
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File(
+        '${dir.path}/nutriv_progresso_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv',
+      );
+      await file.writeAsString(fullCsv);
+
+      if (!mounted) return;
+      // ignore: deprecated_member_use
+      await Share.share(
+        'Arquivo CSV exportado: ${file.path}\n\n$fullCsv',
+        subject: 'NutriV - Progresso ${DateFormat('dd/MM/yyyy').format(DateTime.now())}',
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Erro ao exportar: $e',
+            style: GoogleFonts.manrope(),
+          ),
+          backgroundColor: AppTheme.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
   }
 }

@@ -1,13 +1,17 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import '../database/database_helper.dart';
 
 class PedometerService {
-  final SharedPreferences _prefs;
+  final DatabaseHelper _db;
   int _todaySteps = 0;
   int _goalSteps = 10000;
 
-  PedometerService(this._prefs) {
-    _loadTodaySteps();
-    _goalSteps = _prefs.getInt('step_goal') ?? 10000;
+  PedometerService(this._db);
+
+  Future<void> initialize() async {
+    final today = DateTime.now();
+    final dateStr = _formatDate(today);
+    _todaySteps = await _db.getStepsForDate(dateStr);
+    _goalSteps = await _db.getStepGoalForDate(dateStr);
   }
 
   int get todaySteps => _todaySteps;
@@ -15,16 +19,10 @@ class PedometerService {
 
   double get progress => _goalSteps > 0 ? _todaySteps / _goalSteps : 0;
 
-  void _loadTodaySteps() {
-    final today = DateTime.now();
-    final key = 'steps_${today.year}-${today.month}-${today.day}';
-    _todaySteps = _prefs.getInt(key) ?? 0;
-  }
-
   Future<void> _saveTodaySteps() async {
     final today = DateTime.now();
-    final key = 'steps_${today.year}-${today.month}-${today.day}';
-    await _prefs.setInt(key, _todaySteps);
+    final dateStr = _formatDate(today);
+    await _db.saveSteps(date: dateStr, steps: _todaySteps, goal: _goalSteps);
   }
 
   Future<void> addSteps(int steps) async {
@@ -39,29 +37,39 @@ class PedometerService {
 
   Future<void> setStepGoal(int goal) async {
     _goalSteps = goal;
-    await _prefs.setInt('step_goal', goal);
+    await _db.setStepGoal(goal);
   }
 
-  List<int> getWeeklySteps() {
+  Future<List<int>> getWeeklySteps() async {
+    final dbResults = await _db.getWeeklySteps();
     final weekSteps = <int>[];
     final now = DateTime.now();
 
-    for (int i = 6; i >= 0; i--) {
-      final date = now.subtract(Duration(days: i));
-      final key = 'steps_${date.year}-${date.month}-${date.day}';
-      weekSteps.add(_prefs.getInt(key) ?? 0);
+    for (int i = 0; i < 7; i++) {
+      final date = now.subtract(Duration(days: 6 - i));
+      final dateStr = _formatDate(date);
+      final entry = dbResults.where((e) => e['date'] == dateStr).toList();
+      weekSteps.add(entry.isNotEmpty
+          ? (entry.first['steps'] as num).toInt()
+          : 0);
     }
 
     return weekSteps;
   }
 
-  int getWeeklyAverage() {
-    final weekSteps = getWeeklySteps();
+  Future<int> getWeeklyAverage() async {
+    final weekSteps = await getWeeklySteps();
     if (weekSteps.isEmpty) return 0;
     return weekSteps.reduce((a, b) => a + b) ~/ weekSteps.length;
   }
 
-  int getTotalWeeklySteps() {
-    return getWeeklySteps().reduce((a, b) => a + b);
+  Future<int> getTotalWeeklySteps() async {
+    final weekSteps = await getWeeklySteps();
+    if (weekSteps.isEmpty) return 0;
+    return weekSteps.reduce((a, b) => a + b);
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 }

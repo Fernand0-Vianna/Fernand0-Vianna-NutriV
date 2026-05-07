@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import '../database/database_helper.dart';
 
 class ActivityData {
   final int steps;
@@ -20,7 +20,7 @@ class ActivityData {
 }
 
 class ActivityService {
-  final SharedPreferences _prefs;
+  final DatabaseHelper _db;
 
   int _todaySteps = 0;
   int _goalSteps = 10000;
@@ -32,9 +32,13 @@ class ActivityService {
   static const double _stepThreshold = 12.0;
   static const double _caloriesPerStep = 0.04;
 
-  ActivityService(this._prefs) {
-    _loadTodayData();
-    _goalSteps = _prefs.getInt('step_goal') ?? 10000;
+  ActivityService(this._db);
+
+  Future<void> initialize() async {
+    final now = DateTime.now();
+    final dateStr = _formatDate(now);
+    _todaySteps = await _db.getStepsForDate(dateStr);
+    _goalSteps = await _db.getStepGoalForDate(dateStr);
   }
 
   int get todaySteps => _todaySteps;
@@ -52,16 +56,10 @@ class ActivityService {
     return minutes;
   }
 
-  void _loadTodayData() {
-    final now = DateTime.now();
-    final key = 'steps_${now.year}-${now.month}-${now.day}';
-    _todaySteps = _prefs.getInt(key) ?? 0;
-  }
-
   Future<void> _saveTodayData() async {
     final now = DateTime.now();
-    final key = 'steps_${now.year}-${now.month}-${now.day}';
-    await _prefs.setInt(key, _todaySteps);
+    final dateStr = _formatDate(now);
+    await _db.saveSteps(date: dateStr, steps: _todaySteps, goal: _goalSteps);
   }
 
   void startTracking() {
@@ -123,17 +121,21 @@ class ActivityService {
 
   Future<void> setStepGoal(int goal) async {
     _goalSteps = goal;
-    await _prefs.setInt('step_goal', goal);
+    await _db.setStepGoal(goal);
   }
 
-  List<ActivityData> getWeeklyActivity() {
+  Future<List<ActivityData>> getWeeklyActivity() async {
+    final dbResults = await _db.getWeeklySteps();
     final weekData = <ActivityData>[];
     final now = DateTime.now();
 
     for (int i = 6; i >= 0; i--) {
       final date = now.subtract(Duration(days: i));
-      final key = 'steps_${date.year}-${date.month}-${date.day}';
-      final steps = _prefs.getInt(key) ?? 0;
+      final dateStr = _formatDate(date);
+      final entry = dbResults.where((e) => e['date'] == dateStr).toList();
+      final steps = entry.isNotEmpty
+          ? (entry.first['steps'] as num).toInt()
+          : 0;
 
       weekData.add(ActivityData(
         steps: steps,
@@ -147,9 +149,10 @@ class ActivityService {
     return weekData;
   }
 
-  Map<String, dynamic> getWeeklyStats() {
-    final weekData = getWeeklyActivity();
-    final totalSteps = weekData.fold<int>(0, (sum, data) => sum + data.steps);
+  Future<Map<String, dynamic>> getWeeklyStats() async {
+    final weekData = await getWeeklyActivity();
+    final totalSteps =
+        weekData.fold<int>(0, (sum, data) => sum + data.steps);
     final avgSteps = weekData.isNotEmpty ? totalSteps ~/ weekData.length : 0;
     final totalCalories =
         weekData.fold<int>(0, (sum, data) => sum + data.caloriesBurned);
@@ -163,14 +166,14 @@ class ActivityService {
     };
   }
 
-  int getStreak() {
+  Future<int> getStreak() async {
     int streak = 0;
     final now = DateTime.now();
 
     for (int i = 0; i < 365; i++) {
       final date = now.subtract(Duration(days: i));
-      final key = 'steps_${date.year}-${date.month}-${date.day}';
-      final steps = _prefs.getInt(key) ?? 0;
+      final dateStr = _formatDate(date);
+      final steps = await _db.getStepsForDate(dateStr);
 
       if (steps >= _goalSteps) {
         streak++;
@@ -190,5 +193,9 @@ class ActivityService {
 
   void dispose() {
     stopTracking();
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 }
