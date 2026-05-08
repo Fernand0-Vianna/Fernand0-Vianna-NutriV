@@ -145,5 +145,8 @@ Future<void> setupDependencies() async {
   getIt.registerFactory<FavoriteDishBloc>(
       () => FavoriteDishBloc(getIt<IFavoriteDishRepository>()));
 
-  await getIt<SyncMealRepository>().init();
+  final currentUser = Supabase.instance.client.auth.currentUser;
+  if (currentUser != null) {
+    await getIt<SyncMealRepository>().init();
+  }
 }

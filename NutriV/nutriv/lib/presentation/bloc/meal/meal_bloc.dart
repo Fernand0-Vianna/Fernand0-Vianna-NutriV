@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/services/logging_service.dart';
 import '../../../data/repositories/sync_meal_repository.dart';
 import '../../../domain/entities/meal.dart';
@@ -144,17 +145,7 @@ class MealBloc extends Bloc<MealEvent, MealState> {
   }
 
   String _getMealName(String mealType) {
-    switch (mealType) {
-      case 'café da manhã':
-        return 'Café da Manhã';
-      case 'almoço':
-        return 'Almoço';
-      case 'jantar':
-        return 'Jantar';
-      case 'lanche':
-        return 'Lanche';
-      default:
-        return 'Refeição';
-    }
+    final type = MealType.fromKey(mealType);
+    return type.displayName;
   }
 }

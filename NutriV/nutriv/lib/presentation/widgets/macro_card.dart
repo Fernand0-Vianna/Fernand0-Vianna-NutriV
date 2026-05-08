@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_theme.dart';
 
 class MacroCard extends StatelessWidget {
   final String label;
@@ -33,13 +34,13 @@ class MacroCard extends StatelessWidget {
                   label,
                   style: Theme.of(
                     context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                  ).textTheme.bodySmall?.copyWith(color: AppTheme.onSurfaceVariant),
                 ),
                 Text(
                   '${value.toInt()}$unit / ${goal.toInt()}$unit',
                   style: Theme.of(
                     context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                  ).textTheme.bodySmall?.copyWith(color: AppTheme.onSurfaceVariant),
                 ),
               ],
             ),
@@ -48,7 +49,7 @@ class MacroCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: percentage,
-                backgroundColor: Colors.grey.shade200,
+                backgroundColor: AppTheme.surfaceContainerLow,
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 minHeight: 8,
               ),

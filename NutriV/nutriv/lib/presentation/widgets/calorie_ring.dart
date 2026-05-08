@@ -54,7 +54,7 @@ class CalorieRing extends StatelessWidget {
                   ),
                   Text(
                     '/ ${goal.toInt()}',
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                    style: const TextStyle(fontSize: 14, color: AppTheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -73,7 +73,7 @@ class CalorieRing extends StatelessWidget {
             _buildInfoColumn(
               'Restantes',
               '${remaining.toInt()}',
-              Colors.orange,
+              AppTheme.secondary,
             ),
           ],
         ),
@@ -86,7 +86,7 @@ class CalorieRing extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+          style: const TextStyle(fontSize: 12, color: AppTheme.onSurfaceVariant),
         ),
         const SizedBox(height: 4),
         Text(
