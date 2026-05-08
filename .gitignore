@@ -1,0 +1,34 @@
+# Arquivos de configuração com tokens/senhas
+mcps.json
+
+# Flutter/Dart
+build/
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.gradle/
+android/build/
+ios/build/
+ios/Pods/
+linux/build/
+web/build/
+
+# CMake
+**/CMakeFiles/
+**/*.cmake
+**/Makefile
+**/cmake_install.cmake
+
+# IDEs
+.vscode/
+.cursor/
+.claude/
+.continue/
+.windsurf/skills/
+
+# Git
+.git/
+
+# OS
+.DS_Store
+Thumbs.db
