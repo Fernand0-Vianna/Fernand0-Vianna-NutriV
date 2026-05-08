@@ -53,6 +53,10 @@
 ### 07/05/2026 - Google OAuth
 - Client Secret do Google atualizado no Supabase (Dashboard → Authentication → Providers → Google)
 
+### 08/05/2026 - Groq Vision + Correção Seleção
+- Integração Groq Vision API para análise de alimentos (ver [[Correcoes_08_05_2026]])
+- Correção bug de seleção múltipla na busca por nome
+
 ---
 
 ## Estrutura
@@ -91,7 +95,8 @@ lib/
 
 ## APIs - ver [[Estado_Atual#Stack-Tecnológico]]
 
-- **Google Gemini 2.0 Flash** - Análise de imagens (primário)
+- **Groq Vision (Llama 4)** - Análise de imagens (primário) - ver [[Correcoes_08_05_2026]]
+- **Google Gemini 2.0 Flash** - Fallback IA
 - **OpenAI GPT-4o-mini** - Fallback IA
 - **USDA FoodData Central** - Banco de alimentos
 - **OpenFoodFacts** - Código barras + fallback
@@ -103,6 +108,7 @@ lib/
 ⚠️ Botões "Scan", "Stats", "Receitas" na Home não funcionam - ver [[Lista_Melhorias#alta-prioridade]]
 ⚠️ VoiceInputWidget criado mas não integrado - ver [[Lista_Adicoes#entrada-por-voz]] e [[Lista_Melhorias#alta-prioridade]]
 ⚠️ BarcodeScanPage parcialmente conectado - ver [[Lista_Melhorias#scanner-de-alimentos]] e [[Lista_Adicoes#scanner-de-código-de-barras]]
+✅ Bug seleção múltipla na busca por nome - ver [[Correcoes_08_05_2026]]
 
 ---
 

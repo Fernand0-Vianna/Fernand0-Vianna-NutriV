@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart' show Dio, Options, FormData, MultipartFile;
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/food_item_model.dart';
 import '../../domain/entities/food_item.dart';
+import '../../core/services/logging_service.dart';
 
 String get _groqApiKey => dotenv.env['GROQ_API_KEY'] ?? '';
 String get _openaiApiKey => dotenv.env['OPENAI_API_KEY'] ?? '';
@@ -51,7 +51,7 @@ class AiFoodService {
           }
         }
       } catch (e) {
-        debugPrint('Gemini error: $e');
+        LoggingService.error('AiFoodService', 'Gemini error', e);
       }
     }
 
@@ -84,7 +84,7 @@ class AiFoodService {
           }
         }
       } catch (e) {
-        debugPrint('OpenAI error: $e');
+        LoggingService.error('AiFoodService', 'OpenAI error', e);
       }
     }
 
@@ -121,7 +121,7 @@ class AiFoodService {
           }
         }
       } catch (e) {
-        debugPrint('FoodAPI error: $e');
+        LoggingService.error('AiFoodService', 'FoodAPI error', e);
       }
     }
 
@@ -161,7 +161,7 @@ class AiFoodService {
           }
         }
       } catch (e) {
-        debugPrint('LogMeal error: $e');
+        LoggingService.error('AiFoodService', 'LogMeal error', e);
       }
     }
 
@@ -179,14 +179,14 @@ class AiFoodService {
             'max_tokens': 500,
           },
         );
-        debugPrint('Groq reconhecimento: ${response.data}');
+        LoggingService.info('AiFoodService', 'Groq reconhecimento: ${response.data}');
       } catch (e) {
-        debugPrint('Groq error: $e');
+        LoggingService.error('AiFoodService', 'Groq error', e);
       }
     }
 
     // 5. Fallback final: banco de dados local
-    debugPrint('Usando banco local de alimentos');
+    LoggingService.info('AiFoodService', 'Usando banco local de alimentos');
     return _getLocalFoods();
   }
 
@@ -218,7 +218,7 @@ class AiFoodService {
           }
         }
       } catch (e) {
-        debugPrint('Groq failed: $e');
+        LoggingService.error('AiFoodService', 'Groq failed', e);
       }
     }
 
@@ -249,12 +249,12 @@ class AiFoodService {
           }
         }
       } catch (e) {
-        debugPrint('OpenAI failed: $e');
+        LoggingService.error('AiFoodService', 'OpenAI failed', e);
       }
     }
 
     // 3. Fallback: banco de dados local
-    debugPrint('Falling back to local database for: $text');
+    LoggingService.info('AiFoodService', 'Falling back to local database for: $text');
     return _searchLocalDatabase(text);
   }
 
@@ -622,7 +622,7 @@ class AiFoodService {
         };
       }
     } catch (e) {
-      debugPrint('LogMeal nutrition error: $e');
+      LoggingService.error('AiFoodService', 'LogMeal nutrition error', e);
     }
     return null;
   }

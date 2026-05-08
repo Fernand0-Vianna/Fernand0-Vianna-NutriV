@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../models/daily_log_model.dart';
+import '../models/food_item_model.dart';
 import '../../domain/entities/daily_log.dart';
+import '../../domain/entities/food_item.dart';
 import '../database/database_helper.dart';
 
 class LocalDataSource {
@@ -143,5 +145,32 @@ class LocalDataSource {
 
   String getThemeMode() {
     return _prefs.getString('theme_mode') ?? 'system';
+  }
+
+  Future<FoodItem?> getFoodByBarcode(String barcode) async {
+    return null;
+  }
+
+  Future<List<FoodItem>> getRecentFoods({int limit = 10}) async {
+    final foodsData = _prefs.getString('recent_foods');
+    if (foodsData != null) {
+      final List<dynamic> decoded = jsonDecode(foodsData);
+      final foods = decoded.take(limit).map((f) => FoodItemModel.fromJson(f as Map<String, dynamic>)).toList();
+      return foods;
+    }
+    return [];
+  }
+
+  Future<void> addRecentFood(FoodItem food) async {
+    final foodsData = _prefs.getString('recent_foods');
+    List<dynamic> foods = [];
+    if (foodsData != null) {
+      foods = jsonDecode(foodsData);
+    }
+    foods.insert(0, FoodItemModel.fromEntity(food).toJson());
+    if (foods.length > 20) {
+      foods = foods.take(20).toList();
+    }
+    await _prefs.setString('recent_foods', jsonEncode(foods));
   }
 }

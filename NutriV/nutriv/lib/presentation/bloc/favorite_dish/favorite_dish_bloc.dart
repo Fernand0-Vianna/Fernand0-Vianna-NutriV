@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../../data/repositories/favorite_dish_repository.dart';
+import '../../../domain/repositories/i_favorite_dish_repository.dart';
 import '../../../data/models/favorite_dish_model.dart';
 
 part 'favorite_dish_event.dart';
 part 'favorite_dish_state.dart';
 
 class FavoriteDishBloc extends Bloc<FavoriteDishEvent, FavoriteDishState> {
-  final FavoriteDishRepository _repository;
+  final IFavoriteDishRepository _repository;
 
   FavoriteDishBloc(this._repository) : super(FavoriteDishInitial()) {
     on<LoadFavoriteDishes>(_onLoadFavoriteDishes);

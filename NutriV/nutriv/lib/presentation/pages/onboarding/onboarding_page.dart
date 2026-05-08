@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 
 import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_event.dart';
@@ -1044,8 +1045,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
         activityLevel: _activityLevel,
       );
 
+      // Pegar ID do usuário do Supabase Auth
+      final currentUser = Supabase.instance.client.auth.currentUser;
+      final userId = currentUser?.id ?? DateTime.now().millisecondsSinceEpoch.toString();
+
       final user = User(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: userId,
         name: _nameController.text,
         weight: weight,
         height: height,

@@ -1,4 +1,6 @@
+// ignore_for_file: annotate_overrides
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../domain/repositories/i_water_repository.dart';
 
 class WaterIntakeData {
   final String? id;
@@ -35,7 +37,7 @@ class WaterIntakeData {
   }
 }
 
-class WaterRepository {
+class WaterRepository implements IWaterRepository {
   final SupabaseClient _supabase;
 
   WaterRepository(this._supabase);

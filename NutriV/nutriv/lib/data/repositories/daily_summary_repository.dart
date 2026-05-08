@@ -1,4 +1,6 @@
+// ignore_for_file: annotate_overrides
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../domain/repositories/i_daily_summary_repository.dart';
 
 class DailySummaryData {
   final String? id;
@@ -65,7 +67,7 @@ class DailySummaryData {
   }
 }
 
-class DailySummaryRepository {
+class DailySummaryRepository implements IDailySummaryRepository {
   final SupabaseClient _supabase;
 
   DailySummaryRepository(this._supabase);

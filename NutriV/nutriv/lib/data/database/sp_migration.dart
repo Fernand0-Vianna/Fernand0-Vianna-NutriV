@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart';
 
 import '../database/database_helper.dart';
+import '../../core/services/logging_service.dart';
 
 class SharedPreferencesMigration {
   static const String _migrationKey = 'sqlite_migration_completed';
@@ -18,11 +18,11 @@ class SharedPreferencesMigration {
 
   static Future<void> runMigration() async {
     if (await isMigrationComplete()) {
-      debugPrint('Migration: Already completed, skipping');
+      LoggingService.info('Migration', 'Already completed, skipping');
       return;
     }
 
-    debugPrint('Migration: Starting SharedPreferences → SQLite migration');
+    LoggingService.info('Migration', 'Starting SharedPreferences → SQLite migration');
     final prefs = await SharedPreferences.getInstance();
     final db = DatabaseHelper.instance;
 
@@ -33,9 +33,9 @@ class SharedPreferencesMigration {
       await _migrateDailyLogs(prefs, db);
 
       await prefs.setBool(_migrationKey, true);
-      debugPrint('Migration: Completed successfully');
+      LoggingService.info('Migration', 'Completed successfully');
     } catch (e) {
-      debugPrint('Migration: Failed — $e');
+      LoggingService.error('Migration', 'runMigration', e);
       await prefs.setBool(_migrationKey, false);
       rethrow;
     }
@@ -47,7 +47,7 @@ class SharedPreferencesMigration {
   ) async {
     final mealsData = prefs.getString(_oldMealsKey);
     if (mealsData == null) {
-      debugPrint('Migration: No meals data to migrate');
+      LoggingService.info('Migration', 'No meals data to migrate');
       return;
     }
 
@@ -104,9 +104,9 @@ class SharedPreferencesMigration {
         migratedCount++;
       }
 
-      debugPrint('Migration: Migrated $migratedCount meals');
+      LoggingService.info('Migration', 'Migrated $migratedCount meals');
     } catch (e) {
-      debugPrint('Migration: Error migrating meals — $e');
+      LoggingService.error('Migration', 'migrateMeals', e);
     }
   }
 
@@ -116,7 +116,7 @@ class SharedPreferencesMigration {
   ) async {
     final pendingList = prefs.getStringList(_oldPendingKey);
     if (pendingList == null || pendingList.isEmpty) {
-      debugPrint('Migration: No pending sync items to migrate');
+      LoggingService.info('Migration', 'No pending sync items to migrate');
       return;
     }
 
@@ -131,7 +131,7 @@ class SharedPreferencesMigration {
     }
 
     await prefs.remove(_oldPendingKey);
-    debugPrint('Migration: Migrated $migratedCount pending sync items');
+    LoggingService.info('Migration', 'Migrated $migratedCount pending sync items');
   }
 
   static Future<void> _migrateUserProfile(
@@ -140,7 +140,7 @@ class SharedPreferencesMigration {
   ) async {
     final userData = prefs.getString(_oldUserKey);
     if (userData == null) {
-      debugPrint('Migration: No user profile data to migrate');
+      LoggingService.info('Migration', 'No user profile data to migrate');
       return;
     }
 
@@ -165,9 +165,9 @@ class SharedPreferencesMigration {
         'created_at': user['createdAt'],
       });
 
-      debugPrint('Migration: Migrated user profile');
+      LoggingService.info('Migration', 'Migrated user profile');
     } catch (e) {
-      debugPrint('Migration: Error migrating user profile — $e');
+      LoggingService.error('Migration', 'migrateUserProfile', e);
     }
   }
 
@@ -177,7 +177,7 @@ class SharedPreferencesMigration {
   ) async {
     final logsData = prefs.getString(_oldDailyLogsKey);
     if (logsData == null) {
-      debugPrint('Migration: No daily logs data to migrate');
+      LoggingService.info('Migration', 'No daily logs data to migrate');
       return;
     }
 
@@ -204,9 +204,9 @@ class SharedPreferencesMigration {
         migratedCount++;
       }
 
-      debugPrint('Migration: Migrated $migratedCount daily logs');
+      LoggingService.info('Migration', 'Migrated $migratedCount daily logs');
     } catch (e) {
-      debugPrint('Migration: Error migrating daily logs — $e');
+      LoggingService.error('Migration', 'migrateDailyLogs', e);
     }
   }
 }

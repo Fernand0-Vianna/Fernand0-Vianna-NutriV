@@ -1,4 +1,6 @@
+// ignore_for_file: annotate_overrides
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../domain/repositories/i_meal_repository.dart';
 
 /// Modelo para MealItem (alimento dentro de uma refeição)
 class MealItemData {
@@ -108,7 +110,7 @@ class MealData {
 }
 
 /// Repository para gerenciar refeições
-class MealRepositoryV2 {
+class MealRepositoryV2 implements IMealRepositoryV2 {
   final SupabaseClient _supabase;
 
   MealRepositoryV2(this._supabase);

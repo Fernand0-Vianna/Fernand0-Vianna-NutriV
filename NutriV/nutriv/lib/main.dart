@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:logging/logging.dart';
+import 'core/services/logging_service.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_notifier.dart';
@@ -34,10 +36,22 @@ import 'presentation/pages/main/main_shell.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize logging
+  Logger.root.level = kDebugMode ? Level.ALL : Level.INFO;
+  hierarchicalLoggingEnabled = true;
+
+  // Add console logger
+  Logger.root.onRecord.listen((record) {
+    if (kDebugMode) {
+      LoggingService.info('Logger',
+          '[${record.level.name}] ${record.loggerName}: ${record.message}');
+    }
+  });
+
   try {
     await dotenv.load(fileName: '.env');
   } catch (e) {
-    debugPrint('Warning: Could not load .env file: $e');
+    LoggingService.warn('Main', 'Could not load .env file: $e');
   }
 
   try {
@@ -51,7 +65,7 @@ void main() async {
       );
     }
   } catch (e) {
-    debugPrint('Warning: Could not initialize Supabase: $e');
+    LoggingService.warn('Main', 'Could not initialize Supabase: $e');
   }
 
   await setupDependencies();
@@ -67,9 +81,9 @@ void main() async {
 void _setupAuthListener() {
   Supabase.instance.client.auth.onAuthStateChange.listen((event) {
     if (event.event.name == 'SIGNED_IN') {
-      debugPrint('🔐 Auth: Usuário logou');
+      LoggingService.auth('Usuário logou');
     } else if (event.event.name == 'SIGNED_OUT') {
-      debugPrint('🔐 Auth: Usuário deslogou');
+      LoggingService.auth('Usuário deslogou');
     }
   });
 }
@@ -115,7 +129,7 @@ class NutriVApp extends StatelessWidget {
               ),
             ],
             child: MaterialApp.router(
-              title: 'NutriV',
+              title: 'Nutrivision',
               debugShowCheckedModeBanner: false,
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,

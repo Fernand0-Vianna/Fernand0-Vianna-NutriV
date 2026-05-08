@@ -117,7 +117,7 @@ class _RegisterPageState extends State<RegisterPage> {
         );
 
         context.read<UserBloc>().add(SaveUser(user));
-        context.go('/');
+        context.go('/onboarding');
       } else if (mounted) {
         setState(() => _errorMessage =
             'Erro ao criar conta. E-mail já pode estar em uso.');

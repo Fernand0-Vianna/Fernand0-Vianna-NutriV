@@ -6,10 +6,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/theme/theme_notifier.dart';
 import '../../core/services/error_tracking_service.dart';
 import '../../core/services/haptic_service.dart';
+import '../../core/interceptors/dio_interceptors.dart';
 import '../../data/database/database_helper.dart';
 import '../../data/database/sp_migration.dart';
 import '../../data/datasources/local_data_source.dart';
 import '../../data/datasources/ai_food_service.dart';
+import '../../data/datasources/groq_vision_service.dart';
 import '../../data/datasources/usda_food_service.dart';
 import '../../data/datasources/auth_service.dart';
 import '../../data/datasources/pedometer_service.dart';
@@ -23,6 +25,12 @@ import '../../data/repositories/water_repository.dart';
 import '../../data/repositories/weight_repository.dart';
 import '../../data/repositories/daily_summary_repository.dart';
 import '../../data/repositories/favorite_dish_repository.dart';
+import '../../domain/repositories/i_user_profile_repository.dart';
+import '../../domain/repositories/i_meal_repository.dart';
+import '../../domain/repositories/i_water_repository.dart';
+import '../../domain/repositories/i_weight_repository.dart';
+import '../../domain/repositories/i_daily_summary_repository.dart';
+import '../../domain/repositories/i_favorite_dish_repository.dart';
 import '../../presentation/bloc/user/user_bloc.dart';
 import '../../presentation/bloc/meal/meal_bloc.dart';
 import '../../presentation/bloc/food_scanner/food_scanner_bloc.dart';
@@ -39,7 +47,14 @@ Future<void> setupDependencies() async {
   getIt.registerSingleton<SharedPreferences>(prefs);
   getIt.registerSingleton<ErrorTrackingService>(ErrorTrackingService());
   getIt.registerSingleton<HapticService>(HapticService());
-  getIt.registerSingleton<Dio>(Dio());
+
+  final dio = Dio(BaseOptions(
+    connectTimeout: const Duration(seconds: 30),
+    receiveTimeout: const Duration(seconds: 30),
+  ));
+  dio.interceptors.add(LoggingInterceptor());
+  dio.interceptors.add(AuthInterceptor());
+  getIt.registerSingleton<Dio>(dio);
 
   final dbHelper = DatabaseHelper.instance;
   getIt.registerSingleton<DatabaseHelper>(dbHelper);
@@ -57,6 +72,7 @@ Future<void> setupDependencies() async {
   );
 
   getIt.registerSingleton<AiFoodService>(AiFoodService(getIt<Dio>()));
+  getIt.registerSingleton<GroqVisionService>(GroqVisionService(getIt<Dio>()));
   getIt.registerSingleton<UsdaFoodService>(
     UsdaFoodService(getIt<Dio>(), dbHelper),
   );
@@ -69,27 +85,27 @@ Future<void> setupDependencies() async {
     AuthService(Supabase.instance.client, getIt<UserRepository>()),
   );
 
-  getIt.registerSingleton<UserProfileRepository>(
+  getIt.registerSingleton<IUserProfileRepository>(
     UserProfileRepository(Supabase.instance.client),
   );
 
-  getIt.registerSingleton<MealRepositoryV2>(
+  getIt.registerSingleton<IMealRepositoryV2>(
     MealRepositoryV2(Supabase.instance.client),
   );
 
-  getIt.registerSingleton<WaterRepository>(
+  getIt.registerSingleton<IWaterRepository>(
     WaterRepository(Supabase.instance.client),
   );
 
-  getIt.registerSingleton<WeightRepository>(
+  getIt.registerSingleton<IWeightRepository>(
     WeightRepository(Supabase.instance.client),
   );
 
-  getIt.registerSingleton<DailySummaryRepository>(
+  getIt.registerSingleton<IDailySummaryRepository>(
     DailySummaryRepository(Supabase.instance.client),
   );
 
-  getIt.registerSingleton<FavoriteDishRepository>(
+  getIt.registerSingleton<IFavoriteDishRepository>(
     FavoriteDishRepository(Supabase.instance.client),
   );
 
@@ -114,6 +130,7 @@ Future<void> setupDependencies() async {
   getIt.registerFactory<FoodScannerBloc>(
     () => FoodScannerBloc(
       getIt<AiFoodService>(),
+      getIt<GroqVisionService>(),
       getIt<UsdaFoodService>(),
     ),
   );
@@ -123,10 +140,10 @@ Future<void> setupDependencies() async {
   getIt.registerFactory<BarcodeScannerBloc>(() => BarcodeScannerBloc());
 
   getIt
-      .registerFactory<WeightBloc>(() => WeightBloc(getIt<WeightRepository>()));
+      .registerFactory<WeightBloc>(() => WeightBloc(getIt<IWeightRepository>()));
 
   getIt.registerFactory<FavoriteDishBloc>(
-      () => FavoriteDishBloc(getIt<FavoriteDishRepository>()));
+      () => FavoriteDishBloc(getIt<IFavoriteDishRepository>()));
 
   await getIt<SyncMealRepository>().init();
 }

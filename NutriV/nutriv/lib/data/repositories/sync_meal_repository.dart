@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/entities/meal.dart';
 import '../../domain/entities/food_item.dart';
 import '../../data/database/database_helper.dart';
+import '../../core/services/logging_service.dart';
 
 class SyncMealRepository {
   final DatabaseHelper _db;
@@ -40,7 +41,7 @@ class SyncMealRepository {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return;
 
-      _logDebug('Pull: Buscando refeições do Supabase...');
+      _logSync('Pull: Buscando refeições do Supabase...');
       final meals = await _supabase
           .from('meals')
           .select('*, meal_items(*, foods(*))')
@@ -97,11 +98,11 @@ class SyncMealRepository {
         );
       }
 
-      _logDebug(
+      _logSync(
         'Pull: ${meals.length} refeições baixadas do Supabase',
       );
     } catch (e) {
-      _logDebug('Pull: Erro ao baixar do Supabase: $e');
+      _logSync('Pull: Erro ao baixar do Supabase: $e');
     }
   }
 
@@ -123,7 +124,7 @@ class SyncMealRepository {
             .eq('user_id', userId);
       }
     } catch (e) {
-      _logDebug('Erro ao deletar do Supabase: $e');
+      _logSync('Erro ao deletar do Supabase: $e');
     }
   }
 
@@ -177,7 +178,7 @@ class SyncMealRepository {
       try {
         final userId = _supabase.auth.currentUser?.id;
         if (userId == null) {
-          _logDebug(
+          _logSync(
             'Sync: Usuário não autenticado, salvando apenas localmente',
           );
           return;
@@ -200,7 +201,7 @@ class SyncMealRepository {
             .maybeSingle();
 
         if (mealData == null) {
-          _logDebug('Sync: Erro ao criar refeição principal');
+          _logSync('Sync: Erro ao criar refeição principal');
           return;
         }
 
@@ -233,14 +234,14 @@ class SyncMealRepository {
         }
 
         await _db.markMealSynced(meal.id);
-        _logDebug(
+        _logSync(
           'Sync: Refeição ${meal.name} sincronizada com sucesso',
         );
         return;
       } catch (e) {
-        _logDebug('Sync: Tentativa ${attempt + 1} falhou: $e');
+        _logSync('Sync: Tentativa ${attempt + 1} falhou: $e');
         if (attempt == retryCount - 1) {
-          _logDebug(
+          _logSync(
             'Sync: Todas as tentativas falharam. Erro final: $e',
           );
           await _enqueueForSync(meal);
@@ -288,7 +289,7 @@ class SyncMealRepository {
     final pending = await _db.getPendingSyncQueue();
     if (pending.isEmpty) return;
 
-    _logDebug('Sync: Processando ${pending.length} itens pendentes');
+    _logSync('Sync: Processando ${pending.length} itens pendentes');
 
     for (final item in pending) {
       try {
@@ -298,7 +299,7 @@ class SyncMealRepository {
         await _syncMealToSupabase(meal, retryCount: 1);
         await _db.removeFromSyncQueue(queueId);
       } catch (e) {
-        _logDebug('Sync: Falha ao processar item pendente: $e');
+        _logSync('Sync: Falha ao processar item pendente: $e');
       }
     }
   }
@@ -364,7 +365,7 @@ class SyncMealRepository {
 
       return result['id'] as String;
     } catch (e) {
-      _logDebug(
+      _logSync(
         'Erro ao garantir existência do alimento: $e',
       );
       return food.id;
@@ -510,7 +511,6 @@ class SyncMealRepository {
   }
 }
 
-void _logDebug(String message) {
-  // ignore: avoid_print
-  print('[SyncMealRepository] $message');
+void _logSync(String message) {
+  LoggingService.info('SyncMealRepository', message);
 }

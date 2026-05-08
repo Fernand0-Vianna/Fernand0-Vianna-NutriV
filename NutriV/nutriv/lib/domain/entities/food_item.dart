@@ -14,6 +14,8 @@ class FoodItem extends Equatable {
   final String portionUnit;
   final String? imageUrl;
   final String? barcode;
+  final Map<String, double>? vitamins;
+  final Map<String, double>? minerals;
 
   const FoodItem({
     required this.id,
@@ -29,6 +31,8 @@ class FoodItem extends Equatable {
     this.portionUnit = 'g',
     this.imageUrl,
     this.barcode,
+    this.vitamins,
+    this.minerals,
   });
 
   FoodItem copyWith({
@@ -45,6 +49,8 @@ class FoodItem extends Equatable {
     String? portionUnit,
     String? imageUrl,
     String? barcode,
+    Map<String, double>? vitamins,
+    Map<String, double>? minerals,
   }) {
     return FoodItem(
       id: id ?? this.id,
@@ -60,6 +66,8 @@ class FoodItem extends Equatable {
       portionUnit: portionUnit ?? this.portionUnit,
       imageUrl: imageUrl ?? this.imageUrl,
       barcode: barcode ?? this.barcode,
+      vitamins: vitamins ?? this.vitamins,
+      minerals: minerals ?? this.minerals,
     );
   }
 
@@ -78,5 +86,7 @@ class FoodItem extends Equatable {
         portionUnit,
         imageUrl,
         barcode,
+        vitamins,
+        minerals,
       ];
 }

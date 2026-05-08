@@ -1,7 +1,9 @@
+// ignore_for_file: annotate_overrides
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../domain/repositories/i_favorite_dish_repository.dart';
 import '../models/favorite_dish_model.dart';
 
-class FavoriteDishRepository {
+class FavoriteDishRepository implements IFavoriteDishRepository {
   final SupabaseClient _supabase;
 
   FavoriteDishRepository(this._supabase);

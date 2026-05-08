@@ -9,6 +9,7 @@ import '../../bloc/food_scanner/food_scanner_event.dart';
 import '../../bloc/food_scanner/food_scanner_state.dart';
 import '../../bloc/meal/meal_bloc.dart';
 import '../../bloc/meal/meal_event.dart';
+import '../../bloc/favorite_dish/favorite_dish_bloc.dart';
 import '../../../domain/entities/meal.dart';
 import '../../../domain/entities/food_item.dart';
 import '../../../core/theme/app_theme.dart';
@@ -840,84 +841,223 @@ class _ScannerPageState extends State<ScannerPage> {
   }
 
   void _showFavoriteDishes(BuildContext context) {
+    // Carregar pratos favoritos ao abrir o modal
+    context.read<FavoriteDishBloc>().add(LoadFavoriteDishes());
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (dialogContext) => Container(
-        height: MediaQuery.of(context).size.height * 0.6,
-        decoration: const BoxDecoration(
-          color: AppTheme.surfaceContainerLowest,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(32),
-            topRight: Radius.circular(32),
-          ),
-        ),
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppTheme.outlineVariant,
-                  borderRadius: BorderRadius.circular(2),
+      builder: (dialogContext) => BlocBuilder<FavoriteDishBloc, FavoriteDishState>(
+        builder: (context, state) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.6,
+            decoration: const BoxDecoration(
+              color: AppTheme.surfaceContainerLowest,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32),
+                topRight: Radius.circular(32),
+              ),
+            ),
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppTheme.outlineVariant,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Pratos Favoritos',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Toque para adicionar ao diário',
+                  style: GoogleFonts.manrope(
+                    fontSize: 14,
+                    color: AppTheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Expanded(
+                  child: _buildFavoriteDishesList(state),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFavoriteDishesList(FavoriteDishState state) {
+    if (state is FavoriteDishLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppTheme.primary),
+      );
+    }
+
+    if (state is FavoriteDishLoaded) {
+      if (state.dishes.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.favorite_border,
+                size: 64,
+                color: AppTheme.onSurfaceVariant,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Nenhum prato favorito ainda',
+                style: GoogleFonts.manrope(
+                  fontSize: 16,
+                  color: AppTheme.onSurfaceVariant,
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Pratos Favoritos',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 24,
-                fontWeight: FontWeight.w800,
-                color: AppTheme.onSurface,
+              const SizedBox(height: 8),
+              Text(
+                'Salve refeições do histórico',
+                style: GoogleFonts.manrope(
+                  fontSize: 14,
+                  color: AppTheme.onSurfaceVariant,
+                ),
               ),
+            ],
+          ),
+        );
+      }
+
+      return ListView.builder(
+        itemCount: state.dishes.length,
+        itemBuilder: (context, index) {
+          final dish = state.dishes[index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _buildFavoriteDishCard(dish),
+          );
+        },
+      );
+    }
+
+    if (state is FavoriteDishError) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: AppTheme.error,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             Text(
-              'Adicione refeições frequentes como favorito',
+              'Erro ao carregar pratos',
               style: GoogleFonts.manrope(
-                fontSize: 14,
+                fontSize: 16,
                 color: AppTheme.onSurfaceVariant,
               ),
             ),
-            const SizedBox(height: 24),
+          ],
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildFavoriteDishCard(dynamic dish) {
+    return GestureDetector(
+      onTap: () {
+        _addFavoriteDishToMeal(dish);
+        Navigator.pop(context);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppTheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.restaurant,
+                color: AppTheme.primary,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
             Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.favorite_border,
-                      size: 64,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    dish.name,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${dish.totalCalories.toInt()} kcal • ${dish.items.length} itens',
+                    style: GoogleFonts.manrope(
+                      fontSize: 13,
                       color: AppTheme.onSurfaceVariant,
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Nenhum prato favorito ainda',
-                      style: GoogleFonts.manrope(
-                        fontSize: 16,
-                        color: AppTheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Salve refeições do histórico',
-                      style: GoogleFonts.manrope(
-                        fontSize: 14,
-                        color: AppTheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
+            Icon(
+              Icons.add_circle_outline,
+              color: AppTheme.primary,
+              size: 28,
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _addFavoriteDishToMeal(dynamic dish) {
+    final foods = dish.items.map<FoodItem>((item) {
+      return FoodItem(
+        id: item.foodId ?? '',
+        name: item.name,
+        calories: item.calories,
+        protein: item.proteinG,
+        carbs: item.carbsG,
+        fat: item.fatG,
+        portion: item.portionG ?? 100,
+        portionUnit: 'g',
+      );
+    }).toList();
+
+    _addToMeal(foods);
+
+    // Atualizar timesUsed
+    context.read<FavoriteDishBloc>().add(UseFavoriteDish(dish));
   }
 }

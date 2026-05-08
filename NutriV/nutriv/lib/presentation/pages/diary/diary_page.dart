@@ -11,6 +11,7 @@ import '../../bloc/food_scanner/food_scanner_bloc.dart';
 import '../../bloc/food_scanner/food_scanner_event.dart';
 import '../../bloc/food_scanner/food_scanner_state.dart';
 import '../../widgets/meal_card.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../domain/entities/food_item.dart';
 import '../../../domain/entities/meal.dart';
@@ -187,7 +188,7 @@ class _DiaryPageState extends State<DiaryPage> {
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: AppTheme.primary.withValues(alpha:  0.3),
+                            color: AppTheme.primary.withValues(alpha: 0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -204,7 +205,7 @@ class _DiaryPageState extends State<DiaryPage> {
                           .toUpperCase(),
                       style: GoogleFonts.manrope(
                         color: isSelected
-                            ? AppTheme.onPrimary.withValues(alpha:  0.8)
+                            ? AppTheme.onPrimary.withValues(alpha: 0.8)
                             : AppTheme.onSurfaceVariant,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -243,7 +244,7 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Widget _buildMealsList(MealLoaded state) {
-    final mealTypes = ['Café da manhã', 'Almoço', 'Jantar', 'Lanche'];
+    final mealTypes = MealType.displayNames;
     final totalCalories =
         state.meals.fold<double>(0, (sum, m) => sum + m.totalCalories);
 
@@ -262,7 +263,7 @@ class _DiaryPageState extends State<DiaryPage> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primary.withValues(alpha:  0.25),
+                color: AppTheme.primary.withValues(alpha: 0.25),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -278,7 +279,7 @@ class _DiaryPageState extends State<DiaryPage> {
                     'Total do dia',
                     style: GoogleFonts.manrope(
                       fontSize: 14,
-                      color: AppTheme.onPrimary.withValues(alpha:  0.8),
+                      color: AppTheme.onPrimary.withValues(alpha: 0.8),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -297,7 +298,7 @@ class _DiaryPageState extends State<DiaryPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppTheme.onPrimary.withValues(alpha:  0.15),
+                  color: AppTheme.onPrimary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -324,7 +325,7 @@ class _DiaryPageState extends State<DiaryPage> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha:  0.04),
+                  color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -343,7 +344,7 @@ class _DiaryPageState extends State<DiaryPage> {
                           gradient: LinearGradient(
                             colors: [
                               AppTheme.primaryContainer,
-                              AppTheme.primaryContainer.withValues(alpha:  0.6),
+                              AppTheme.primaryContainer.withValues(alpha: 0.6),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -558,7 +559,7 @@ class _DiaryPageState extends State<DiaryPage> {
     for (final meal in currentState.meals) {
       final copiedFoods = meal.foods.map((mealFood) {
         return MealFood(
-          id: '${DateTime.now().millisecondsSinceEpoch}_${copiedCount}',
+          id: '${DateTime.now().millisecondsSinceEpoch}_$copiedCount',
           food: mealFood.food,
           quantity: mealFood.quantity,
         );
@@ -871,19 +872,20 @@ class _AddFoodSheetState extends State<_AddFoodSheet> {
     final mealState = context.read<MealBloc>().state;
     if (mealState is MealLoaded) {
       final existingMeals = mealState.getMealsByType(mealType);
-      
+
       if (existingMeals.isNotEmpty) {
         // Adicionar à refeição existente (primeiro card)
         context.read<MealBloc>().add(AddFoodToMeal(
-          mealId: existingMeals.first.id,
-          food: mealFood,
-        ));
+              mealId: existingMeals.first.id,
+              food: mealFood,
+            ));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${food.name} adicionado ao ${widget.mealType}'),
             backgroundColor: AppTheme.primary,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         );
         Navigator.pop(context);
@@ -971,19 +973,20 @@ class _AddFoodSheetState extends State<_AddFoodSheet> {
     final mealState = context.read<MealBloc>().state;
     if (mealState is MealLoaded) {
       final existingMeals = mealState.getMealsByType(mealType);
-      
+
       if (existingMeals.isNotEmpty) {
         // Adicionar à refeição existente (primeiro card)
         context.read<MealBloc>().add(AddFoodToMeal(
-          mealId: existingMeals.first.id,
-          food: mealFood,
-        ));
+              mealId: existingMeals.first.id,
+              food: mealFood,
+            ));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${food.name} adicionado ao ${widget.mealType}'),
             backgroundColor: AppTheme.primary,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         );
         Navigator.pop(context);

@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../domain/entities/food_item.dart';
 import '../database/database_helper.dart';
+import '../../core/services/logging_service.dart';
 
 class UsdaFoodService {
   final Dio _dio;
@@ -14,7 +14,7 @@ class UsdaFoodService {
 
   Future<List<FoodItem>> searchFoodByName(String query) async {
     if (_apiKey.isEmpty) {
-      debugPrint('USDA API key not configured');
+      LoggingService.warn('USDA', 'API key not configured');
       return [];
     }
 
@@ -23,11 +23,11 @@ class UsdaFoodService {
     try {
       final cached = await _db.getCachedFoods(searchKey);
       if (cached.isNotEmpty) {
-        debugPrint('USDA cache hit for "$searchKey" (${cached.length} items)');
+        LoggingService.info('USDA', 'cache hit for "$searchKey" (${cached.length} items)');
         return cached.map(_parseCachedFood).toList();
       }
     } catch (e) {
-      debugPrint('Cache read error: $e');
+      LoggingService.error('USDA', 'cache read error', e);
     }
 
     try {
@@ -51,7 +51,7 @@ class UsdaFoodService {
       }
       return [];
     } catch (e) {
-      debugPrint('USDA search error: $e');
+      LoggingService.error('USDA', 'search error', e);
       return [];
     }
   }
@@ -62,11 +62,11 @@ class UsdaFoodService {
     try {
       final cached = await _db.getCachedFoodById(fdcId);
       if (cached != null) {
-        debugPrint('USDA cache hit for food ID $fdcId');
+        LoggingService.info('USDA', 'cache hit for food ID $fdcId');
         return _parseCachedFood(cached);
       }
     } catch (e) {
-      debugPrint('Cache read error: $e');
+      LoggingService.error('USDA', 'cache read error', e);
     }
 
     try {
@@ -82,7 +82,7 @@ class UsdaFoodService {
       }
       return null;
     } catch (e) {
-      debugPrint('USDA get food error: $e');
+      LoggingService.error('USDA', 'get food error', e);
       return null;
     }
   }
@@ -111,9 +111,9 @@ class UsdaFoodService {
       }).toList();
 
       await _db.cacheFoods(cachedEntries);
-      debugPrint('Cached ${foods.length} foods for "$searchKey"');
+      LoggingService.info('USDA', 'Cached ${foods.length} foods for "$searchKey"');
     } catch (e) {
-      debugPrint('Cache write error: $e');
+      LoggingService.error('USDA', 'cache write error', e);
     }
   }
 
@@ -138,7 +138,7 @@ class UsdaFoodService {
         'cached_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
-      debugPrint('Cache write error: $e');
+      LoggingService.error('USDA', 'cache write error', e);
     }
   }
 

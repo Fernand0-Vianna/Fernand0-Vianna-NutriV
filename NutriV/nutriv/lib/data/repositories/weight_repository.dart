@@ -1,4 +1,6 @@
+// ignore_for_file: annotate_overrides
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../domain/repositories/i_weight_repository.dart';
 
 class WeightLogData {
   final String? id;
@@ -43,7 +45,7 @@ class WeightLogData {
   }
 }
 
-class WeightRepository {
+class WeightRepository implements IWeightRepository {
   final SupabaseClient _supabase;
 
   WeightRepository(this._supabase);

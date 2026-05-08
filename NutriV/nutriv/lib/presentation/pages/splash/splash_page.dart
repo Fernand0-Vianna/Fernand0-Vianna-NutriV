@@ -9,6 +9,7 @@ import '../../../core/di/injection.dart';
 import '../../../data/datasources/auth_service.dart';
 import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_event.dart';
+import '../../../core/services/logging_service.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -70,7 +71,7 @@ class _SplashPageState extends State<SplashPage>
             return;
           }
         } catch (e) {
-          debugPrint('⚠️ Splash: Erro ao buscar perfil do Supabase: $e');
+          LoggingService.warn('SplashPage', 'Erro ao buscar perfil do Supabase: $e');
         }
 
         // Fallback: tenta getCurrentUser

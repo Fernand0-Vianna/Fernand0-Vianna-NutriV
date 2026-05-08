@@ -1,12 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../domain/repositories/i_weight_repository.dart';
 import '../../../data/repositories/weight_repository.dart';
 
 part 'weight_event.dart';
 part 'weight_state.dart';
 
 class WeightBloc extends Bloc<WeightEvent, WeightState> {
-  final WeightRepository _repository;
+  final IWeightRepository _repository;
 
   WeightBloc(this._repository) : super(WeightInitial()) {
     on<LoadWeightHistory>(_onLoadWeightHistory);

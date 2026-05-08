@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 import '../../../data/datasources/groq_chat_service.dart';
 import '../../../domain/entities/user.dart';
+import '../../../core/services/logging_service.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
 
@@ -73,7 +74,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ));
       } catch (e) {
         if (kDebugMode) {
-          debugPrint('Erro no ChatBloc: $e');
+          LoggingService.error('ChatBloc', 'sendMessage', e);
         }
 
         String errorMessage = 'Erro ao enviar mensagem';

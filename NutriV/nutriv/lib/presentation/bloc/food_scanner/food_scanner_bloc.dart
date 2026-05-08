@@ -1,16 +1,22 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/datasources/ai_food_service.dart';
+import '../../../data/datasources/groq_vision_service.dart';
 import '../../../data/datasources/usda_food_service.dart';
+import '../../../domain/entities/food_item.dart';
+import '../../../core/services/logging_service.dart';
 import 'food_scanner_event.dart';
 import 'food_scanner_state.dart';
 
 class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
   final AiFoodService _aiFoodService;
+  final GroqVisionService _groqVisionService;
   final UsdaFoodService _usdaFoodService;
 
-  FoodScannerBloc(this._aiFoodService, this._usdaFoodService)
-      : super(FoodScannerInitial()) {
+  FoodScannerBloc(
+    this._aiFoodService,
+    this._groqVisionService,
+    this._usdaFoodService,
+  ) : super(FoodScannerInitial()) {
     on<AnalyzeImage>(_onAnalyzeImage);
     on<AnalyzeText>(_onAnalyzeText);
     on<SearchFoodByName>(_onSearchFoodByName);
@@ -27,7 +33,14 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
   ) async {
     emit(FoodScannerLoading());
     try {
-      final foods = await _aiFoodService.analyzeFoodImage(event.imageFile);
+      List<FoodItem> foods;
+
+      try {
+        foods = await _groqVisionService.analyzeFoodImage(event.imageFile);
+      } catch (e) {
+        LoggingService.error('FoodScannerBloc', 'AnalyzeImage GroqVision', e);
+        foods = await _aiFoodService.analyzeFoodImage(event.imageFile);
+      }
 
       if (foods.isEmpty) {
         emit(
@@ -36,10 +49,10 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
           ),
         );
       } else {
-        emit(FoodScannerAnalyzed(scannedFoods: foods));
+        emit(FoodScannerAnalyzed(scannedFoods: foods, selectedFoods: const []));
       }
     } catch (e) {
-      debugPrint('FoodScannerBloc AnalyzeImage error: $e');
+      LoggingService.error('FoodScannerBloc', 'AnalyzeImage', e);
       emit(
         const FoodScannerError(
           'Erro ao analisar imagem. Verifique sua conexão e tente novamente.',
@@ -62,10 +75,10 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
           ),
         );
       } else {
-        emit(FoodScannerAnalyzed(scannedFoods: foods));
+        emit(FoodScannerAnalyzed(scannedFoods: foods, selectedFoods: const []));
       }
     } catch (e) {
-      debugPrint('FoodScannerBloc AnalyzeText error: $e');
+      LoggingService.error('FoodScannerBloc', 'AnalyzeText', e);
       emit(
         const FoodScannerError(
           'Erro ao buscar alimento. Verifique sua conexão e tente novamente.',
@@ -97,10 +110,10 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
           ),
         );
       } else {
-        emit(FoodScannerAnalyzed(scannedFoods: foods));
+        emit(FoodScannerAnalyzed(scannedFoods: foods, selectedFoods: const []));
       }
     } catch (e) {
-      debugPrint('FoodScannerBloc SearchFoodByName error: $e');
+      LoggingService.error('FoodScannerBloc', 'SearchFoodByName', e);
       emit(
         const FoodScannerError(
           'Erro ao buscar alimento. Verifique sua conexão e tente novamente.',
@@ -119,6 +132,10 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
   void _onSelectFood(SelectFood event, Emitter<FoodScannerState> emit) {
     final currentState = state;
     if (currentState is FoodScannerAnalyzed) {
+      final isAlreadySelected = currentState.selectedFoods.any(
+        (f) => f.id == event.food.id,
+      );
+      if (isAlreadySelected) return;
       final updatedSelected = [...currentState.selectedFoods, event.food];
       emit(currentState.copyWith(selectedFoods: updatedSelected));
     }

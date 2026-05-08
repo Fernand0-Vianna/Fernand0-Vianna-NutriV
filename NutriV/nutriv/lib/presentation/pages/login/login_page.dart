@@ -10,6 +10,7 @@ import '../../bloc/user/user_event.dart';
 import '../../../core/di/injection.dart';
 import '../../../data/datasources/auth_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/services/logging_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -41,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
       final authService = getIt<AuthService>();
 
       if (kDebugMode) {
-        debugPrint('Tentando login com: ${_emailController.text.trim()}');
+        LoggingService.auth('Tentando login com: ${_emailController.text.trim()}');
       }
 
       final user = await authService.signInWithEmail(
@@ -50,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (kDebugMode) {
-        debugPrint('Resultado do login: $user');
+        LoggingService.auth('Resultado do login: $user');
       }
 
       if (user != null && mounted) {
@@ -94,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
         );
 
         if (kDebugMode) {
-          debugPrint('Login error: $e');
+          LoggingService.error('LoginPage', 'signIn', e);
         }
       }
     } finally {
@@ -215,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
             final profile = await authService.fetchUserProfileFromSupabase();
             if (profile != null && mounted) {
               if (kDebugMode) {
-                debugPrint(
+                LoggingService.auth(
                     'Google login (web) - Perfil encontrado: ${profile.name}, ${profile.email}');
               }
               context.read<UserBloc>().add(SaveUser(profile));
@@ -224,7 +225,7 @@ class _LoginPageState extends State<LoginPage> {
             }
           } catch (e) {
             if (kDebugMode) {
-              debugPrint('Google login (web) - Erro ao buscar perfil: $e');
+              LoggingService.error('LoginPage', 'Google login (web) fetch profile', e);
             }
           }
 
@@ -232,7 +233,7 @@ class _LoginPageState extends State<LoginPage> {
           final user = authService.getCurrentUser();
           if (user != null && mounted) {
             if (kDebugMode) {
-              debugPrint(
+              LoggingService.auth(
                   'Google login (web) - User via getCurrentUser: ${user.name}, ${user.email}');
             }
             context.read<UserBloc>().add(SaveUser(user));
@@ -302,7 +303,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
         if (kDebugMode) {
-          debugPrint('Google login error: $e');
+          LoggingService.error('LoginPage', 'Google login', e);
         }
       }
     } finally {

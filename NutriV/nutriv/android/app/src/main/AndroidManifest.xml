@@ -10,7 +10,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false"/>
     <application
-        android:label="nutriv"
+        android:label="Nutrivision"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

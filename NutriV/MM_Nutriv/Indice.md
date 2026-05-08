@@ -40,6 +40,7 @@ graph LR
 | [[Analise_FitCal_VS_NutriV]] | Comparativo com app concorrente | → Falhas, Pendencias |
 | [[Falhas_Apk]] | Bug report - sync Supabase | → Correções, [[Pendencias_Amanha]] |
 | [[Pendencias_Amanha]] | Tarefas para próxima sessão | ← Falhas, → Correções |
+| [[Correcoes_08_05_2026]] | Groq Vision + Seleção múltipla | → Lista_Adicoes, Anotações |
 
 ---
 
@@ -124,6 +125,7 @@ Correcoes_QA_02_05_2026 → (Sessao_QA_Correcoes, Relatorio_QA_Completo_Revisao_
 2. **[[Correcoes_QA_02_05_2026]]** - Log detalhado de mudanças
 3. **[[Relatorios/Relatorio_QA_Completo]]** - Primeira análise
 4. **[[Relatorios/Relatorio_QA_Completo_Revisao_Final]]** - Revisão pós-correções
+5. **[[Correcoes_08_05_2026]]** - Groq Vision + Seleção múltipla (08/05/2026)
 
 ### Problemas Resolvidos (Commit 2dee6c8)
 - ✅ Auth/Onboarding usa Supabase real
@@ -167,6 +169,7 @@ Correcoes_QA_02_05_2026 → (Sessao_QA_Correcoes, Relatorio_QA_Completo_Revisao_
 - ✅ `data/datasources/ai_food_service.dart` - Fallback local
 
 ### Relatórios de Correções
+- **[[Correcoes_08_05_2026]]** ← Groq Vision + Seleção múltipla
 - **[[Correcoes_QA_02_05_2026]]** ← Commit 2dee6c8
 - **[[Relatorios/Relatorio_QA_Completo_Revisao_Final]]** ← Segunda análise
 - **[[Relatorios/Sessao_QA_Correcoes_Criticas_02_05_2026]]** ← Sessão completa
@@ -181,6 +184,6 @@ Correcoes_QA_02_05_2026 → (Sessao_QA_Correcoes, Relatorio_QA_Completo_Revisao_
 
 ---
 
-*Última atualização: 02 de Maio de 2026*
+*Última atualização: 08 de Maio de 2026*
 *Documento faz parte do [[NutriV_Anotacoes_Gerais]]*
-*Commit mais recente: 2dee6c8 (fix: correções críticas QA)*
+*Correções recentes: [[Correcoes_08_05_2026]] (Groq Vision + Seleção)*

@@ -37,6 +37,12 @@
 - Manutenção de `MealRepository` legado
 - **Status**: Implementado
 
+### 7. Groq Vision API
+- Novo `GroqVisionService` para análise de imagens de alimentos
+- Integração com API Groq (`meta-llama/llama-4-scout-17b-16e-instruct`)
+- Fallback para `AiFoodService` em caso de falha
+- **Status**: Implementado - ver [[Correcoes_08_05_2026]]
+
 ---
 
 ## Dependências Adicionadas
@@ -85,10 +91,11 @@ get_it: ^8.0.3
 - `weight_entry_model.dart`
 
 ### Services
-- `ai_food_service.dart` - Google Gemini + OpenAI
+- `ai_food_service.dart` - Google Gemini + OpenAI (fallback)
 - `usda_food_service.dart` - USDA API
 - `auth_service.dart` - Google Sign-In
 - `local_data_source.dart` - Armazenamento local
+- `groq_vision_service.dart` - Groq Vision API (primário) - ver [[Correcoes_08_05_2026]]
 
 ### Repositories
 - `user_repository.dart`
@@ -106,3 +113,4 @@ get_it: ^8.0.3
 | VoiceInput | [[Lista_Melhorias#entrada-voz]] - integrar ao fluxo |
 | ProgressPage | [[Ideias/Ideias_e_Casos_Uso]] - Caso 2 |
 | Supabase sync | [[Estado_Atual#Backend]] |
+| Groq Vision | [[Correcoes_08_05_2026]] - análise de imagens | |

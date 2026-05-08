@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import '../../domain/entities/user.dart';
+import '../../core/services/logging_service.dart';
 
 class ChatMessage {
   final String role; // 'user' ou 'assistant'
@@ -87,7 +88,7 @@ class GroqChatService {
       }
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('Erro no GroqChatService: $e');
+        LoggingService.error('GroqChatService', 'sendMessage', e);
       }
       throw Exception('Erro ao comunicar com assistente: $e');
     }

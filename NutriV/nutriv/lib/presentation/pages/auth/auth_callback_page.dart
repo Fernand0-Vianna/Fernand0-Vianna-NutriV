@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 
 import '../../../core/di/injection.dart';
+import '../../../core/utils/helpers.dart';
 import '../../../data/datasources/auth_service.dart';
+import '../../../core/services/logging_service.dart';
 import '../../../domain/entities/user.dart';
 import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_event.dart';
@@ -26,7 +28,7 @@ class _AuthCallbackPageState extends State<AuthCallbackPage> {
 
   Future<void> _handleAuthCallback() async {
     try {
-      debugPrint('🔄 AuthCallback: Iniciando processamento...');
+      LoggingService.auth('AuthCallback: Iniciando processamento...');
 
       // Aguarda um momento para o Supabase processar o callback
       await Future.delayed(const Duration(milliseconds: 800));
@@ -35,48 +37,87 @@ class _AuthCallbackPageState extends State<AuthCallbackPage> {
       final session = Supabase.instance.client.auth.currentSession;
       final user = Supabase.instance.client.auth.currentUser;
 
-      debugPrint('🔄 AuthCallback: Session = ${session != null}');
-      debugPrint('🔄 AuthCallback: User = ${user?.email}');
+      LoggingService.auth('AuthCallback: Session = ${session != null}');
+      LoggingService.auth('AuthCallback: User = ${user?.email}');
 
       if (session != null && user != null) {
         // Usuário autenticado com sucesso
         final authService = getIt<AuthService>();
 
-        debugPrint('🔄 AuthCallback: Buscando perfil completo...');
+        LoggingService.auth('AuthCallback: Buscando perfil completo...');
 
         // Tenta buscar perfil completo do Supabase
         User? profile;
         try {
           profile = await authService.fetchUserProfileFromSupabase();
         } catch (e) {
-          debugPrint('⚠️ AuthCallback: Erro ao buscar perfil do Supabase: $e');
+          LoggingService.error('AuthCallback', 'fetchUserProfileFromSupabase', e);
         }
 
         if (profile != null) {
-          debugPrint('✅ AuthCallback: Perfil encontrado - ${profile.email}');
+          LoggingService.auth('AuthCallback: Perfil encontrado - ${profile.email}');
           if (mounted) {
             context.read<UserBloc>().add(SaveUser(profile));
-            context.go('/');
+            // Verificar se é usuário novo (sem dados configurados = peso 0)
+            if (profile.weight == 0 || profile.weight == 70) {
+              // Usuário novo - ir para configurar plano
+              LoggingService.auth('AuthCallback: Novo usuário, redirecionando para setup...');
+              context.go('/onboarding');
+            } else {
+              context.go('/');
+            }
             return;
           }
         }
 
-        debugPrint(
-            '⚠️ AuthCallback: Perfil não encontrado, usando getCurrentUser como fallback...');
+        LoggingService.auth(
+            'AuthCallback: Perfil não encontrado, usando getCurrentUser como fallback...');
 
         // Fallback: tenta obter do getCurrentUser
         final appUser = authService.getCurrentUser();
         if (appUser != null && mounted) {
-          debugPrint(
-              '✅ AuthCallback: Usuário via getCurrentUser - ${appUser.email}');
+          LoggingService.auth(
+              'AuthCallback: Usuário via getCurrentUser - ${appUser.email}');
           context.read<UserBloc>().add(SaveUser(appUser));
-          context.go('/');
+          // Verificar se é usuário novo
+          if (appUser.weight == 0) {
+            LoggingService.auth('AuthCallback: Novo usuário via fallback, redirecionando para setup...');
+            context.go('/onboarding');
+          } else {
+            context.go('/');
+          }
           return;
         }
 
-        // Último fallback: cria usuário padrão temporário para não ficar em loop
-        debugPrint(
-            '⚠️ AuthCallback: Criando usuário default como último fallback...');
+        // Último fallback: cria usuário padrão com metas calculadas automaticamente
+        LoggingService.auth(
+            'AuthCallback: Criando usuário com metas calculadas automaticamente...');
+
+        // Valores padrão razoáveis para novos usuários
+        const defaultWeight = 70.0;
+        const defaultHeight = 170.0;
+        const defaultAge = 30;
+        const defaultIsMale = true;
+        const defaultActivityLevel = 1;
+        const defaultGoal = 'maintain';
+
+        // Calcular metas automaticamente usando TMB/TDEE
+        final bmr = NutritionUtils.calculateBMR(
+          weight: defaultWeight,
+          height: defaultHeight,
+          age: defaultAge,
+          isMale: defaultIsMale,
+        );
+        final tdee = NutritionUtils.calculateTDEE(bmr, defaultActivityLevel);
+        final calorieGoal = NutritionUtils.calculateGoalCalories(tdee, defaultGoal);
+        final proteinGoal = defaultWeight * 1.6;
+        final carbsGoal = calorieGoal * 0.4 / 4;
+        final fatGoal = calorieGoal * 0.3 / 9;
+        final waterGoal = WaterUtils.calculateWaterGoal(
+          weightKg: defaultWeight,
+          activityLevel: defaultActivityLevel,
+        );
+
         final defaultUser = User(
           id: user.id,
           name: user.userMetadata?['name'] ??
@@ -86,17 +127,17 @@ class _AuthCallbackPageState extends State<AuthCallbackPage> {
           email: user.email,
           photoUrl:
               user.userMetadata?['avatar_url'] ?? user.userMetadata?['picture'],
-          weight: 70,
-          height: 170,
-          age: 30,
-          isMale: true,
-          activityLevel: 1,
-          goal: 'maintain',
-          calorieGoal: 2000,
-          proteinGoal: 150,
-          carbsGoal: 250,
-          fatGoal: 65,
-          waterGoal: 2000,
+          weight: defaultWeight,
+          height: defaultHeight,
+          age: defaultAge,
+          isMale: defaultIsMale,
+          activityLevel: defaultActivityLevel,
+          goal: defaultGoal,
+          calorieGoal: calorieGoal,
+          proteinGoal: proteinGoal,
+          carbsGoal: carbsGoal,
+          fatGoal: fatGoal,
+          waterGoal: waterGoal,
           createdAt: DateTime.now(),
         );
 
@@ -109,7 +150,7 @@ class _AuthCallbackPageState extends State<AuthCallbackPage> {
       }
 
       // Se não há sessão, tenta refresh
-      debugPrint('⚠️ AuthCallback: Sem sessão, tentando refresh...');
+      LoggingService.auth('AuthCallback: Sem sessão, tentando refresh...');
       await Supabase.instance.client.auth.refreshSession();
 
       final refreshedSession = Supabase.instance.client.auth.currentSession;
@@ -126,13 +167,13 @@ class _AuthCallbackPageState extends State<AuthCallbackPage> {
       }
 
       // Se não há sessão mesmo após refresh, volta para login
-      debugPrint('❌ AuthCallback: Falha total, indo para login');
+      LoggingService.error('AuthCallback', 'auth_callback', 'Falha total, indo para login');
       if (mounted) {
         context.go('/login');
       }
     } catch (e, stackTrace) {
-      debugPrint('❌ Erro no callback: $e');
-      debugPrint('❌ Stack: $stackTrace');
+      LoggingService.error('AuthCallback', 'callback error', e);
+      LoggingService.error('AuthCallback', 'callback stack', stackTrace);
       if (mounted) {
         context.go('/login');
       }

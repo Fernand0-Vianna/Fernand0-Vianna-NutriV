@@ -15,9 +15,19 @@ class FoodItemModel extends FoodItem {
     super.portionUnit,
     super.imageUrl,
     super.barcode,
+    super.vitamins,
+    super.minerals,
   });
 
   factory FoodItemModel.fromJson(Map<String, dynamic> json) {
+    Map<String, double>? parseMicroNutrients(dynamic data) {
+      if (data == null) return null;
+      if (data is Map) {
+        return data.map((key, value) => MapEntry(key.toString(), (value as num).toDouble()));
+      }
+      return null;
+    }
+
     return FoodItemModel(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -32,6 +42,8 @@ class FoodItemModel extends FoodItem {
       portionUnit: json['portionUnit'] as String? ?? 'g',
       imageUrl: json['imageUrl'] as String?,
       barcode: json['barcode'] as String?,
+      vitamins: parseMicroNutrients(json['vitamins']),
+      minerals: parseMicroNutrients(json['minerals']),
     );
   }
 
@@ -50,6 +62,8 @@ class FoodItemModel extends FoodItem {
       'portionUnit': portionUnit,
       'imageUrl': imageUrl,
       'barcode': barcode,
+      'vitamins': vitamins,
+      'minerals': minerals,
     };
   }
 
@@ -68,6 +82,8 @@ class FoodItemModel extends FoodItem {
       portionUnit: food.portionUnit,
       imageUrl: food.imageUrl,
       barcode: food.barcode,
+      vitamins: food.vitamins,
+      minerals: food.minerals,
     );
   }
 

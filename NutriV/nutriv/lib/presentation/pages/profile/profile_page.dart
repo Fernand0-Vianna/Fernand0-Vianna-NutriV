@@ -9,6 +9,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/helpers.dart';
 import '../../../data/datasources/auth_service.dart';
 import '../../../data/repositories/sync_meal_repository.dart';
+import '../../../core/services/logging_service.dart';
 import '../../bloc/user/user_bloc.dart';
 import '../../bloc/user/user_state.dart';
 import '../../bloc/user/user_event.dart';
@@ -1013,7 +1014,7 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final meals = await getIt<SyncMealRepository>().getAllMeals();
       final csv = getIt<SyncMealRepository>().exportMealsToCsv(meals);
-      debugPrint('CSV gerado: ${csv.substring(0, csv.length > 100 ? 100 : csv.length)}...');
+      LoggingService.info('ProfilePage', 'CSV gerado: ${csv.substring(0, csv.length > 100 ? 100 : csv.length)}...');
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

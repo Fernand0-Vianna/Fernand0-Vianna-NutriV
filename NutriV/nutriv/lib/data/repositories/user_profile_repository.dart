@@ -1,7 +1,9 @@
+// ignore_for_file: annotate_overrides
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../domain/repositories/i_user_profile_repository.dart';
 import '../models/user_profile_model.dart';
 
-class UserProfileRepository {
+class UserProfileRepository implements IUserProfileRepository {
   final SupabaseClient _supabase;
 
   UserProfileRepository(this._supabase);
