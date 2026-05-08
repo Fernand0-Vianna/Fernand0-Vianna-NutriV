@@ -87,5 +87,39 @@ O `SyncMealRepository` (localizado em `nutriv/lib/data/repositories/sync_meal_re
 
 ---
 
+## 🆕 Novas Falhas Reportadas (08/05/2026)
+
+### 1. Falhas Visuais na Página Inicial
+- **Textos em vermelho** aparecem indevidamente na interface
+- **Barras pretas e amarelas** na página inicial com status e botão '+'
+- Interface poluída visualmente prejudicando UX
+
+### 2. Menu Iniciar Não Funcional
+- Menu iniciar **não adiciona de fato** os pratos no diário
+- Usuário seleciona prato mas não é registrado no sistema
+- Falha na comunicação entre UI e repositório de dados
+
+### 3. Refeições de Hoje - Registro Incompleto
+- Na aba início, "Refeições de Hoje" só registra o **primeiro item** informado
+- Exemplo: almoço "peixe 100g, batata 200g" → só mostra "peixe"
+- Perda de dados nutricionais importantes
+
+### 4. Metas Diárias Desajustadas
+- Metas **não se ajustam** com peso e altura dos usuários
+- Cálculos fixos sem personalização
+- Possível erro nas fórmulas de TMB e necessidades calóricas
+
+### 5. Validação de Dados - Pratos no Banco
+- **Validar se pratos adicionados** estão sendo salvos no Supabase
+- Possível falha no sync entre app e banco de dados
+- Risco de perda de dados dos usuários
+
+### 6. IA - Reconhecimento de Alimentos
+- **Validar se IA reconhece alimentos** corretamente
+- Verificar se calorias e macronutrientes estão corretos
+- Sugerir: registrar alimentos identificados no Supabase para cache
+
+---
+
 *Reportado: 25/04/2026*  
-*Atualizado: 03/05/2026 - Correções críticas aplicadas*
+*Atualizado: 08/05/2026 - Novas falhas visuais e funcionais identificadas*

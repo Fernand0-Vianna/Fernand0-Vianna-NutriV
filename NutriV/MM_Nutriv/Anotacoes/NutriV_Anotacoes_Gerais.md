@@ -50,6 +50,11 @@
 
 ---
 
+### 07/05/2026 - Google OAuth
+- Client Secret do Google atualizado no Supabase (Dashboard → Authentication → Providers → Google)
+
+---
+
 ## Estrutura
 
 ```

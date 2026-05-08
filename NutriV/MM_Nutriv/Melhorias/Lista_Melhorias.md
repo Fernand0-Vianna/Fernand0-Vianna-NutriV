@@ -120,3 +120,28 @@
 7. Micronutrients (vitaminas/minerais)
 8. OCR tabela nutricional
 9. Integração com dispositivos
+
+---
+
+## 🆕 Melhorias Urgentes (08/05/2026)
+
+### Correções Críticas de UI/UX
+- [ ] **Corrigir falhas visuais** na página inicial (textos vermelhos, barras pretas/amarelas)
+- [ ] **Ajustar interface** do status e botão '+' para melhor UX
+- [ ] **Limpar poluição visual** que prejudica navegação
+
+### Funcionalidades Essenciais
+- [ ] **Corrigir menu iniciar** para adicionar pratos no diário corretamente
+- [ ] **Corrigir registro múltiplo** em "Refeições de Hoje" (mostrar todos os itens)
+- [ ] **Implementar metas personalizadas** baseadas em peso e altura do usuário
+
+### Validação e Dados
+- [ ] **Validar persistência** de pratos no Supabase
+- [ ] **Testar sincronização** entre app e banco de dados
+- [ ] **Implementar logging** para detectar falhas de save
+
+### Inteligência Artificial
+- [ ] **Validar reconhecimento** de alimentos pela IA
+- [ ] **Verificar precisão** de calorias e macronutrientes
+- [ ] **Implementar cache** de alimentos identificados no Supabase
+- [ ] **Criar sistema** de aprendizado com correções do usuário
