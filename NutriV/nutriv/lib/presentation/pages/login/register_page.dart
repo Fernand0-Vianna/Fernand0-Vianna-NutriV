@@ -11,6 +11,7 @@ import '../../../core/utils/helpers.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/di/injection.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import '../../../data/datasources/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -117,7 +118,8 @@ class _RegisterPageState extends State<RegisterPage> {
         );
 
         context.read<UserBloc>().add(SaveUser(user));
-        context.go('/onboarding');
+        await _updateProfileInSupabase(user, userResult.id);
+        if (mounted) context.go('/');
       } else if (mounted) {
         setState(() => _errorMessage =
             'Erro ao criar conta. E-mail já pode estar em uso.');
@@ -142,6 +144,51 @@ class _RegisterPageState extends State<RegisterPage> {
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _updateProfileInSupabase(User user, String userId) async {
+    try {
+      final activityLabels = ['sedentary', 'light', 'moderate', 'active', 'very_active'];
+      await Supabase.instance.client.from('user_profiles').update({
+        'name': user.name,
+        'current_weight_kg': user.weight,
+        'height_cm': user.height,
+        'birth_date': DateTime.now()
+            .subtract(Duration(days: user.age * 365))
+            .toIso8601String()
+            .split('T')[0],
+        'gender': user.isMale ? 'male' : 'female',
+        'activity_level': activityLabels[user.activityLevel.clamp(0, 4)],
+        'goal_type': user.goal,
+        'target_weight_kg': user.goal == 'lose'
+            ? user.weight - 5
+            : user.goal == 'gain'
+                ? user.weight + 5
+                : user.weight,
+        'bmr_calories': NutritionUtils.calculateBMR(
+          weight: user.weight,
+          height: user.height,
+          age: user.age,
+          isMale: user.isMale,
+        ),
+        'tdee_calories': NutritionUtils.calculateTDEE(
+          NutritionUtils.calculateBMR(
+            weight: user.weight,
+            height: user.height,
+            age: user.age,
+            isMale: user.isMale,
+          ),
+          user.activityLevel,
+        ),
+        'daily_calories_target': user.calorieGoal,
+        'protein_target_g': user.proteinGoal,
+        'carbs_target_g': user.carbsGoal,
+        'fat_target_g': user.fatGoal,
+        'water_target_ml': user.waterGoal,
+      }).eq('id', userId);
+    } catch (e) {
+      if (kDebugMode) debugPrint('Erro ao salvar perfil no Supabase: $e');
     }
   }
 

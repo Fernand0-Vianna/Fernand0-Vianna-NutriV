@@ -4,6 +4,53 @@
 
 ---
 
+## 📅 14 de Maio de 2026 - Correções Scanner AI e Registro de Usuários
+
+### 🎯 Resumo
+Correção do scanner de alimentos (foto), scanner de código de barras e fluxo de registro de novos usuários no Supabase.
+
+### ✅ Concluído
+
+#### 1. Scanner de Alimentos (Foto) - GroqVisionService
+- **Problema:** Modelos Groq usados não suportavam visão (llama-4-scout)
+- **Solução:** Alterado para modelos de visão: `llama-3.2-11b-vision-preview` e `llama-3.2-90b-vision-preview`
+- **Impacto:** Reconhecimento de alimentos em fotos deve funcionar
+
+#### 2. Fallback Scanner de Imagem - LogMeal
+- **Problema:** Gemini (quota esgotada) e OpenAI (precisa crédito) eram usados mas não funcionavam
+- **Solução:** LogMeal adicionado como fallback primário de análise de imagem
+- **Adicionado:** Método `_analyzeWithLogMeal` em `ai_food_service.dart`
+- **Impacto:** Mais opções de fallback quando APIs principais falham
+
+#### 3. Scanner de Código de Barras
+- **Problema:** Dependência do Gemini API (não configurada) causava exceção ao ler código de barras
+- **Solução:** Removida dependência do Gemini, agora usa OpenFoodFacts + fallback local
+- **Removido:** Método `_enrichWithGemini` e `_parseSimpleJson` (código morto)
+- **Impacto:** Scanner de código de barras funciona com OpenFoodFacts
+
+#### 4. Registro de Usuários - Fluxo Completo
+- **Problema:** Rota `/onboarding` não existia no router → app quebrava após registro
+- **Problema 2:** Dados do formulário (peso, altura, metas) eram salvos localmente mas não no Supabase
+- **Solução:** 
+  - Navegação alterada de `/onboarding` para `/` (home)
+  - Adicionado `_updateProfileInSupabase()` para salvar dados no Supabase
+- **Impacto:** Novo usuário é criado com dados completos no Supabase
+
+#### 5. Limpeza de Código
+- Removido código morto em `auth_service.dart` (linha 341)
+- Removido método `_enrichWithGemini` não utilizado
+- Corrigido import Ambiguous User (Supabase vs app User)
+- **Resultado:** `flutter analyze` mostra 0 issues
+
+### 📄 Arquivos Modificados
+- `lib/data/datasources/groq_vision_service.dart`
+- `lib/data/datasources/ai_food_service.dart`
+- `lib/presentation/bloc/barcode/barcode_scanner_bloc.dart`
+- `lib/presentation/pages/login/register_page.dart`
+- `lib/data/datasources/auth_service.dart`
+
+---
+
 ## 📅 06 de Maio de 2026 - Correções Login Google e Adição de Alimentos
 
 ### 🎯 Resumo

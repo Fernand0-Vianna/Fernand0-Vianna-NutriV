@@ -338,7 +338,7 @@ class AuthService {
         'current_weight_kg': defaultWeight,
         'height_cm': defaultHeight,
         'birth_date': DateTime.now().subtract(Duration(days: defaultAge * 365)).toIso8601String().split('T')[0],
-        'gender': defaultIsMale ? 'male' : 'female',
+        'gender': 'male',
         'activity_level': 'moderate',
         'goal_type': defaultGoal,
         'target_weight_kg': defaultWeight,

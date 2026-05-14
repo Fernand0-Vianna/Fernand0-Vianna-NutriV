@@ -11,8 +11,8 @@ class GroqVisionService {
   String get _apiKey => dotenv.env['GROQ_API_KEY'] ?? '';
 
   static const String _baseUrl = 'https://api.groq.com/openai/v1';
-  static const String _model = 'meta-llama/llama-4-scout-17b-16e-instruct';
-  static const String _fallbackModel = 'llava-v1.5-7b-4096-preview';
+  static const String _model = 'llama-3.2-11b-vision-preview';
+  static const String _fallbackModel = 'llama-3.2-90b-vision-preview';
 
   GroqVisionService(this._dio);
 

@@ -21,6 +21,19 @@ class AiFoodService {
     final bytes = await imageFile.readAsBytes();
     final base64Image = base64Encode(bytes);
 
+    // 0. Tentar LogMeal (especializado em reconhecimento de alimentos)
+    if (_logmealApiKey.isNotEmpty) {
+      try {
+        final logmealFoods = await _analyzeWithLogMeal(base64Image);
+        if (logmealFoods.isNotEmpty) {
+          LoggingService.info('AiFoodService', 'LogMeal encontrou ${logmealFoods.length} alimentos');
+          return logmealFoods;
+        }
+      } catch (e) {
+        LoggingService.error('AiFoodService', 'LogMeal error', e);
+      }
+    }
+
     // 1. Tentar Gemini
     if (_geminiApiKey.isNotEmpty) {
       try {
@@ -625,5 +638,45 @@ class AiFoodService {
       LoggingService.error('AiFoodService', 'LogMeal nutrition error', e);
     }
     return null;
+  }
+
+  Future<List<FoodItem>> _analyzeWithLogMeal(String base64Image) async {
+    try {
+      final response = await _dio.post(
+        'https://api.logmeal.es/v2/image/segmentation/complete',
+        options: Options(headers: {'Authorization': 'Bearer $_logmealApiKey'}),
+        data: {'image_url': 'data:image/jpeg;base64,$base64Image'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['recognition_results'] != null) {
+          final results = data['recognition_results'] as List;
+          if (results.isNotEmpty) {
+            final foods = <FoodItem>[];
+            for (final item in results) {
+              final name = item['name'] as String? ?? 'Alimento';
+              final nutrition = await _getLogmealNutrition(item['id']);
+              if (nutrition != null) {
+                foods.add(FoodItem(
+                  id: item['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
+                  name: name,
+                  calories: nutrition['calories'] ?? 100,
+                  protein: nutrition['protein'] ?? 5,
+                  carbs: nutrition['carbs'] ?? 15,
+                  fat: nutrition['fat'] ?? 3,
+                  portion: (nutrition['portion'] as num?)?.toDouble() ?? 100,
+                  portionUnit: 'g',
+                ));
+              }
+            }
+            if (foods.isNotEmpty) return foods;
+          }
+        }
+      }
+    } catch (e) {
+      LoggingService.error('AiFoodService', '_analyzeWithLogMeal error', e);
+    }
+    return [];
   }
 }
