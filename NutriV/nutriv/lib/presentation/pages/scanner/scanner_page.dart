@@ -99,7 +99,7 @@ class _ScannerPageState extends State<ScannerPage> {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: AppTheme.errorContainer.withValues(alpha:  0.2),
+                color: AppTheme.errorContainer.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -154,76 +154,72 @@ class _ScannerPageState extends State<ScannerPage> {
   }
 
   Widget _buildInitialView() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 60, 24, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Adicionar',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              color: AppTheme.onSurface,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 60, 24, 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Adicionar',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 28,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.onSurface,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'O que você quer adicionar?',
-            style: GoogleFonts.manrope(
-              fontSize: 16,
-              color: AppTheme.onSurfaceVariant,
+            const SizedBox(height: 8),
+            Text(
+              'O que você quer adicionar?',
+              style: GoogleFonts.manrope(
+                fontSize: 16,
+                color: AppTheme.onSurfaceVariant,
+              ),
             ),
-          ),
-          const SizedBox(height: 32),
-          Expanded(
-            child: Column(
-              children: [
-                _buildOptionButton(
-                  icon: Icons.qr_code_scanner,
-                  label: 'Código de Barras',
-                  subtitle: 'Escaneie o código de barras',
-                  onTap: _openBarcodeScanner,
-                ),
-                const SizedBox(height: 16),
-                _buildOptionButton(
-                  icon: Icons.camera_alt,
-                  label: 'Tirar Foto',
-                  subtitle: 'Fotografie seu alimento',
-                  onTap: () => _pickImage(ImageSource.camera),
-                ),
-                const SizedBox(height: 16),
-                _buildOptionButton(
-                  icon: Icons.photo_library,
-                  label: 'Escolher da Galeria',
-                  subtitle: 'Selecione uma foto',
-                  onTap: () => _pickImage(ImageSource.gallery),
-                ),
-                const SizedBox(height: 16),
-                _buildOptionButton(
-                  icon: Icons.search,
-                  label: 'Buscar Alimento',
-                  subtitle: 'Pesquise pelo nome',
-                  onTap: _showSearchDialog,
-                ),
-                const SizedBox(height: 16),
-                _buildOptionButton(
-                  icon: Icons.mic,
-                  label: 'Entrada por Voz',
-                  subtitle: 'Diga o nome do alimento',
-                  onTap: () => showVoiceInput(context),
-                ),
-                const SizedBox(height: 16),
-                _buildOptionButton(
-                  icon: Icons.favorite,
-                  label: 'Pratos Favoritos',
-                  subtitle: 'Suas refeições salvas',
-                  onTap: () => _showFavoriteDishes(context),
-                ),
-              ],
+            const SizedBox(height: 32),
+            _buildOptionButton(
+              icon: Icons.qr_code_scanner,
+              label: 'Código de Barras',
+              subtitle: 'Escaneie o código de barras',
+              onTap: _openBarcodeScanner,
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            _buildOptionButton(
+              icon: Icons.camera_alt,
+              label: 'Tirar Foto',
+              subtitle: 'Fotografie seu alimento',
+              onTap: () => _pickImage(ImageSource.camera),
+            ),
+            const SizedBox(height: 16),
+            _buildOptionButton(
+              icon: Icons.photo_library,
+              label: 'Escolher da Galeria',
+              subtitle: 'Selecione uma foto',
+              onTap: () => _pickImage(ImageSource.gallery),
+            ),
+            const SizedBox(height: 16),
+            _buildOptionButton(
+              icon: Icons.search,
+              label: 'Buscar Alimento',
+              subtitle: 'Pesquise pelo nome',
+              onTap: _showSearchDialog,
+            ),
+            const SizedBox(height: 16),
+            _buildOptionButton(
+              icon: Icons.mic,
+              label: 'Entrada por Voz',
+              subtitle: 'Diga o nome do alimento',
+              onTap: () => showVoiceInput(context),
+            ),
+            const SizedBox(height: 16),
+            _buildOptionButton(
+              icon: Icons.favorite,
+              label: 'Pratos Favoritos',
+              subtitle: 'Suas refeições salvas',
+              onTap: () => _showFavoriteDishes(context),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -243,7 +239,7 @@ class _ScannerPageState extends State<ScannerPage> {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha:  0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -272,13 +268,18 @@ class _ScannerPageState extends State<ScannerPage> {
                       fontWeight: FontWeight.w700,
                       color: AppTheme.onSurface,
                     ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
                   ),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: GoogleFonts.manrope(
                       fontSize: 13,
                       color: AppTheme.onSurfaceVariant,
                     ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
                   ),
                 ],
               ),
@@ -414,7 +415,7 @@ class _ScannerPageState extends State<ScannerPage> {
               isSelected ? Border.all(color: AppTheme.primary, width: 2) : null,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha:  0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -454,23 +455,25 @@ class _ScannerPageState extends State<ScannerPage> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      _buildNutrientChip(
-                        '${food.calories.toInt()} kcal',
-                        AppTheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      _buildNutrientChip(
-                        'P: ${food.protein.toInt()}g',
-                        const Color(0xFF2196F3),
-                      ),
-                      const SizedBox(width: 8),
-                      _buildNutrientChip(
-                        'C: ${food.carbs.toInt()}g',
-                        const Color(0xFFFF9800),
-                      ),
-                    ],
+                  Flexible(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: [
+                        _buildNutrientChip(
+                          '${food.calories.toInt()} kcal',
+                          AppTheme.primary,
+                        ),
+                        _buildNutrientChip(
+                          'P: ${food.protein.toInt()}g',
+                          const Color(0xFF2196F3),
+                        ),
+                        _buildNutrientChip(
+                          'C: ${food.carbs.toInt()}g',
+                          const Color(0xFFFF9800),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -480,7 +483,7 @@ class _ScannerPageState extends State<ScannerPage> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryContainer.withValues(alpha:  0.5),
+                  color: AppTheme.primaryContainer.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -503,7 +506,7 @@ class _ScannerPageState extends State<ScannerPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha:  0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
@@ -848,7 +851,8 @@ class _ScannerPageState extends State<ScannerPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (dialogContext) => BlocBuilder<FavoriteDishBloc, FavoriteDishState>(
+      builder: (dialogContext) =>
+          BlocBuilder<FavoriteDishBloc, FavoriteDishState>(
         builder: (context, state) {
           return Container(
             height: MediaQuery.of(context).size.height * 0.6,
@@ -1018,6 +1022,8 @@ class _ScannerPageState extends State<ScannerPage> {
                       fontWeight: FontWeight.w600,
                       color: AppTheme.onSurface,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -1026,6 +1032,8 @@ class _ScannerPageState extends State<ScannerPage> {
                       fontSize: 13,
                       color: AppTheme.onSurfaceVariant,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

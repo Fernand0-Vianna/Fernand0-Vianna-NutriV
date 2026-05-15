@@ -124,41 +124,46 @@ class _ProgressPageState extends State<ProgressPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Estatísticas',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 28,
-                              fontWeight: FontWeight.w800,
-                              color: AppTheme.onSurface,
+                          Expanded(
+                            child: Text(
+                              'Estatísticas',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w800,
+                                color: AppTheme.onSurface,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
                           ),
                           Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               GestureDetector(
                                 onTap: _exportProgressCsv,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 10,
+                                    horizontal: 10,
+                                    vertical: 8,
                                   ),
-                                  margin: const EdgeInsets.only(right: 10),
+                                  margin: const EdgeInsets.only(right: 8),
                                   decoration: BoxDecoration(
                                     color: AppTheme.primaryContainer,
-                                    borderRadius: BorderRadius.circular(14),
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       const Icon(
                                         Icons.download,
-                                        size: 16,
+                                        size: 14,
                                         color: AppTheme.primary,
                                       ),
-                                      const SizedBox(width: 6),
+                                      const SizedBox(width: 4),
                                       Text(
                                         'Exportar',
                                         style: GoogleFonts.manrope(
-                                          fontSize: 12,
+                                          fontSize: 11,
                                           fontWeight: FontWeight.w600,
                                           color: AppTheme.primary,
                                         ),
@@ -169,25 +174,26 @@ class _ProgressPageState extends State<ProgressPage> {
                               ),
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
+                                  horizontal: 12,
+                                  vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
                                   color: AppTheme.primaryContainer,
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Icon(
                                       Icons.calendar_today,
-                                      size: 16,
+                                      size: 14,
                                       color: AppTheme.primary,
                                     ),
-                                    const SizedBox(width: 6),
+                                    const SizedBox(width: 4),
                                     Text(
                                       'Hoje',
                                       style: GoogleFonts.manrope(
-                                        fontSize: 12,
+                                        fontSize: 11,
                                         fontWeight: FontWeight.w600,
                                         color: AppTheme.primary,
                                       ),
@@ -260,7 +266,7 @@ class _ProgressPageState extends State<ProgressPage> {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -272,40 +278,42 @@ class _ProgressPageState extends State<ProgressPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Meta Calórica',
-                    style: GoogleFonts.manrope(
-                      fontSize: 14,
-                      color: AppTheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w500,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Meta Calórica',
+                      style: GoogleFonts.manrope(
+                        fontSize: 12,
+                        color: AppTheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: _calorieGoal.toInt().toString(),
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w800,
-                            color: AppTheme.primary,
+                    const SizedBox(height: 4),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: _calorieGoal.toInt().toString(),
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w800,
+                              color: AppTheme.primary,
+                            ),
                           ),
-                        ),
-                        TextSpan(
-                          text: ' kcal / dia',
-                          style: GoogleFonts.manrope(
-                            fontSize: 14,
-                            color: AppTheme.onSurfaceVariant,
+                          TextSpan(
+                            text: ' kcal / dia',
+                            style: GoogleFonts.manrope(
+                              fontSize: 12,
+                              color: AppTheme.onSurfaceVariant,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -313,7 +321,7 @@ class _ProgressPageState extends State<ProgressPage> {
                   Text(
                     'Consumido',
                     style: GoogleFonts.manrope(
-                      fontSize: 11,
+                      fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: AppTheme.onSurfaceVariant,
                     ),
@@ -322,7 +330,7 @@ class _ProgressPageState extends State<ProgressPage> {
                   Text(
                     totalCalories.toInt().toString(),
                     style: GoogleFonts.plusJakartaSans(
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: AppTheme.onSurface,
                     ),
@@ -333,27 +341,35 @@ class _ProgressPageState extends State<ProgressPage> {
           ),
           const SizedBox(height: 20),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildDayBar(
-                'C',
-                mealCalories['café da manhã'] ?? 0,
-                maxCalories,
+              Expanded(
+                child: _buildDayBar(
+                  'C',
+                  mealCalories['café da manhã'] ?? 0,
+                  maxCalories,
+                ),
               ),
-              _buildDayBar(
-                'A',
-                mealCalories['almoço'] ?? 0,
-                maxCalories,
+              Expanded(
+                child: _buildDayBar(
+                  'A',
+                  mealCalories['almoço'] ?? 0,
+                  maxCalories,
+                ),
               ),
-              _buildDayBar(
-                'L',
-                mealCalories['lanche'] ?? 0,
-                maxCalories,
+              Expanded(
+                child: _buildDayBar(
+                  'L',
+                  mealCalories['lanche'] ?? 0,
+                  maxCalories,
+                ),
               ),
-              _buildDayBar(
-                'J',
-                mealCalories['jantar'] ?? 0,
-                maxCalories,
+              Expanded(
+                child: _buildDayBar(
+                  'J',
+                  mealCalories['jantar'] ?? 0,
+                  maxCalories,
+                ),
               ),
             ],
           ),
@@ -369,23 +385,23 @@ class _ProgressPageState extends State<ProgressPage> {
     return Column(
       children: [
         Container(
-          width: 32,
-          height: 150,
+          width: 24,
+          height: 120,
           alignment: Alignment.bottomCenter,
           child: Container(
-            width: 32,
-            height: 150 * barHeight,
+            width: 24,
+            height: 120 * barHeight,
             decoration: BoxDecoration(
               color: isOver ? AppTheme.errorContainer : AppTheme.primary,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Text(
           label,
           style: GoogleFonts.manrope(
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: FontWeight.w600,
             color: AppTheme.onSurfaceVariant,
           ),
@@ -411,7 +427,7 @@ class _ProgressPageState extends State<ProgressPage> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -558,7 +574,7 @@ class _ProgressPageState extends State<ProgressPage> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -575,7 +591,7 @@ class _ProgressPageState extends State<ProgressPage> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: color.withValues(alpha:  0.15),
+                      color: color.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
@@ -621,7 +637,7 @@ class _ProgressPageState extends State<ProgressPage> {
                   decoration: BoxDecoration(
                     color: isPositive
                         ? AppTheme.primaryContainer
-                        : AppTheme.errorContainer.withValues(alpha:  0.2),
+                        : AppTheme.errorContainer.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
@@ -640,7 +656,7 @@ class _ProgressPageState extends State<ProgressPage> {
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
               value: progress.clamp(0, 1),
-              backgroundColor: color.withValues(alpha:  0.15),
+              backgroundColor: color.withValues(alpha: 0.15),
               valueColor: AlwaysStoppedAnimation(color),
               minHeight: 6,
             ),
@@ -684,7 +700,7 @@ class _ProgressPageState extends State<ProgressPage> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withValues(alpha:  0.3),
+            color: AppTheme.primary.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -742,7 +758,8 @@ class _ProgressPageState extends State<ProgressPage> {
           ),
           backgroundColor: AppTheme.error,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
       return;
@@ -787,7 +804,8 @@ class _ProgressPageState extends State<ProgressPage> {
       // ignore: deprecated_member_use
       await Share.share(
         'Arquivo CSV exportado: ${file.path}\n\n$fullCsv',
-        subject: 'NutriV - Progresso ${DateFormat('dd/MM/yyyy').format(DateTime.now())}',
+        subject:
+            'NutriV - Progresso ${DateFormat('dd/MM/yyyy').format(DateTime.now())}',
       );
     } catch (e) {
       if (!mounted) return;
@@ -799,7 +817,8 @@ class _ProgressPageState extends State<ProgressPage> {
           ),
           backgroundColor: AppTheme.error,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
     }

@@ -397,35 +397,43 @@ class _RecipesPageState extends State<RecipesPage> {
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              _buildNutrientChip(
-                  'P', '${recipe.protein.toInt()}g', AppTheme.primary),
-              const SizedBox(width: 8),
-              _buildNutrientChip(
-                  'C', '${recipe.carbs.toInt()}g', AppTheme.tertiary),
-              const SizedBox(width: 8),
-              _buildNutrientChip('F', '${recipe.fat.toInt()}g', AppTheme.error),
-              const Spacer(),
-              if (recipe.totalTime > 0)
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.timer_outlined,
-                      size: 16,
-                      color: AppTheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${recipe.totalTime} min',
-                      style: GoogleFonts.manrope(
-                        fontSize: 12,
+          Flexible(
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                _buildNutrientChip(
+                    'P', '${recipe.protein.toInt()}g', AppTheme.primary),
+                _buildNutrientChip(
+                    'C', '${recipe.carbs.toInt()}g', AppTheme.tertiary),
+                _buildNutrientChip('F', '${recipe.fat.toInt()}g', AppTheme.error),
+                if (recipe.totalTime > 0) ...[
+                  const SizedBox(width: 8),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.timer_outlined,
+                        size: 16,
                         color: AppTheme.onSurfaceVariant,
                       ),
-                    ),
-                  ],
-                ),
-            ],
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          '${recipe.totalTime} min',
+                          style: GoogleFonts.manrope(
+                            fontSize: 12,
+                            color: AppTheme.onSurfaceVariant,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
           ),
           const SizedBox(height: 12),
           Text(

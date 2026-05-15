@@ -4,42 +4,20 @@
     "type": "split",
     "children": [
       {
-        "id": "dd225a984fa5a25a",
+        "id": "adbf300cd72e22a1",
         "type": "tabs",
         "children": [
           {
-            "id": "be2c21fdaeda3805",
+            "id": "e38f8f1211a4fea9",
             "type": "leaf",
             "state": {
-              "type": "canvas",
-              "state": {
-                "file": "NutriV_Mapa_Mental.canvas",
-                "viewState": {
-                  "x": -731,
-                  "y": 328.5,
-                  "zoom": -2.192841585517866
-                }
-              },
-              "icon": "lucide-layout-dashboard",
-              "title": "NutriV_Mapa_Mental"
-            }
-          },
-          {
-            "id": "fb30bc4640bdaa91",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Relatorios/Correcoes_Analise_25_04_2026.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "Correcoes_Analise_25_04_2026"
+              "title": "Nova aba"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -192,6 +170,8 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "obsidian-excalidraw-plugin:New drawing": false,
+      "obsidian-importer:Open Importer": false,
       "switcher:Abrir a troca rápida": false,
       "graph:Abrir visualização em gráfico": false,
       "canvas:Criar novo canvas": false,
@@ -201,13 +181,14 @@
       "bases:Criar nova base": false
     }
   },
-  "active": "fb30bc4640bdaa91",
+  "active": "e38f8f1211a4fea9",
   "lastOpenFiles": [
+    "NutriV_Mapa_Mental.canvas",
+    "Relatorios/Correcoes_Analise_25_04_2026.md",
     "Problema_Google_OAuth_04_05_2026.md",
     "Documentation_Map.md",
     "Relatorios/Estado_Atual.md",
     "Relatorios/Implementacoes_24_04_2026.md",
-    "NutriV_Mapa_Mental.canvas",
     "Sem título.md",
     "Pendencias_Amanha.md",
     "Falhas_Apk.md",

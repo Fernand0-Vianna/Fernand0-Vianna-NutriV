@@ -13,6 +13,8 @@ import '../../data/datasources/local_data_source.dart';
 import '../../data/datasources/ai_food_service.dart';
 import '../../data/datasources/groq_vision_service.dart';
 import '../../data/datasources/usda_food_service.dart';
+import '../../data/datasources/fatsecret_service.dart';
+import '../../data/datasources/gemini_food_service.dart';
 import '../../data/datasources/auth_service.dart';
 import '../../data/datasources/pedometer_service.dart';
 import '../../data/datasources/activity_service.dart';
@@ -77,6 +79,14 @@ Future<void> setupDependencies() async {
     UsdaFoodService(getIt<Dio>(), dbHelper),
   );
 
+  getIt.registerSingleton<FatSecretService>(
+    FatSecretService(getIt<Dio>()),
+  );
+
+  getIt.registerSingleton<GeminiFoodService>(
+    GeminiFoodService(getIt<Dio>()),
+  );
+
   getIt.registerSingleton<UserRepository>(
     UserRepository(getIt<LocalDataSource>()),
   );
@@ -132,6 +142,8 @@ Future<void> setupDependencies() async {
       getIt<AiFoodService>(),
       getIt<GroqVisionService>(),
       getIt<UsdaFoodService>(),
+      getIt<FatSecretService>(),
+      getIt<GeminiFoodService>(),
     ),
   );
 

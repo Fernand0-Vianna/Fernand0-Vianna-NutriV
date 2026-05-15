@@ -80,65 +80,59 @@ class _ProfilePageState extends State<ProfilePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Perfil',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
-                  color: AppTheme.onPrimary,
+              Expanded(
+                flex: 2,
+                child: Text(
+                  'Perfil',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.onPrimary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
               ),
               Container(
-                width: 40,
-                height: 40,
+                width: 80,
+                height: 80,
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryContainer.withValues(alpha:  0.3),
+                  color: AppTheme.primaryContainer,
                   shape: BoxShape.circle,
+                  border: Border.all(color: AppTheme.onPrimary, width: 2),
                 ),
-                child: const Icon(
-                  Icons.notifications_outlined,
-                  color: AppTheme.onPrimary,
-                  size: 20,
+                child: Center(
+                  child: Text(
+                    state.user.name.isNotEmpty
+                        ? state.user.name[0].toUpperCase()
+                        : 'U',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.primary,
+                    ),
+                  ),
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 24),
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              color: AppTheme.primaryContainer,
-              shape: BoxShape.circle,
-              border: Border.all(color: AppTheme.onPrimary, width: 3),
-            ),
-            child: Center(
-              child: Text(
-                state.user.name.isNotEmpty
-                    ? state.user.name[0].toUpperCase()
-                    : 'U',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w800,
-                  color: AppTheme.primary,
-                ),
-              ),
-            ),
           ),
           const SizedBox(height: 16),
           Text(
             state.user.name,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 24,
+              fontSize: 20,
               fontWeight: FontWeight.w800,
               color: AppTheme.onPrimary,
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.primaryContainer.withValues(alpha:  0.3),
+              color: AppTheme.primaryContainer.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -188,7 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -197,11 +191,18 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem('${state.user.weight.toInt()}', 'kg', 'Peso'),
+          Expanded(
+            child: _buildStatItem('${state.user.weight.toInt()}', 'kg', 'Peso'),
+          ),
           Container(width: 1, height: 40, color: AppTheme.outlineVariant),
-          _buildStatItem('${state.user.height.toInt()}', 'cm', 'Altura'),
+          Expanded(
+            child:
+                _buildStatItem('${state.user.height.toInt()}', 'cm', 'Altura'),
+          ),
           Container(width: 1, height: 40, color: AppTheme.outlineVariant),
-          _buildStatItem('${state.user.age}', 'anos', 'Idade'),
+          Expanded(
+            child: _buildStatItem('${state.user.age}', 'anos', 'Idade'),
+          ),
         ],
       ),
     );
@@ -252,7 +253,7 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -326,28 +327,40 @@ class _ProfilePageState extends State<ProfilePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            Container(
-              width: 10,
-              height: 10,
-              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              label,
-              style: GoogleFonts.manrope(
-                color: AppTheme.onSurface,
-                fontWeight: FontWeight.w500,
+        Expanded(
+          flex: 2,
+          child: Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
-            ),
-          ],
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  label,
+                  style: GoogleFonts.manrope(
+                    color: AppTheme.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ],
+          ),
         ),
-        Text(
-          '${value.toInt()} $unit',
-          style: GoogleFonts.plusJakartaSans(
-            fontWeight: FontWeight.w700,
-            color: AppTheme.onSurface,
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            '${value.toInt()} $unit',
+            style: GoogleFonts.plusJakartaSans(
+              fontWeight: FontWeight.w700,
+              color: AppTheme.onSurface,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ),
       ],
@@ -362,7 +375,7 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -487,7 +500,7 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -523,13 +536,13 @@ class _ProfilePageState extends State<ProfilePage> {
           const SizedBox(height: 8),
           Container(
             width: double.infinity,
-            color: AppTheme.errorContainer.withValues(alpha:  0.1),
+            color: AppTheme.errorContainer.withValues(alpha: 0.1),
             child: ListTile(
               leading: Container(
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppTheme.errorContainer.withValues(alpha:  0.2),
+                  color: AppTheme.errorContainer.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -649,15 +662,23 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+          Expanded(
+            child: Text(
+              label,
+              style: GoogleFonts.manrope(color: AppTheme.onSurfaceVariant),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          Text(
-            value,
-            style: GoogleFonts.manrope(
-              fontWeight: FontWeight.w600,
-              color: AppTheme.onSurface,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              value,
+              style: GoogleFonts.manrope(
+                fontWeight: FontWeight.w600,
+                color: AppTheme.onSurface,
+              ),
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -763,7 +784,10 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: GoogleFonts.manrope(color: AppTheme.onSurface)),
+          Flexible(
+            child: Text(label,
+                style: GoogleFonts.manrope(color: AppTheme.onSurface)),
+          ),
           Switch(
             value: value,
             onChanged: onChanged,
@@ -816,7 +840,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Icon(
                       Icons.favorite_border,
                       size: 64,
-                      color: AppTheme.onSurfaceVariant.withValues(alpha:  0.5),
+                      color: AppTheme.onSurfaceVariant.withValues(alpha: 0.5),
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -1014,7 +1038,8 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final meals = await getIt<SyncMealRepository>().getAllMeals();
       final csv = getIt<SyncMealRepository>().exportMealsToCsv(meals);
-      LoggingService.info('ProfilePage', 'CSV gerado: ${csv.substring(0, csv.length > 100 ? 100 : csv.length)}...');
+      LoggingService.info('ProfilePage',
+          'CSV gerado: ${csv.substring(0, csv.length > 100 ? 100 : csv.length)}...');
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

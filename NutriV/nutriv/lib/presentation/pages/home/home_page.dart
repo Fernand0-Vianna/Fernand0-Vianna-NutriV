@@ -182,7 +182,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               Text(
                 greeting,
                 style: GoogleFonts.manrope(
-                  fontSize: 14,
+                  fontSize: 12,
                   color: AppTheme.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
                 ),
@@ -191,10 +191,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               Text(
                 name,
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: FontWeight.w800,
                   color: AppTheme.onSurface,
                 ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ],
           ),
@@ -204,8 +206,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           child: Semantics(
             label: 'Abrir perfil do usuário',
             child: Container(
-              width: 48,
-              height: 48,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [AppTheme.primary, AppTheme.primaryDim],
@@ -215,7 +217,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primary.withValues(alpha:  0.3),
+                    color: AppTheme.primary.withValues(alpha: 0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -224,7 +226,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: const Icon(
                 Icons.person,
                 color: AppTheme.onPrimary,
-                size: 24,
+                size: 20,
               ),
             ),
           ),
@@ -258,7 +260,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primary.withValues(alpha:  0.25),
+                color: AppTheme.primary.withValues(alpha: 0.25),
                 blurRadius: 24,
                 offset: const Offset(0, 12),
               ),
@@ -270,17 +272,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 animation: _caloriesAnimationController,
                 builder: (context, child) {
                   return SizedBox(
-                    width: 120,
-                    height: 120,
+                    width: 100,
+                    height: 100,
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
                         CircularProgressIndicator(
                           value: progress.clamp(0, 1) *
                               _caloriesAnimationController.value,
-                          strokeWidth: 10,
+                          strokeWidth: 8,
                           backgroundColor:
-                              AppTheme.onPrimary.withValues(alpha:  0.15),
+                              AppTheme.onPrimary.withValues(alpha: 0.15),
                           valueColor:
                               const AlwaysStoppedAnimation(AppTheme.onPrimary),
                           strokeCap: StrokeCap.round,
@@ -292,7 +294,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               Text(
                                 consumed.toInt().toString(),
                                 style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 28,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.w800,
                                   color: AppTheme.onPrimary,
                                 ),
@@ -300,9 +302,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               Text(
                                 'kcal',
                                 style: GoogleFonts.manrope(
-                                  fontSize: 12,
+                                  fontSize: 10,
                                   color:
-                                      AppTheme.onPrimary.withValues(alpha:  0.7),
+                                      AppTheme.onPrimary.withValues(alpha: 0.7),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -322,8 +324,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     Text(
                       'Meta Diária',
                       style: GoogleFonts.manrope(
-                        fontSize: 14,
-                        color: AppTheme.onPrimary.withValues(alpha:  0.8),
+                        fontSize: 12,
+                        color: AppTheme.onPrimary.withValues(alpha: 0.8),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -331,7 +333,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     Text(
                       '${goal.toInt()} kcal',
                       style: GoogleFonts.plusJakartaSans(
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
                         color: AppTheme.onPrimary,
                       ),
@@ -343,7 +345,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.onPrimary.withValues(alpha:  0.15),
+                        color: AppTheme.onPrimary.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -405,29 +407,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         child: Column(
           children: [
             Container(
-              width: 60,
-              height: 60,
+              width: 50,
+              height: 50,
               decoration: BoxDecoration(
                 color: AppTheme.surfaceContainerLowest,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha:  0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
                 ],
               ),
-              child: Icon(icon, color: AppTheme.primary, size: 26),
+              child: Icon(icon, color: AppTheme.primary, size: 22),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               label,
               style: GoogleFonts.manrope(
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: AppTheme.onSurfaceVariant,
               ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ],
         ),
@@ -472,7 +476,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     Icons.egg_alt_outlined,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 Expanded(
                   child: _buildMacroCard(
                     'Carboidratos',
@@ -482,7 +486,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     Icons.grain_outlined,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 Expanded(
                   child: _buildMacroCard(
                     'Gorduras',
@@ -510,13 +514,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final progress = goal > 0 ? value / goal : 0.0;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:  0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -527,35 +531,41 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         children: [
           Row(
             children: [
-              Icon(icon, size: 18, color: color),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: GoogleFonts.manrope(
-                  fontSize: 12,
-                  color: AppTheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w500,
+              Icon(icon, size: 16, color: color),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  label,
+                  style: GoogleFonts.manrope(
+                    fontSize: 10,
+                    color: AppTheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Text(
             '${value.toInt()}g',
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.w700,
               color: AppTheme.onSurface,
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(3),
             child: LinearProgressIndicator(
               value: progress.clamp(0, 1),
-              backgroundColor: color.withValues(alpha:  0.15),
+              backgroundColor: color.withValues(alpha: 0.15),
               valueColor: AlwaysStoppedAnimation(color),
-              minHeight: 5,
+              minHeight: 4,
             ),
           ),
         ],
@@ -649,7 +659,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppTheme.outline.withValues(alpha:  0.5)),
+        border: Border.all(color: AppTheme.outline.withValues(alpha: 0.5)),
       ),
       child: Column(
         children: [

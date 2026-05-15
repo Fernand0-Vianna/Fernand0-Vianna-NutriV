@@ -10,7 +10,7 @@ class UsdaFoodService {
   final String _apiKey;
 
   UsdaFoodService(this._dio, this._db)
-    : _apiKey = dotenv.env['USDA_API_KEY'] ?? '';
+    : _apiKey = dotenv.env['USDA_API_KEY'] ?? 'DEMO_KEY';
 
   Future<List<FoodItem>> searchFoodByName(String query) async {
     if (_apiKey.isEmpty) {

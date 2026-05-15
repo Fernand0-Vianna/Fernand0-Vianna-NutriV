@@ -127,7 +127,9 @@
 
 ### Correções Críticas de UI/UX
 - [ ] **Corrigir falhas visuais** na página inicial (textos vermelhos, barras pretas/amarelas)
+- [ ] **Corrigir erros de overflow** (Right e Bottom overflowed)
 - [ ] **Ajustar interface** do status e botão '+' para melhor UX
+- [ ] **Implementar layout responsivo** para diferentes tamanhos de tela
 - [ ] **Limpar poluição visual** que prejudica navegação
 
 ### Funcionalidades Essenciais
@@ -145,3 +147,36 @@
 - [ ] **Verificar precisão** de calorias e macronutrientes
 - [ ] **Implementar cache** de alimentos identificados no Supabase
 - [ ] **Criar sistema** de aprendizado com correções do usuário
+
+---
+
+## 🆕 Novas Melhorias Solicitadas (08/05/2026)
+
+### Funcionalidades do Usuário
+- [ ] **Remoção de pratos** adicionados por engano
+  - Botão para excluir pratos individuais do diário
+  - Confirmação antes de remover
+  - Undo (desfazer) para remoções acidentais
+  - Histórico de refeições removidas (últimas 24h)
+
+### Integração com Netlify
+- [ ] **Acesso à conta Google** via Netlify
+  - Configurar OAuth provider no Netlify
+  - Integrar login Google com backend Netlify
+  - Sincronizar dados entre Supabase e Netlify
+  - Alternar entre métodos de login (Supabase/Netlify)
+
+---
+
+## ✅ Status das Correções de Overflow (08/05/2026)
+
+### Concluído
+- [x] **Corrigir erros de overflow** (Right e Bottom overflowed) - RESOLVIDO
+- [x] **Implementar layout responsivo** para diferentes tamanhos de tela - RESOLVIDO
+- [x] **ScannerPage** - SingleChildScrollView aplicado
+- [x] **ProgressPage** - Elementos redimensionados
+- [x] **HomePage** - Header, macronutrientes e botões corrigidos
+- [x] **ProfilePage** - Layout responsivo implementado
+
+### Documentação
+- [x] **Correções documentadas** em `Correcoes_Overflow_08_05_2026.md`

@@ -59,51 +59,64 @@ class BarcodeScannerBloc
 
   Future<FoodItem?> _fetchFromOpenFoodFacts(String barcode) async {
     try {
-      final response = await _dio.get(
+      final List<String> urls = [
         'https://world.openfoodfacts.org/product/$barcode.json',
-        queryParameters: {
-          'fields':
-              'product_name,nutriments,brands,quantity,serving_size,packing',
-        },
-      );
+        'https://world.openfoodfacts.org/api/v0/product/$barcode.json',
+      ];
 
-      if (response.statusCode == 200 && response.data['status'] == 1) {
-        final product = response.data['product'];
-        if (product == null) return null;
+      for (final url in urls) {
+        try {
+          final response = await _dio.get(
+            url,
+            queryParameters: {
+              'fields':
+                  'product_name,nutriments,brands,quantity,serving_size,packing',
+            },
+          ).timeout(const Duration(seconds: 10));
 
-        final nutriments = product['nutriments'] ?? {};
-        final name = product['product_name'] ??
-            product['brands'] ??
-            'Produto desconhecido';
+          if (response.statusCode == 200 &&
+              response.data != null &&
+              response.data['status'] == 1) {
+            final product = response.data['product'];
+            if (product == null) continue;
 
-        if (name == 'Produto desconhecido' && product['brands'] == null) {
-          return null;
-        }
+            final nutriments = product['nutriments'] ?? {};
+            final name = product['product_name'] ??
+                product['brands'] ??
+                'Produto desconhecido';
 
-        final portionMatch = RegExp(
-          r'(\d+(?:\.\d+)?)\s*(g|ml|mg)',
-        ).firstMatch(product['quantity']?.toString() ?? '');
-        final defaultPortion = portionMatch != null
-            ? double.tryParse(portionMatch.group(1) ?? '100') ?? 100.0
-            : 100.0;
-        final portionUnit = portionMatch?.group(2) ?? 'g';
+            if (name == 'Produto desconhecido' && product['brands'] == null) {
+              continue;
+            }
 
-        return FoodItem(
-          id: barcode,
-          name: name.toString(),
-          calories: (nutriments['energy-kcal_100g'] ?? 0.0).toDouble(),
-          protein:
-              (nutriments['proteins_100g'] ?? nutriments['proteins'] ?? 0.0)
+            final portionMatch = RegExp(
+              r'(\d+(?:\.\d+)?)\s*(g|ml|mg)',
+            ).firstMatch(product['quantity']?.toString() ?? '');
+            final defaultPortion = portionMatch != null
+                ? double.tryParse(portionMatch.group(1) ?? '100') ?? 100.0
+                : 100.0;
+            final portionUnit = portionMatch?.group(2) ?? 'g';
+
+            return FoodItem(
+              id: barcode,
+              name: name.toString(),
+              calories: (nutriments['energy-kcal_100g'] ?? 0.0).toDouble(),
+              protein:
+                  (nutriments['proteins_100g'] ?? nutriments['proteins'] ?? 0.0)
+                      .toDouble(),
+              carbs: (nutriments['carbohydrates_100g'] ??
+                      nutriments['carbohydrates'] ??
+                      0.0)
                   .toDouble(),
-          carbs: (nutriments['carbohydrates_100g'] ??
-                  nutriments['carbohydrates'] ??
-                  0.0)
-              .toDouble(),
-          fat: (nutriments['fat_100g'] ?? nutriments['fat'] ?? 0.0).toDouble(),
-          portion: defaultPortion,
-          portionUnit: portionUnit,
-          barcode: barcode,
-        );
+              fat: (nutriments['fat_100g'] ?? nutriments['fat'] ?? 0.0).toDouble(),
+              portion: defaultPortion,
+              portionUnit: portionUnit,
+              barcode: barcode,
+            );
+          }
+        } catch (_) {
+          continue;
+        }
       }
     } catch (_) {}
     return null;

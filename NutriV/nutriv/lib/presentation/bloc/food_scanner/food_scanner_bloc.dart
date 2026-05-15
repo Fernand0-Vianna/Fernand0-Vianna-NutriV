@@ -2,6 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/datasources/ai_food_service.dart';
 import '../../../data/datasources/groq_vision_service.dart';
 import '../../../data/datasources/usda_food_service.dart';
+import '../../../data/datasources/fatsecret_service.dart';
+import '../../../data/datasources/gemini_food_service.dart';
 import '../../../domain/entities/food_item.dart';
 import '../../../core/services/logging_service.dart';
 import 'food_scanner_event.dart';
@@ -11,11 +13,15 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
   final AiFoodService _aiFoodService;
   final GroqVisionService _groqVisionService;
   final UsdaFoodService _usdaFoodService;
+  final FatSecretService _fatSecretService;
+  final GeminiFoodService _geminiFoodService;
 
   FoodScannerBloc(
     this._aiFoodService,
     this._groqVisionService,
     this._usdaFoodService,
+    this._fatSecretService,
+    this._geminiFoodService,
   ) : super(FoodScannerInitial()) {
     on<AnalyzeImage>(_onAnalyzeImage);
     on<AnalyzeText>(_onAnalyzeText);
@@ -33,13 +39,42 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
   ) async {
     emit(FoodScannerLoading());
     try {
-      List<FoodItem> foods;
+      List<FoodItem> foods = [];
 
+      // Fluxo: Gemini → USDA (validação) → Groq (fallback) → AiFoodService
       try {
-        foods = await _groqVisionService.analyzeFoodImage(event.imageFile);
+        foods = await _geminiFoodService.analyzeFoodImage(event.imageFile);
+        LoggingService.info('FoodScannerBloc', 'Gemini retornou ${foods.length} alimentos');
+
+        // Validação opcional com USDA para dados mais precisos
+        if (foods.isNotEmpty) {
+          foods = await _validateWithUSDA(foods);
+        }
       } catch (e) {
-        LoggingService.error('FoodScannerBloc', 'AnalyzeImage GroqVision', e);
-        foods = await _aiFoodService.analyzeFoodImage(event.imageFile);
+        LoggingService.warn('FoodScannerBloc', 'Gemini falhou, tentando USDA: $e');
+        try {
+          // Fallback para USDA via busca por nome do primeiro alimento
+          if (foods.isNotEmpty && foods.first.name.isNotEmpty) {
+            final usdaFoods = await _usdaFoodService.searchFoodByName(foods.first.name);
+            if (usdaFoods.isNotEmpty) {
+              foods = usdaFoods;
+              LoggingService.info('FoodScannerBloc', 'USDA fallback retornou ${foods.length} alimentos');
+            }
+          }
+        } catch (e2) {
+          LoggingService.warn('FoodScannerBloc', 'USDA falhou, tentando Groq: $e2');
+          try {
+            foods = await _groqVisionService.analyzeFoodImage(event.imageFile);
+            LoggingService.info('FoodScannerBloc', 'Groq Vision retornou ${foods.length} alimentos');
+          } catch (e3) {
+            LoggingService.warn('FoodScannerBloc', 'Groq falhou, tentando AiFoodService: $e3');
+            try {
+              foods = await _aiFoodService.analyzeFoodImage(event.imageFile);
+            } catch (e4) {
+              LoggingService.error('FoodScannerBloc', 'Todos os serviços falharam', e4);
+            }
+          }
+        }
       }
 
       if (foods.isEmpty) {
@@ -61,13 +96,77 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
     }
   }
 
+  Future<List<FoodItem>> _validateWithUSDA(List<FoodItem> foods) async {
+    try {
+      final validatedFoods = <FoodItem>[];
+      
+      for (final food in foods) {
+        // Buscar no USDA para obter dados mais precisos
+        final usdaResults = await _usdaFoodService.searchFoodByName(food.name);
+        
+        if (usdaResults.isNotEmpty) {
+          // Usar dados do USDA para refinar os valores
+          final usdaFood = usdaResults.first;
+          validatedFoods.add(food.copyWith(
+            calories: usdaFood.calories,
+            protein: usdaFood.protein,
+            carbs: usdaFood.carbs,
+            fat: usdaFood.fat,
+            fiber: usdaFood.fiber,
+          ));
+          LoggingService.info('FoodScannerBloc', 'USDA validou: ${food.name}');
+        } else {
+          // Manter dados do Gemini se USDA não encontrar
+          validatedFoods.add(food);
+        }
+      }
+      
+      return validatedFoods;
+    } catch (e) {
+      LoggingService.warn('FoodScannerBloc', 'Validação USDA falhou: $e');
+      return foods;
+    }
+  }
+
   Future<void> _onAnalyzeText(
     AnalyzeText event,
     Emitter<FoodScannerState> emit,
   ) async {
     emit(FoodScannerLoading());
     try {
-      final foods = await _aiFoodService.analyzeFoodFromText(event.text);
+      List<FoodItem> foods = [];
+
+      // Fluxo: USDA (primário) → Gemini (fallback) → Groq → AiFoodService
+      try {
+        // USDA é 100% grátis e mais preciso para dados nutricionais
+        foods = await _usdaFoodService.searchFoodByName(event.text);
+        LoggingService.info('FoodScannerBloc', 'USDA retornou ${foods.length} alimentos');
+        
+        if (foods.isEmpty) {
+          // Fallback para Gemini se USDA não encontrar
+          throw Exception('USDA vazio, tentando Gemini');
+        }
+      } catch (e) {
+        LoggingService.warn('FoodScannerBloc', 'USDA falhou, tentando Gemini: $e');
+        try {
+          foods = await _geminiFoodService.analyzeFoodFromText(event.text);
+          LoggingService.info('FoodScannerBloc', 'Gemini retornou ${foods.length} alimentos');
+          
+          // Validar com USDA após Gemini
+          if (foods.isNotEmpty) {
+            foods = await _validateWithUSDA(foods);
+          }
+        } catch (e2) {
+          LoggingService.warn('FoodScannerBloc', 'Gemini falhou, tentando Groq: $e2');
+          try {
+            // Groq não suporta texto diretamente, usar AiFoodService
+            foods = await _aiFoodService.analyzeFoodFromText(event.text);
+          } catch (e3) {
+            LoggingService.error('FoodScannerBloc', 'Todos os serviços falharam', e3);
+          }
+        }
+      }
+
       if (foods.isEmpty) {
         emit(
           const FoodScannerError(
@@ -93,14 +192,39 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
   ) async {
     emit(FoodScannerLoading());
     try {
-      var foods = await _usdaFoodService.searchFoodByName(event.query);
+      List<FoodItem> foods = [];
 
-      if (foods.isEmpty) {
-        foods = await _aiFoodService.analyzeFoodFromText(event.query);
-      }
-
-      if (foods.isEmpty) {
-        foods = await _aiFoodService.searchOpenFoodFacts(event.query);
+      // Fluxo: USDA (primário, grátis) → Gemini → FatSecret → AiFoodService
+      try {
+        foods = await _usdaFoodService.searchFoodByName(event.query);
+        LoggingService.info('FoodScannerBloc', 'USDA retornou ${foods.length} alimentos');
+      } catch (e) {
+        LoggingService.warn('FoodScannerBloc', 'USDA falhou, tentando Gemini: $e');
+        try {
+          foods = await _geminiFoodService.analyzeFoodFromText(event.query);
+          LoggingService.info('FoodScannerBloc', 'Gemini retornou ${foods.length} alimentos');
+          
+          // Validar com USDA após Gemini
+          if (foods.isNotEmpty) {
+            foods = await _validateWithUSDA(foods);
+          }
+        } catch (e2) {
+          LoggingService.warn('FoodScannerBloc', 'Gemini falhou, tentando FatSecret: $e2');
+          try {
+            foods = await _fatSecretService.searchFoods(event.query);
+            LoggingService.info('FoodScannerBloc', 'FatSecret retornou ${foods.length} alimentos');
+          } catch (e3) {
+            LoggingService.warn('FoodScannerBloc', 'FatSecret falhou, tentando AiFoodService: $e3');
+            try {
+              foods = await _aiFoodService.analyzeFoodFromText(event.query);
+              if (foods.isEmpty) {
+                foods = await _aiFoodService.searchOpenFoodFacts(event.query);
+              }
+            } catch (e4) {
+              LoggingService.error('FoodScannerBloc', 'Todos os serviços falharam', e4);
+            }
+          }
+        }
       }
 
       if (foods.isEmpty) {

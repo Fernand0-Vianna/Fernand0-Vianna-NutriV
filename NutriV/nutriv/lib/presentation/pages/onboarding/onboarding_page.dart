@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -184,30 +185,34 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ),
       child: Column(
         children: [
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton.icon(
-              onPressed: _signInWithGoogle,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.surfaceContainerLow,
-                foregroundColor: AppTheme.onSurface,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                elevation: 0,
-              ),
-              icon: const Icon(Icons.g_mobiledata, size: 24),
-              label: Text(
-                'Continuar com Google',
-                style: GoogleFonts.manrope(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
+          // Temporariamente desabilitado - login por email apenas
+          // SizedBox(
+          //   width: double.infinity,
+          //   height: 56,
+          //   child: ElevatedButton.icon(
+          //     onPressed: _signInWithGoogle,
+          //     style: ElevatedButton.styleFrom(
+          //       backgroundColor: AppTheme.surfaceContainerLow,
+          //       foregroundColor: AppTheme.onSurface,
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(28),
+          //       ),
+          //       elevation: 0,
+          //     ),
+          //     icon: const Icon(Icons.g_mobiledata, size: 24),
+          //     label: Flexible(
+          //       child: Text(
+          //         'Continuar com Google',
+          //         style: GoogleFonts.manrope(
+          //           fontSize: 16,
+          //           fontWeight: FontWeight.w700,
+          //         ),
+          //         overflow: TextOverflow.ellipsis,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 12),
           TextButton(
             onPressed: () => setState(() => _showEmailLogin = !_showEmailLogin),
             child: Text(
@@ -900,6 +905,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         userResult = await authService.signUpWithEmail(
           _emailController.text.trim(),
           _passwordController.text,
+          name: _nameController.text.isNotEmpty ? _nameController.text.trim() : null,
         );
       } else {
         userResult = await authService.signInWithEmail(
@@ -954,7 +960,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
         );
 
         context.read<UserBloc>().add(SaveUser(user));
-        context.go('/');
+
+        // Salva perfil completo no Supabase (não bloqueia se falhar)
+        if (_isSignUp) {
+          try {
+            await _updateProfileInSupabase(user, userResult.id);
+          } catch (e) {
+            if (kDebugMode) debugPrint('Profile update skipped: $e');
+          }
+        }
+
+        if (mounted) context.go('/');
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -1015,6 +1031,53 @@ class _OnboardingPageState extends State<OnboardingPage> {
     }
   }
 
+  Future<void> _updateProfileInSupabase(User user, String userId) async {
+    try {
+      final activityLabels = ['sedentary', 'light', 'moderate', 'active', 'very_active'];
+      await Supabase.instance.client.from('user_profiles').upsert({
+        'id': userId,
+        'name': user.name,
+        'email': user.email,
+        'current_weight_kg': user.weight,
+        'height_cm': user.height,
+        'birth_date': DateTime.now()
+            .subtract(Duration(days: user.age * 365))
+            .toIso8601String()
+            .split('T')[0],
+        'gender': user.isMale ? 'male' : 'female',
+        'activity_level': activityLabels[user.activityLevel.clamp(0, 4)],
+        'goal_type': user.goal,
+        'target_weight_kg': user.goal == 'lose'
+            ? user.weight - 5
+            : user.goal == 'gain'
+                ? user.weight + 5
+                : user.weight,
+        'bmr_calories': NutritionUtils.calculateBMR(
+          weight: user.weight,
+          height: user.height,
+          age: user.age,
+          isMale: user.isMale,
+        ),
+        'tdee_calories': NutritionUtils.calculateTDEE(
+          NutritionUtils.calculateBMR(
+            weight: user.weight,
+            height: user.height,
+            age: user.age,
+            isMale: user.isMale,
+          ),
+          user.activityLevel,
+        ),
+        'daily_calories_target': user.calorieGoal,
+        'protein_target_g': user.proteinGoal,
+        'carbs_target_g': user.carbsGoal,
+        'fat_target_g': user.fatGoal,
+        'water_target_ml': user.waterGoal,
+      }, onConflict: 'id');
+    } catch (e) {
+      if (kDebugMode) debugPrint('Erro ao salvar perfil no Supabase: $e');
+    }
+  }
+
   Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -1047,10 +1110,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
       // Pegar ID do usuário do Supabase Auth
       final currentUser = Supabase.instance.client.auth.currentUser;
-      final userId = currentUser?.id ?? DateTime.now().millisecondsSinceEpoch.toString();
+      if (currentUser == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Nenhum usuário autenticado. Faça login primeiro.'),
+              backgroundColor: AppTheme.error,
+            ),
+          );
+        }
+        setState(() => _isLoading = false);
+        return;
+      }
 
       final user = User(
-        id: userId,
+        id: currentUser.id,
         name: _nameController.text,
         weight: weight,
         height: height,
@@ -1067,6 +1141,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
       );
 
       context.read<UserBloc>().add(SaveUser(user));
+
+      // Salva perfil completo no Supabase
+      await _updateProfileInSupabase(user, currentUser.id);
+
       if (mounted) context.go('/');
     } catch (e) {
       if (mounted) {

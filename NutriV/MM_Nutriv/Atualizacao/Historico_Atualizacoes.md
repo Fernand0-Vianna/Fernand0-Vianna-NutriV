@@ -51,6 +51,35 @@ Correção do scanner de alimentos (foto), scanner de código de barras e fluxo 
 
 ---
 
+## 📅 14 de Maio de 2026 (Tarde) - Debug Registro de Usuários
+
+### 🎯 Problema
+Usuários não conseguem criar conta. Ao clicar em "Criar Conta", aparece erro genérico "Erro ao criar conta".
+
+### 🔧 Correções Aplicadas
+
+#### 1. auth_callback_page.dart - Correção de rotas
+- **Problema:** Login Google tentava navegar para `/onboarding` que não existe no router
+- **Solução:** Alterado para redirecionar para `/` (home) após login com Google
+- **Arquivo:** `lib/presentation/pages/auth/auth_callback_page.dart` (linhas 65 e 85)
+
+#### 2. register_page.dart - Debug e tratamento de erros
+- **Adicionado:** Logging detalhado no catch para identificar erro real
+- **Melhorado:** `_updateProfileInSupabase()` não bloqueia registro se falhar
+- **Arquivo:** `lib/presentation/pages/login/register_page.dart`
+
+### 📊 Status Atual
+- **flutter analyze:** 0 issues ✅
+- **APK:** Compilado e instalado no celular
+- **Teste:** Usuário testando registro novamente para capturar erro específico
+
+### 📋 Próximos Passos
+1. Identificar erro específico do registro
+2. Corrigir políticas RLS do Supabase se necessário
+3. Verificar se tabela `user_profiles` existe e está configurada
+
+---
+
 ## 📅 06 de Maio de 2026 - Correções Login Google e Adição de Alimentos
 
 ### 🎯 Resumo

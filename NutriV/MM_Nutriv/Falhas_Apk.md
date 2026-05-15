@@ -92,7 +92,9 @@ O `SyncMealRepository` (localizado em `nutriv/lib/data/repositories/sync_meal_re
 ### 1. Falhas Visuais na Página Inicial
 - **Textos em vermelho** aparecem indevidamente na interface
 - **Barras pretas e amarelas** na página inicial com status e botão '+'
+- **Erros de overflow**: Right e Bottom overflowed continuam aparecendo
 - Interface poluída visualmente prejudicando UX
+- Layout quebra em diferentes tamanhos de tela
 
 ### 2. Menu Iniciar Não Funcional
 - Menu iniciar **não adiciona de fato** os pratos no diário

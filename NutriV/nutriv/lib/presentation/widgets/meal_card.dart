@@ -174,12 +174,15 @@ class MealCard extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 6),
-        Text(
-          '$label: ${value.toInt()}g',
-          style: GoogleFonts.manrope(
-            fontSize: 12,
-            color: AppTheme.onSurfaceVariant,
-            fontWeight: FontWeight.w500,
+        Flexible(
+          child: Text(
+            '$label: ${value.toInt()}g',
+            style: GoogleFonts.manrope(
+              fontSize: 12,
+              color: AppTheme.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],

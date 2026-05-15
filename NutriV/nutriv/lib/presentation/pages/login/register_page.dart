@@ -74,6 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
       final userResult = await authService.signUpWithEmail(
         _emailController.text.trim(),
         _passwordController.text,
+        name: _nameController.text.trim(),
       );
 
       if (kDebugMode) {
@@ -118,15 +119,28 @@ class _RegisterPageState extends State<RegisterPage> {
         );
 
         context.read<UserBloc>().add(SaveUser(user));
-        await _updateProfileInSupabase(user, userResult.id);
+
+        // Atualiza perfil no Supabase (não bloqueia se falhar)
+        try {
+          await _updateProfileInSupabase(user, userResult.id);
+        } catch (e) {
+          if (kDebugMode) debugPrint('Profile update skipped: $e');
+        }
+
         if (mounted) context.go('/');
       } else if (mounted) {
         setState(() => _errorMessage =
             'Erro ao criar conta. E-mail já pode estar em uso.');
       }
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('=== REGISTRATION ERROR ===');
+        debugPrint('Error: $e');
+        debugPrint('Stack: ${StackTrace.current}');
+        debugPrint('===========================');
+      }
       if (mounted) {
-        String errorMessage = 'Erro ao criar conta';
+        String errorMessage = 'Erro ao criar conta: ${e.toString()}';
 
         if (e.toString().contains('email')) {
           errorMessage = 'E-mail inválido ou já está em uso';
@@ -150,8 +164,10 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> _updateProfileInSupabase(User user, String userId) async {
     try {
       final activityLabels = ['sedentary', 'light', 'moderate', 'active', 'very_active'];
-      await Supabase.instance.client.from('user_profiles').update({
+      await Supabase.instance.client.from('user_profiles').upsert({
+        'id': userId,
         'name': user.name,
+        'email': user.email,
         'current_weight_kg': user.weight,
         'height_cm': user.height,
         'birth_date': DateTime.now()
@@ -186,7 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'carbs_target_g': user.carbsGoal,
         'fat_target_g': user.fatGoal,
         'water_target_ml': user.waterGoal,
-      }).eq('id', userId);
+      }, onConflict: 'id');
     } catch (e) {
       if (kDebugMode) debugPrint('Erro ao salvar perfil no Supabase: $e');
     }

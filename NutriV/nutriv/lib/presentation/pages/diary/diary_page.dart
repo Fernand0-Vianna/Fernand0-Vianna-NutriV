@@ -80,12 +80,15 @@ class _DiaryPageState extends State<DiaryPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          'Diário',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 32,
-            fontWeight: FontWeight.w800,
-            color: AppTheme.onSurface,
+        Flexible(
+          child: Text(
+            'Diário',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 32,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.onSurface,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         Row(

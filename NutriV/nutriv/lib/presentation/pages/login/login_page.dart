@@ -328,10 +328,11 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 48),
                 _buildLoginCard(),
                 const SizedBox(height: 24),
-                _buildDivider(),
-                const SizedBox(height: 24),
-                _buildGoogleButton(),
-                const SizedBox(height: 32),
+                // Temporariamente desabilitado - login por email apenas
+                // _buildDivider(),
+                // const SizedBox(height: 24),
+                // _buildGoogleButton(),
+                // const SizedBox(height: 32),
                 _buildRegisterLink(),
               ],
             ),
@@ -623,12 +624,15 @@ class _LoginPageState extends State<LoginPage> {
               elevation: 0,
             ),
             icon: Icon(Icons.g_mobiledata, size: 24, color: AppTheme.secondary),
-            label: Text(
-              'Continuar com Google',
-              style: GoogleFonts.manrope(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: AppTheme.onSurface,
+            label: Flexible(
+              child: Text(
+                'Continuar com Google',
+                style: GoogleFonts.manrope(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.onSurface,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),

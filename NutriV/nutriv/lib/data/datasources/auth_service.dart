@@ -32,7 +32,7 @@ class AuthService {
     }
   }
 
-  Future<app.User?> signUpWithEmail(String email, String password) async {
+  Future<app.User?> signUpWithEmail(String email, String password, {String? name}) async {
     try {
       if (kDebugMode) {
         LoggingService.auth('Attempting to sign up with email: $email');
@@ -41,22 +41,17 @@ class AuthService {
       final response = await _supabase.auth.signUp(
         email: email,
         password: password,
+        data: name != null ? {'name': name} : null,
       );
 
       if (response.user != null) {
         final user = _createUserFromSupabase(response.user!);
         await _userRepository.saveUser(user);
 
-        // Criar perfil no Supabase
-        await _createUserProfile(response.user!.id, email);
-
-        return user;
-      }
-
-      if (response.session != null && response.user != null) {
-        final user = _createUserFromSupabase(response.user!);
-        await _userRepository.saveUser(user);
-        await _createUserProfile(response.user!.id, email);
+        if (name != null) {
+          await _createUserProfile(response.user!.id, email, name);
+        }
+        
         return user;
       }
 
@@ -69,51 +64,17 @@ class AuthService {
     }
   }
 
-  Future<void> _createUserProfile(String userId, String email) async {
+  Future<void> _createUserProfile(String userId, String email, String name) async {
     try {
-      final name = email.split('@').first;
-      
-      // Valores padrão razoáveis
-      const defaultWeight = 70.0;
-      const defaultHeight = 170.0;
-      const defaultAge = 30;
-      const defaultActivity = 'moderate';
-      const defaultGoal = 'maintain';
-      const defaultCalorieGoal = 2000;
-      const defaultProteinGoal = 150;
-      const defaultCarbsGoal = 200;
-      const defaultFatGoal = 65;
-      const defaultWaterGoal = 2500;
-      
       await _supabase.from('user_profiles').upsert({
         'id': userId,
         'email': email,
         'name': name,
-        'current_weight_kg': defaultWeight,
-        'height_cm': defaultHeight,
-        'birth_date': DateTime.now().subtract(Duration(days: defaultAge * 365)).toIso8601String().split('T')[0],
-        'gender': 'male',
-        'activity_level': defaultActivity,
-        'goal_type': defaultGoal,
-        'target_weight_kg': defaultWeight,
-        'weekly_goal_kg': 0.5,
-        'bmr_calories': 1700,
-        'tdee_calories': 2600,
-        'daily_calories_target': defaultCalorieGoal,
-        'protein_target_g': defaultProteinGoal,
-        'carbs_target_g': defaultCarbsGoal,
-        'fat_target_g': defaultFatGoal,
-        'water_target_ml': defaultWaterGoal,
-        'daily_steps_target': 10000,
-        'measurement_unit': 'metric',
-        'language': 'pt-BR',
-        'timezone': 'America/Sao_Paulo',
         'created_at': DateTime.now().toIso8601String(),
       }, onConflict: 'id');
-      
       LoggingService.auth('Perfil criado no Supabase para: $email');
     } catch (e) {
-      LoggingService.error('AuthService', 'createUserProfile', e);
+      LoggingService.warn('AuthService', 'Perfil já existe ou erro ao criar: $e');
     }
   }
 

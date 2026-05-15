@@ -60,9 +60,9 @@ class _AuthCallbackPageState extends State<AuthCallbackPage> {
             context.read<UserBloc>().add(SaveUser(profile));
             // Verificar se é usuário novo (sem dados configurados = peso 0)
             if (profile.weight == 0 || profile.weight == 70) {
-              // Usuário novo - ir para configurar plano
-              LoggingService.auth('AuthCallback: Novo usuário, redirecionando para setup...');
-              context.go('/onboarding');
+              // Usuário novo - redireciona para home
+              LoggingService.auth('AuthCallback: Novo usuário, redirecionando para home...');
+              context.go('/');
             } else {
               context.go('/');
             }
@@ -81,8 +81,8 @@ class _AuthCallbackPageState extends State<AuthCallbackPage> {
           context.read<UserBloc>().add(SaveUser(appUser));
           // Verificar se é usuário novo
           if (appUser.weight == 0) {
-            LoggingService.auth('AuthCallback: Novo usuário via fallback, redirecionando para setup...');
-            context.go('/onboarding');
+            LoggingService.auth('AuthCallback: Novo usuário via fallback, redirecionando para home...');
+            context.go('/');
           } else {
             context.go('/');
           }
