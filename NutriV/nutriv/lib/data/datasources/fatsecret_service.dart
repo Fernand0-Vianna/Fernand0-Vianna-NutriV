@@ -94,7 +94,7 @@ class FatSecretService {
 
     final signatureBase = '$method&${Uri.encodeComponent(_baseUrl)}&${Uri.encodeComponent(paramString)}';
 
-    final key = '${_apiKey}&';
+    final key = '$_apiKey&';
     final hmac = Hmac(sha1, key.codeUnits);
     final digest = hmac.convert(signatureBase.codeUnits);
 
@@ -117,10 +117,10 @@ class FatSecretService {
         return FoodItem(
           id: f['food_id']?.toString() ?? '',
           name: f['food_name'] ?? '',
-          calories: (double.tryParse(f['calories']?.toString() ?? '0') ?? 0) / 100,
-          protein: (double.tryParse(f['protein']?.toString() ?? '0') ?? 0) / 100,
-          carbs: (double.tryParse(f['carbohydrate']?.toString() ?? '0') ?? 0) / 100,
-          fat: (double.tryParse(f['fat']?.toString() ?? '0') ?? 0) / 100,
+          calories: double.tryParse(f['calories']?.toString() ?? '0') ?? 0,
+          protein: double.tryParse(f['protein']?.toString() ?? '0') ?? 0,
+          carbs: double.tryParse(f['carbohydrate']?.toString() ?? '0') ?? 0,
+          fat: double.tryParse(f['fat']?.toString() ?? '0') ?? 0,
           portion: 100,
           portionUnit: 'g',
         );

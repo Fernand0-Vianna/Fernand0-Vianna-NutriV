@@ -26,6 +26,7 @@ class ScannerPage extends StatefulWidget {
 class _ScannerPageState extends State<ScannerPage> {
   late final ImagePicker _picker;
   String _selectedMealType = 'Café da manhã';
+  String _inputMethod = 'manual';
 
   @override
   void initState() {
@@ -367,7 +368,7 @@ class _ScannerPageState extends State<ScannerPage> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: state.selectedFoods.isNotEmpty
-                  ? () => _addToMeal(state.selectedFoods)
+                  ? () => _addToMeal(state.selectedFoods, inputMethod: _inputMethod)
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primary,
@@ -694,6 +695,7 @@ class _ScannerPageState extends State<ScannerPage> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
+    setState(() => _inputMethod = 'ai_scan');
     final XFile? image = await _picker.pickImage(source: source);
     if (image != null && mounted) {
       context.read<FoodScannerBloc>().add(AnalyzeImage(File(image.path)));
@@ -768,6 +770,7 @@ class _ScannerPageState extends State<ScannerPage> {
                 onPressed: () {
                   Navigator.pop(dialogContext);
                   if (controller.text.isNotEmpty) {
+                    _inputMethod = 'search';
                     context.read<FoodScannerBloc>().add(
                           AnalyzeText(controller.text),
                         );
@@ -796,7 +799,7 @@ class _ScannerPageState extends State<ScannerPage> {
     );
   }
 
-  void _addToMeal(List<FoodItem> foods) {
+  void _addToMeal(List<FoodItem> foods, {String inputMethod = 'manual'}) {
     int counter = 0;
     final mealFoods = foods
         .map(
@@ -816,7 +819,7 @@ class _ScannerPageState extends State<ScannerPage> {
       foods: mealFoods,
     );
 
-    context.read<MealBloc>().add(AddMeal(meal));
+    context.read<MealBloc>().add(AddMeal(meal, inputMethod: inputMethod));
     context.read<FoodScannerBloc>().add(ClearScannedFoods());
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -839,7 +842,7 @@ class _ScannerPageState extends State<ScannerPage> {
     );
 
     if (result != null && result is FoodItem) {
-      _addToMeal([result]);
+      _addToMeal([result], inputMethod: 'barcode');
     }
   }
 
@@ -1063,7 +1066,7 @@ class _ScannerPageState extends State<ScannerPage> {
       );
     }).toList();
 
-    _addToMeal(foods);
+    _addToMeal(foods, inputMethod: 'manual');
 
     // Atualizar timesUsed
     context.read<FavoriteDishBloc>().add(UseFavoriteDish(dish));

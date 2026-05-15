@@ -247,7 +247,6 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Widget _buildMealsList(MealLoaded state) {
-    final mealTypes = MealType.displayNames;
     final totalCalories =
         state.meals.fold<double>(0, (sum, m) => sum + m.totalCalories);
 
@@ -318,8 +317,8 @@ class _DiaryPageState extends State<DiaryPage> {
         ),
         const SizedBox(height: 24),
         // Lista de refeições por tipo
-        ...mealTypes.map((mealType) {
-          final mealsForType = state.getMealsByType(mealType);
+        ...MealType.values.map((type) {
+          final mealsForType = state.getMealsByType(type.key);
 
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
@@ -355,7 +354,7 @@ class _DiaryPageState extends State<DiaryPage> {
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
-                          _getMealIcon(mealType),
+                          _getMealIcon(type.key),
                           color: AppTheme.primary,
                           size: 22,
                         ),
@@ -366,7 +365,7 @@ class _DiaryPageState extends State<DiaryPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              mealType,
+                              type.displayName,
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
@@ -386,7 +385,7 @@ class _DiaryPageState extends State<DiaryPage> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => _showAddFoodDialog(mealType),
+                        onTap: () => _showAddFoodDialog(type.displayName),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 14, vertical: 8),
@@ -449,13 +448,13 @@ class _DiaryPageState extends State<DiaryPage> {
 
   IconData _getMealIcon(String mealType) {
     switch (mealType) {
-      case 'Café da manhã':
+      case 'café da manhã':
         return Icons.free_breakfast_outlined;
-      case 'Almoço':
+      case 'almoço':
         return Icons.lunch_dining_outlined;
-      case 'Jantar':
+      case 'jantar':
         return Icons.dinner_dining_outlined;
-      case 'Lanche':
+      case 'lanche':
         return Icons.cookie_outlined;
       default:
         return Icons.restaurant_outlined;
@@ -902,6 +901,7 @@ class _AddFoodSheetState extends State<_AddFoodSheet> {
           food: mealFood,
           quantity: food.portion,
           date: widget.date,
+          inputMethod: 'search',
         ));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -1003,6 +1003,7 @@ class _AddFoodSheetState extends State<_AddFoodSheet> {
           food: mealFood,
           quantity: quantity,
           date: widget.date,
+          inputMethod: 'search',
         ));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

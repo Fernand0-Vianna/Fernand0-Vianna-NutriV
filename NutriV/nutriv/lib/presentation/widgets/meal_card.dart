@@ -191,13 +191,13 @@ class MealCard extends StatelessWidget {
 
   IconData _getMealIcon(String mealType) {
     switch (mealType) {
-      case 'Café da manhã':
+      case 'café da manhã':
         return Icons.wb_sunny_outlined;
-      case 'Almoço':
+      case 'almoço':
         return Icons.restaurant_outlined;
-      case 'Jantar':
+      case 'jantar':
         return Icons.nightlight_outlined;
-      case 'Lanche':
+      case 'lanche':
         return Icons.coffee_outlined;
       default:
         return Icons.restaurant_outlined;

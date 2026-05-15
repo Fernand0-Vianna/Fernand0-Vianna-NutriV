@@ -16,7 +16,7 @@ class SyncMealRepository {
     final dbMeals = await _db.getAllMeals(userId: userId);
 
     if (dbMeals.isEmpty) {
-      await _pullFromSupabase();
+      await pullFromSupabase();
       final dbMealsAfter = await _db.getAllMeals(userId: userId);
       return await _parseMealListWithFoods(dbMealsAfter);
     }
@@ -27,16 +27,22 @@ class SyncMealRepository {
   Future<List<Meal>> getMealsByDate(DateTime date) async {
     final userId = _supabase.auth.currentUser?.id;
     final dateStr = _formatDate(date);
-    final dbMeals = await _db.getMealsByDate(dateStr, userId: userId);
+    var dbMeals = await _db.getMealsByDate(dateStr, userId: userId);
+
+    if (dbMeals.isEmpty) {
+      await pullFromSupabase();
+      dbMeals = await _db.getMealsByDate(dateStr, userId: userId);
+    }
+
     return await _parseMealListWithFoods(dbMeals);
   }
 
   Future<void> init() async {
     await processPendingSync();
-    await _pullFromSupabase();
+    await pullFromSupabase();
   }
 
-  Future<void> _pullFromSupabase() async {
+  Future<void> pullFromSupabase() async {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return;
@@ -132,7 +138,7 @@ class SyncMealRepository {
     await saveMeal(meal);
   }
 
-  Future<void> saveMeal(Meal meal) async {
+  Future<void> saveMeal(Meal meal, {String inputMethod = 'manual'}) async {
     final dateStr = _formatDate(meal.dateTime);
     final userId = _supabase.auth.currentUser?.id;
 
@@ -144,7 +150,7 @@ class SyncMealRepository {
         'meal_type': meal.mealType,
         'consumed_at': meal.dateTime.toIso8601String(),
         'date': dateStr,
-        'input_method': 'manual',
+        'input_method': inputMethod,
         'notes': meal.notes,
         'sync_status': 'pending',
       },
@@ -170,17 +176,15 @@ class SyncMealRepository {
       }).toList(),
     );
 
-    await _syncMealToSupabase(meal);
+    await _syncMealToSupabase(meal, inputMethod: inputMethod);
   }
 
-  Future<void> _syncMealToSupabase(Meal meal, {int retryCount = 3}) async {
+  Future<void> _syncMealToSupabase(Meal meal, {int retryCount = 3, String inputMethod = 'manual'}) async {
     for (int attempt = 0; attempt < retryCount; attempt++) {
       try {
         final userId = _supabase.auth.currentUser?.id;
         if (userId == null) {
-          _logSync(
-            'Sync: Usuário não autenticado, salvando apenas localmente',
-          );
+          _logSync('Sync: Usuário não autenticado, salvando apenas localmente');
           return;
         }
 
@@ -195,7 +199,7 @@ class SyncMealRepository {
               'meal_type': meal.mealType.toLowerCase(),
               'consumed_at': meal.dateTime.toIso8601String(),
               'date': dateStr,
-              'input_method': 'manual',
+              'input_method': inputMethod,
             }, onConflict: 'id')
             .select('id')
             .maybeSingle();
@@ -211,44 +215,32 @@ class SyncMealRepository {
             .eq('meal_id', mealData['id']);
 
         for (final mealFood in meal.foods) {
-          final foodId =
-              await _ensureFoodExists(mealFood.food, userId);
+          final foodId = await _ensureFoodExists(mealFood.food, userId);
           await _supabase.from('meal_items').insert({
-            'id':
-                '${mealData['id']}_${foodId}_${DateTime.now().millisecondsSinceEpoch}',
+            'id': '${mealData['id']}_${foodId}_${DateTime.now().millisecondsSinceEpoch}',
             'meal_id': mealData['id'],
             'food_id': foodId,
             'food_name': mealFood.food.name,
             'quantity_g': mealFood.quantity,
-            'calories':
-                mealFood.food.calories * (mealFood.quantity / 100),
-            'protein_g':
-                mealFood.food.protein * (mealFood.quantity / 100),
-            'carbs_g':
-                mealFood.food.carbs * (mealFood.quantity / 100),
+            'calories': mealFood.food.calories * (mealFood.quantity / 100),
+            'protein_g': mealFood.food.protein * (mealFood.quantity / 100),
+            'carbs_g': mealFood.food.carbs * (mealFood.quantity / 100),
             'fat_g': mealFood.food.fat * (mealFood.quantity / 100),
-            'fiber_g':
-                mealFood.food.fiber * (mealFood.quantity / 100),
-            'input_method': 'manual',
+            'fiber_g': mealFood.food.fiber * (mealFood.quantity / 100),
+            'input_method': inputMethod,
           });
         }
 
         await _db.markMealSynced(meal.id);
-        _logSync(
-          'Sync: Refeição ${meal.name} sincronizada com sucesso',
-        );
+        _logSync('Sync: Refeição ${meal.name} sincronizada com sucesso');
         return;
       } catch (e) {
         _logSync('Sync: Tentativa ${attempt + 1} falhou: $e');
         if (attempt == retryCount - 1) {
-          _logSync(
-            'Sync: Todas as tentativas falharam. Erro final: $e',
-          );
+          _logSync('Sync: Todas as tentativas falharam. Erro final: $e');
           await _enqueueForSync(meal);
         }
-        await Future.delayed(
-          Duration(milliseconds: 500 * (attempt + 1)),
-        );
+        await Future.delayed(Duration(milliseconds: 500 * (attempt + 1)));
       }
     }
   }
@@ -334,10 +326,7 @@ class SyncMealRepository {
     );
   }
 
-  Future<String> _ensureFoodExists(
-    FoodItem food,
-    String userId,
-  ) async {
+  Future<String> _ensureFoodExists(FoodItem food, String userId) async {
     try {
       final existing = await _supabase
           .from('foods')
@@ -346,7 +335,9 @@ class SyncMealRepository {
           .maybeSingle();
 
       if (existing != null) {
-        return existing['id'] as String;
+        final foodId = existing['id'] as String;
+        _logSync('Sync: Alimento "${food.name}" já existe (ID: $foodId)');
+        return foodId;
       }
 
       final result = await _supabase
@@ -357,17 +348,18 @@ class SyncMealRepository {
             'protein': food.protein,
             'carbs': food.carbs,
             'fat': food.fat,
+            'fiber': food.fiber,
             'serving_size': food.portion,
             'created_by': userId,
           })
           .select('id')
           .single();
 
+      _logSync('Sync: Alimento "${food.name}" criado (ID: ${result['id']})');
       return result['id'] as String;
     } catch (e) {
-      _logSync(
-        'Erro ao garantir existência do alimento: $e',
-      );
+      _logSync('Sync: Alimento "${food.name}" sem registro em foods table, usando ID local: $e');
+      // Fallback: usar ID local + salvar dados denormalizados em meal_items
       return food.id;
     }
   }

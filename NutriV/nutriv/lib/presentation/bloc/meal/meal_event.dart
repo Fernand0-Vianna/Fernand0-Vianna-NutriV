@@ -19,11 +19,12 @@ class LoadMeals extends MealEvent {
 
 class AddMeal extends MealEvent {
   final Meal meal;
+  final String inputMethod;
 
-  const AddMeal(this.meal);
+  const AddMeal(this.meal, {this.inputMethod = 'manual'});
 
   @override
-  List<Object?> get props => [meal];
+  List<Object?> get props => [meal, inputMethod];
 }
 
 class UpdateMeal extends MealEvent {
@@ -54,6 +55,15 @@ class AddFoodToMeal extends MealEvent {
   List<Object?> get props => [mealId, food];
 }
 
+class SyncMeals extends MealEvent {
+  final DateTime date;
+
+  const SyncMeals(this.date);
+
+  @override
+  List<Object?> get props => [date];
+}
+
 class RemoveFoodFromMeal extends MealEvent {
   final String mealId;
   final String foodId;
@@ -69,14 +79,16 @@ class AddMealFood extends MealEvent {
   final MealFood food;
   final double quantity;
   final DateTime date;
+  final String inputMethod;
 
   const AddMealFood({
     required this.mealType,
     required this.food,
     required this.quantity,
     required this.date,
+    this.inputMethod = 'manual',
   });
 
   @override
-  List<Object?> get props => [mealType, food, quantity, date];
+  List<Object?> get props => [mealType, food, quantity, date, inputMethod];
 }

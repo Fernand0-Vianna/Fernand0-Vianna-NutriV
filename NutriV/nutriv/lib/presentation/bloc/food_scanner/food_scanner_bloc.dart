@@ -41,39 +41,32 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
     try {
       List<FoodItem> foods = [];
 
-      // Fluxo: Gemini → USDA (validação) → Groq (fallback) → AiFoodService
+      // Fluxo: Gemini → Groq Vision → AiFoodService (fallback linear)
       try {
         foods = await _geminiFoodService.analyzeFoodImage(event.imageFile);
         LoggingService.info('FoodScannerBloc', 'Gemini retornou ${foods.length} alimentos');
-
-        // Validação opcional com USDA para dados mais precisos
         if (foods.isNotEmpty) {
           foods = await _validateWithUSDA(foods);
         }
       } catch (e) {
-        LoggingService.warn('FoodScannerBloc', 'Gemini falhou, tentando USDA: $e');
+        LoggingService.warn('FoodScannerBloc', 'Gemini falhou: $e');
+      }
+
+      if (foods.isEmpty) {
         try {
-          // Fallback para USDA via busca por nome do primeiro alimento
-          if (foods.isNotEmpty && foods.first.name.isNotEmpty) {
-            final usdaFoods = await _usdaFoodService.searchFoodByName(foods.first.name);
-            if (usdaFoods.isNotEmpty) {
-              foods = usdaFoods;
-              LoggingService.info('FoodScannerBloc', 'USDA fallback retornou ${foods.length} alimentos');
-            }
-          }
-        } catch (e2) {
-          LoggingService.warn('FoodScannerBloc', 'USDA falhou, tentando Groq: $e2');
-          try {
-            foods = await _groqVisionService.analyzeFoodImage(event.imageFile);
-            LoggingService.info('FoodScannerBloc', 'Groq Vision retornou ${foods.length} alimentos');
-          } catch (e3) {
-            LoggingService.warn('FoodScannerBloc', 'Groq falhou, tentando AiFoodService: $e3');
-            try {
-              foods = await _aiFoodService.analyzeFoodImage(event.imageFile);
-            } catch (e4) {
-              LoggingService.error('FoodScannerBloc', 'Todos os serviços falharam', e4);
-            }
-          }
+          foods = await _groqVisionService.analyzeFoodImage(event.imageFile);
+          LoggingService.info('FoodScannerBloc', 'Groq Vision retornou ${foods.length} alimentos');
+        } catch (e) {
+          LoggingService.warn('FoodScannerBloc', 'Groq falhou: $e');
+        }
+      }
+
+      if (foods.isEmpty) {
+        try {
+          foods = await _aiFoodService.analyzeFoodImage(event.imageFile);
+          LoggingService.info('FoodScannerBloc', 'AiFoodService retornou ${foods.length} alimentos');
+        } catch (e) {
+          LoggingService.error('FoodScannerBloc', 'Todos os serviços falharam', e);
         }
       }
 
@@ -136,34 +129,31 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
     try {
       List<FoodItem> foods = [];
 
-      // Fluxo: USDA (primário) → Gemini (fallback) → Groq → AiFoodService
       try {
-        // USDA é 100% grátis e mais preciso para dados nutricionais
         foods = await _usdaFoodService.searchFoodByName(event.text);
         LoggingService.info('FoodScannerBloc', 'USDA retornou ${foods.length} alimentos');
-        
-        if (foods.isEmpty) {
-          // Fallback para Gemini se USDA não encontrar
-          throw Exception('USDA vazio, tentando Gemini');
-        }
       } catch (e) {
-        LoggingService.warn('FoodScannerBloc', 'USDA falhou, tentando Gemini: $e');
+        LoggingService.warn('FoodScannerBloc', 'USDA falhou: $e');
+      }
+
+      if (foods.isEmpty) {
         try {
           foods = await _geminiFoodService.analyzeFoodFromText(event.text);
           LoggingService.info('FoodScannerBloc', 'Gemini retornou ${foods.length} alimentos');
-          
-          // Validar com USDA após Gemini
           if (foods.isNotEmpty) {
             foods = await _validateWithUSDA(foods);
           }
-        } catch (e2) {
-          LoggingService.warn('FoodScannerBloc', 'Gemini falhou, tentando Groq: $e2');
-          try {
-            // Groq não suporta texto diretamente, usar AiFoodService
-            foods = await _aiFoodService.analyzeFoodFromText(event.text);
-          } catch (e3) {
-            LoggingService.error('FoodScannerBloc', 'Todos os serviços falharam', e3);
-          }
+        } catch (e) {
+          LoggingService.warn('FoodScannerBloc', 'Gemini falhou: $e');
+        }
+      }
+
+      if (foods.isEmpty) {
+        try {
+          foods = await _aiFoodService.analyzeFoodFromText(event.text);
+          LoggingService.info('FoodScannerBloc', 'AiFoodService retornou ${foods.length} alimentos');
+        } catch (e) {
+          LoggingService.error('FoodScannerBloc', 'Todos os serviços falharam', e);
         }
       }
 
@@ -194,36 +184,43 @@ class FoodScannerBloc extends Bloc<FoodScannerEvent, FoodScannerState> {
     try {
       List<FoodItem> foods = [];
 
-      // Fluxo: USDA (primário, grátis) → Gemini → FatSecret → AiFoodService
       try {
         foods = await _usdaFoodService.searchFoodByName(event.query);
         LoggingService.info('FoodScannerBloc', 'USDA retornou ${foods.length} alimentos');
       } catch (e) {
-        LoggingService.warn('FoodScannerBloc', 'USDA falhou, tentando Gemini: $e');
+        LoggingService.warn('FoodScannerBloc', 'USDA falhou: $e');
+      }
+
+      if (foods.isEmpty) {
         try {
           foods = await _geminiFoodService.analyzeFoodFromText(event.query);
           LoggingService.info('FoodScannerBloc', 'Gemini retornou ${foods.length} alimentos');
-          
-          // Validar com USDA após Gemini
           if (foods.isNotEmpty) {
             foods = await _validateWithUSDA(foods);
           }
-        } catch (e2) {
-          LoggingService.warn('FoodScannerBloc', 'Gemini falhou, tentando FatSecret: $e2');
-          try {
-            foods = await _fatSecretService.searchFoods(event.query);
-            LoggingService.info('FoodScannerBloc', 'FatSecret retornou ${foods.length} alimentos');
-          } catch (e3) {
-            LoggingService.warn('FoodScannerBloc', 'FatSecret falhou, tentando AiFoodService: $e3');
-            try {
-              foods = await _aiFoodService.analyzeFoodFromText(event.query);
-              if (foods.isEmpty) {
-                foods = await _aiFoodService.searchOpenFoodFacts(event.query);
-              }
-            } catch (e4) {
-              LoggingService.error('FoodScannerBloc', 'Todos os serviços falharam', e4);
-            }
+        } catch (e) {
+          LoggingService.warn('FoodScannerBloc', 'Gemini falhou: $e');
+        }
+      }
+
+      if (foods.isEmpty) {
+        try {
+          foods = await _fatSecretService.searchFoods(event.query);
+          LoggingService.info('FoodScannerBloc', 'FatSecret retornou ${foods.length} alimentos');
+        } catch (e) {
+          LoggingService.warn('FoodScannerBloc', 'FatSecret falhou: $e');
+        }
+      }
+
+      if (foods.isEmpty) {
+        try {
+          foods = await _aiFoodService.analyzeFoodFromText(event.query);
+          if (foods.isEmpty) {
+            foods = await _aiFoodService.searchOpenFoodFacts(event.query);
           }
+          LoggingService.info('FoodScannerBloc', 'AiFoodService retornou ${foods.length} alimentos');
+        } catch (e) {
+          LoggingService.error('FoodScannerBloc', 'Todos os serviços falharam', e);
         }
       }
 

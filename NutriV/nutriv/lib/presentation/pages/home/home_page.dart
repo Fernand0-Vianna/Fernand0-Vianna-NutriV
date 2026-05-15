@@ -52,9 +52,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           if (userState is UserLoaded) {
             return RefreshIndicator(
               onRefresh: () async {
-                context.read<MealBloc>().add(LoadMeals(DateTime.now()));
-                context.read<WaterBloc>().add(LoadWaterIntake(DateTime.now()));
+                final mealBloc = context.read<MealBloc>();
+                final waterBloc = context.read<WaterBloc>();
+                mealBloc.add(SyncMeals(DateTime.now()));
                 await Future.delayed(const Duration(milliseconds: 500));
+                mealBloc.add(LoadMeals(DateTime.now()));
+                waterBloc.add(LoadWaterIntake(DateTime.now()));
               },
               color: AppTheme.primary,
               backgroundColor: AppTheme.surfaceContainerLowest,

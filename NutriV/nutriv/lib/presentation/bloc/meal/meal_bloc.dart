@@ -18,6 +18,7 @@ class MealBloc extends Bloc<MealEvent, MealState> {
     on<AddFoodToMeal>(_onAddFoodToMeal);
     on<RemoveFoodFromMeal>(_onRemoveFoodFromMeal);
     on<AddMealFood>(_onAddMealFood);
+    on<SyncMeals>(_onSyncMeals);
   }
 
   Future<void> _onLoadMeals(LoadMeals event, Emitter<MealState> emit) async {
@@ -32,9 +33,20 @@ class MealBloc extends Bloc<MealEvent, MealState> {
     }
   }
 
+  Future<void> _onSyncMeals(SyncMeals event, Emitter<MealState> emit) async {
+    try {
+      await _mealRepository.pullFromSupabase();
+      final meals = await _mealRepository.getMealsByDate(event.date);
+      _currentDate = event.date;
+      emit(MealLoaded(date: event.date, meals: meals));
+    } catch (e) {
+      LoggingService.error('MealBloc', 'SyncMeals', e);
+    }
+  }
+
   Future<void> _onAddMeal(AddMeal event, Emitter<MealState> emit) async {
     try {
-      await _mealRepository.saveMeal(event.meal);
+      await _mealRepository.saveMeal(event.meal, inputMethod: event.inputMethod);
       final meals = await _mealRepository.getMealsByDate(_currentDate);
       emit(MealLoaded(date: _currentDate, meals: meals));
     } catch (e) {
@@ -135,7 +147,7 @@ class MealBloc extends Bloc<MealEvent, MealState> {
         foods: [event.food],
       );
 
-      await _mealRepository.saveMeal(meal);
+      await _mealRepository.saveMeal(meal, inputMethod: event.inputMethod);
       final meals = await _mealRepository.getMealsByDate(event.date);
       emit(MealLoaded(date: event.date, meals: meals));
     } catch (e) {
