@@ -1011,26 +1011,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
     }
   }
 
-  Future<void> _signInWithGoogle() async {
-    final authService = getIt<AuthService>();
-    final success = await authService.signInWithGoogle();
-
-    if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Abrindo login Google... Você será redirecionado automaticamente.'),
-          duration: Duration(seconds: 3),
-        ),
-      );
-      // Não navegamos imediatamente - o OAuth redirecionará de volta via callback
-      // O auth_callback_page ou auth state change irá navegar para home
-    } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao iniciar login com Google')),
-      );
-    }
-  }
-
   Future<void> _updateProfileInSupabase(User user, String userId) async {
     try {
       final activityLabels = ['sedentary', 'light', 'moderate', 'active', 'very_active'];

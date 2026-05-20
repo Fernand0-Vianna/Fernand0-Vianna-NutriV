@@ -34,9 +34,13 @@ class AuthInterceptor extends Interceptor {
   static final _log = Logger('AuthInterceptor');
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final authToken = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (authToken != null) {
-      options.headers['Authorization'] = 'Bearer $authToken';
+    final uri = options.uri.toString();
+    // Só adiciona token Supabase em requisições para o próprio Supabase
+    if (uri.contains('supabase.co')) {
+      final authToken = Supabase.instance.client.auth.currentSession?.accessToken;
+      if (authToken != null) {
+        options.headers['Authorization'] = 'Bearer $authToken';
+      }
     }
     return handler.next(options);
   }

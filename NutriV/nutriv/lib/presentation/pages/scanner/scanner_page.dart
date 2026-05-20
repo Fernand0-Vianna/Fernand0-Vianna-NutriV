@@ -15,6 +15,7 @@ import '../../../domain/entities/food_item.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/voice_input_widget.dart';
 import 'barcode_scan_page.dart';
+import '../../../core/utils/permission_handler.dart';
 
 class ScannerPage extends StatefulWidget {
   const ScannerPage({super.key});
@@ -695,6 +696,27 @@ class _ScannerPageState extends State<ScannerPage> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
+    // Request camera permission if using camera
+    if (source == ImageSource.camera) {
+      final permissionGranted = await PermissionHandler.requestCameraPermission();
+      if (!permissionGranted) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Permissão da câmera negada. Não é possível tirar foto.',
+                style: GoogleFonts.manrope(),
+              ),
+              backgroundColor: AppTheme.error,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
+          );
+        }
+        return;
+      }
+    }
+
     setState(() => _inputMethod = 'ai_scan');
     final XFile? image = await _picker.pickImage(source: source);
     if (image != null && mounted) {

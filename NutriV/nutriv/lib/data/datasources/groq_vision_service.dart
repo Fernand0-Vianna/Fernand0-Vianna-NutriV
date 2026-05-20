@@ -11,8 +11,8 @@ class GroqVisionService {
   String get _apiKey => dotenv.env['GROQ_API_KEY'] ?? '';
 
   static const String _baseUrl = 'https://api.groq.com/openai/v1';
-  static const String _model = 'llama-3.2-90b-vision-preview';
-  static const String _fallbackModel = 'llama-3.2-11b-vision-preview';
+  static const String _model = 'meta-llama/llama-4-scout-17b-16e-instruct';
+  static const String _fallbackModel = 'meta-llama/llama-4-scout-17b-16e-instruct';
 
   GroqVisionService(this._dio);
 
@@ -67,7 +67,6 @@ Retorne apenas o JSON array, sem texto adicional. Se não conseguir identificar 
           ],
           'temperature': 0.3,
           'max_tokens': 2048,
-          'response_format': {'type': 'json_object'},
         },
       );
 
@@ -145,7 +144,6 @@ Retorne apenas o JSON array, sem texto adicional. Se não conseguir identificar 
           ],
           'temperature': 0.3,
           'max_tokens': 1024,
-          'response_format': {'type': 'json_object'},
         },
       );
 
